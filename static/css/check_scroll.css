@@ -1,0 +1,21 @@
+#scroll-indicator {
+    opacity: 0.8; /* Menos llamativo */
+    bottom: 8px; /* Más centrado */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6); /* Color más sutil */
+    transition: opacity 0.3s ease-in-out;
+}
+
+@keyframes subtle-bounce {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(3px); /* Movimiento más sutil */
+    }
+}
+
+.animate-bounce-x {
+    animation: subtle-bounce 2s infinite ease-in-out;
+}

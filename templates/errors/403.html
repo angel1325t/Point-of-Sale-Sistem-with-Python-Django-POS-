@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Acceso Denegado{% endblock %}
+
+{% block content %}
+    <div>
+        <div>
+            <img src="{% static 'img/403.svg' %}" alt="403 Error">
+            <h1>🚫 ¡Acceso Denegado!</h1>
+            <p>No tienes los permisos necesarios para acceder a esta página.</p>
+            <a href="/">Volver al inicio</a>
+        </div>
+    </div>
+{% endblock %}

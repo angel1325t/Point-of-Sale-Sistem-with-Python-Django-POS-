@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+<div class="fixed top-4 right-4 z-50 space-y-2">
+    {% for message in messages %}
+    <div class="relative transition-transform duration-300 ease-in-out transform animate-slide-in alert-box">
+        <div class="p-4 rounded-lg shadow-lg text-sm relative 
+                    {% if message.tags == 'error' %} 
+                        bg-red-100 border border-red-400 text-red-700 
+                    {% elif message.tags == 'success' %} 
+                        bg-green-100 border border-green-400 text-green-700 
+                    {% else %}
+                        bg-yellow-100 border border-yellow-400 text-yellow-700 
+                    {% endif %}">
+            {{ message }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-wrap items-center justify-center">
+            <div class="w-full 2xl:w-2/5 xl:w-1/2 md:w-2/3 flex flex-col justify-center items-center bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold text-center mb-2">Iniciar sesión</h2>
+                <div class="mb-3">
+                    <img src="{% static 'img/logo.png' %}" class="w-36">
+                </div>
+                <form action="{% url 'login' %}" method="post" class="w-full" id="login-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="block text-gray-700">Nombre de usuario</label>
+                        <div class="flex border rounded-lg overflow-hidden">
+                            <span class="bg-gray-200 p-2"><img src="{% static 'icons/user.svg' %}" alt=""></span>
+                            <input type="text" class="w-full p-2 focus:outline-none" placeholder="Ingresa tu nombre de usuario" name="username">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-gray-700">Contraseña</label>
+                        <div class="flex border rounded-lg overflow-hidden">
+                            <span class="bg-gray-200 p-2"><img src="{% static 'icons/psw.svg' %}" alt=""></span>
+                            <input type="password" id="password" class="w-full p-2 focus:outline-none" placeholder="Ingresa tu contraseña" name="password">
+                            <button type="button" id="togglePassword" class="bg-gray-200 p-2"><img src="{% static 'icons/eye.svg' %}" alt=""></button>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white p-2 rounded-lg mt-2">Iniciar Sesión</button>
+                </form>
+
+                <!-- Spinner de carga -->
+                <div id="loading-spinner" style="display: none;">
+                    <span class="loader"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/toogle_icon.js' %}"></script>
+<script src="{% static 'js/alerts_login.js' %}"></script>
+{% endblock %}

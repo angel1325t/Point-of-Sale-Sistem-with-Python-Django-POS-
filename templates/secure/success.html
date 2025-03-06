@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Credenciales Actualizadas{% endblock %}
+{% block content %}
+
+<div class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full">
+        <svg class="mx-auto mb-4 text-green-500 w-16 h-16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-800">¡Credenciales Actualizadas!</h2>
+        <p class="text-gray-600 mt-2">Tu información ha sido guardada correctamente.</p>
+        <a href="{% url 'login' %}" class="mt-6 inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+            Ir al Login
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+

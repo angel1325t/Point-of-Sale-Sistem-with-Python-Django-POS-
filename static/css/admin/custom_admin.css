@@ -1,0 +1,38 @@
+/* Estilo personalizado para el select */
+select{
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    appearance: none;  /* Elimina la apariencia predeterminada del input */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Estilo cuando el select está en foco */
+select:focus {
+    outline: none;
+    border-color: #5b9bd5;
+    box-shadow: 0 0 5px rgba(91, 155, 213, 0.6);
+}
+
+/* Flecha personalizada para el select */
+select::after {
+    content: '▼';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+
+/* Esconde el span generado por select2 */
+.select2 {
+    display: none !important;
+}
