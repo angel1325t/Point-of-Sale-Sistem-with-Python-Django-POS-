@@ -3,22 +3,26 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
 from .forms import CustomUserForm
+from django.contrib.auth.models import Group
+
 
 class CustomUserAdmin(admin.ModelAdmin):
     form = CustomUserForm
-    list_display = ('username', 'email', 'is_superuser', 'is_active', 'profile_image_display')
-    list_filter = ('is_superuser', 'is_active')
+    list_display = ('username', 'email', 'is_superuser', 'is_active', 'profile_image_display', 'groups_display')
+    list_filter = ('is_superuser', 'is_active', 'groups')
     list_per_page = 5
     search_fields = ('username', 'email', 'id')
     actions = ['disable_users', 'delete_selected', 'enable_users']
+    
     fieldsets = (
         (None, {
-            'fields': ['email','is_staff',]  # Cambié de tupla a lista aquí
+            'fields': ['email']  # Manteniendo el formato con listas
         }),
         ('Permisos', {
-            'fields': ['is_superuser','is_client','is_active']  # Cambié de tupla a lista aquí
+            'fields': ['is_superuser', 'is_staff', 'is_active', 'groups'],  # Moviendo 'groups' aquí
         }),
     )
+
 
     def profile_image_display(self, obj):
         if obj.profile_image:
@@ -35,6 +39,11 @@ class CustomUserAdmin(admin.ModelAdmin):
 
     profile_image_display.short_description = "Profile Image"
 
+    def groups_display(self, obj):
+        return ", ".join([group.name for group in obj.groups.all()])  # Mostrar nombres de los grupos
+
+    groups_display.short_description = "Groups"
+
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
         for fieldset in fieldsets:
@@ -50,6 +59,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     @admin.action(description=_("Enable selected users"))
     def enable_users(self, request, queryset):
         queryset.update(is_active=True)
+
 
 # Registrar el modelo
 admin.site.register(CustomUser, CustomUserAdmin)

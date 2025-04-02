@@ -2,8 +2,8 @@ from django.utils.html import format_html
 from django.contrib import admin
 from django import forms
 from django.shortcuts import render, redirect
-from .models import Producto, Categoria
-from .forms import AddProductForm, CategoriaForm  # Importa los formularios
+from .models import Producto, Categoria, Suministradores
+from .forms import AddProductForm, CategoriaForm, SuministradoresForm  # Importa los formularios
 
 # Formulario para aplicar descuentos
 class DiscountForm(forms.Form):
@@ -23,9 +23,9 @@ class CategoriaAdmin(admin.ModelAdmin):
 # Registro de Producto en el admin
 class ProductAdmin(admin.ModelAdmin):
     form = AddProductForm
-    list_display = ('nombre', 'marca', 'precio', 'stock', 'imagen_preview', 'descripcion', 'categoria', 'descuento', 'activo') 
+    list_display = ('nombre', 'marca', 'precio', 'stock', 'imagen_preview', 'descripcion', 'categoria','suministrador', 'descuento', 'activo') 
     search_fields = ('nombre', 'descripcion', 'marca', 'id_producto')
-    list_filter = ('activo', 'created_at', 'categoria')
+    list_filter = ('activo', 'created_at', 'categoria','suministrador')
     ordering = ('-created_at',)
     list_editable = ['activo']
     list_per_page = 5
@@ -33,7 +33,7 @@ class ProductAdmin(admin.ModelAdmin):
     
     fieldsets = (
         (None, {
-            'fields': ('nombre', 'marca', 'descripcion', 'image', 'activo', 'categoria')
+            'fields': ('nombre', 'marca', 'descripcion', 'image', 'activo', 'categoria','suministrador')
         }),
         ('Precios y Descuentos', {
             'fields': ('precio', 'stock', 'descuento')
@@ -85,3 +85,13 @@ class ProductAdmin(admin.ModelAdmin):
 
 # Registra el modelo en el admin
 admin.site.register(Producto, ProductAdmin)
+# Registro de Suministradores en el admin
+
+@admin.register(Suministradores)
+class SuministradoresAdmin(admin.ModelAdmin):
+    form = SuministradoresForm
+    list_display = ('nombre_proveedor', 'telefono', 'email', 'direccion')
+    search_fields = ('nombre_proveedor', 'telefono', 'email')
+    list_filter = ('created_at', 'updated_at')
+    ordering = ('-created_at',)
+    list_per_page = 10

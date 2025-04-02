@@ -18,10 +18,11 @@ Including another URLconf
 from django.urls import path, include
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
-from apps.users import views
+from apps.ventas import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseForbidden
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path(
@@ -35,6 +36,11 @@ urlpatterns = [
     path("empleados/", include("apps.productos.urls")),
     path("empleados/", include("apps.ventas.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
+    path("api/chartdata/", views.chart_data, name="chart_data"),
+    path("accounts/password_reset/",auth_views.PasswordResetView.as_view(template_name="registration/password_reset_form.html",email_template_name="registration/password_reset_email.html"),name="password_reset",),
+    path('accounts/password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('accounts/reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('accounts/reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]
 
 

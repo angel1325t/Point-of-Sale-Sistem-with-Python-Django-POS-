@@ -16,10 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import login_view, logout_view, CreateCredentialsView 
+from . import views
 
 urlpatterns = [
-    path("", login_view, name='login'),  # FBV
-    path("logout/", logout_view, name='logout'),  # FBV
-    path('email/<int:id>/', CreateCredentialsView.as_view(), name='email'), # CBV
+    path("", views.login_view, name='login'),  
+    path("disabled/", views.disabled_user_view, name='disabled_user'),  
+    path("problem/", views.technical_problem_view, name="technical_problem"), 
+    path("logout/", views.logout_view, name='logout'), 
+    path('email/<int:id>/', views.CreateCredentialsView.as_view(), name='email'),
+    
 ]

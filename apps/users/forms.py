@@ -2,6 +2,7 @@ from django import forms
 from .models import CustomUser
 from .utils import generate_random_password
 from .email_service import EmailService
+from django.contrib.auth.models import Group
 
 
 class CustomUserForm(forms.ModelForm):
@@ -15,15 +16,20 @@ class CustomUserForm(forms.ModelForm):
             'style': 'width: 100%; padding: 8px; border-radius: 5px; background-color: white; color: black; border: 1px solid #ccc;'
         })
     )
-    is_client = forms.BooleanField(required=False, label="Es cliente")
     is_superuser = forms.BooleanField(required=False, label="Es superusuario")
-    is_staff = forms.BooleanField(required=False, label="Es staff", initial=True)
+    is_staff = forms.BooleanField(required=False, label="Es staff", initial=False)
     first_name = forms.CharField(widget=forms.HiddenInput(), required=False)
     last_name = forms.CharField(widget=forms.HiddenInput(), required=False)
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.Select,
+        label="Grupos"
+    )
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'first_name', 'last_name', 'is_client', 'is_superuser', 'is_staff', 'is_active', 'profile_image']
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_superuser', 'is_staff', 'is_active', 'profile_image', 'groups']
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -38,9 +44,7 @@ class CustomUserForm(forms.ModelForm):
             random_password = None
 
         user.is_superuser = self.cleaned_data.get("is_superuser", False)
-        user.is_client = self.cleaned_data.get("is_client", False)
         user.is_active = self.cleaned_data.get("is_active", True)
-
         user.is_staff = self.cleaned_data.get("is_staff", False)
 
         user.save()
@@ -48,6 +52,11 @@ class CustomUserForm(forms.ModelForm):
         if self.cleaned_data.get('profile_image'):
             user.profile_image = self.cleaned_data['profile_image']
             user.save()
+
+        # Asignar los grupos seleccionados
+        groups = self.cleaned_data.get('groups', [])
+        if groups:
+            user.groups.set(groups)
 
         if random_password:
             self.send_credentials_email(user.id, user, random_password)

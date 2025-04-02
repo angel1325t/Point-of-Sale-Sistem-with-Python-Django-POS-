@@ -35,6 +35,7 @@ stripe.api_key = STRIPE_SECRET_KEY  # Configura la clave secreta
 INSTALLED_APPS = [
     "jazzmin",
     "django.contrib.admin",
+    'django.contrib.sites',
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -44,29 +45,40 @@ INSTALLED_APPS = [
     "apps.productos",
     "apps.ventas",
     "django_extensions",
+    'widget_tweaks',
 ]
+SITE_ID = 1
+
 JAZZMIN_SETTINGS = {
     "site_logo": "img/P.png",
     "site_icon": "imgs/favicon.png",
     "welcome_sign": "Bienvenido al panel de administración",
     "copyright": "PuntoXpress",
-    "usermenu_links": [{"name": "Usuarios", "model": "users.CustomUser"}],
     "topmenu_links": [
         {
             "name": "Soporte",
             "url": "https://github.com/farridav/django-jazzmin/issues",
             "new_window": True,
         },
+        {"name": "Usuarios", "model": "users.CustomUser"},
+        {
+            "name": "Empleados",
+            "url": "/empleados/",
+            "new_window": False,  # Se abrirá en la misma ventana
+        },
     ],
     "search_model": ["users.CustomUser"],
     "site_brand": "PuntoXpress",
     "language_chooser": True,
-    "hide_models": [
-        "auth.Group",  # Solo ocultar el modelo 'Group'
-    ],
     "icons": {
         "users.CustomUser": "fas fa-user",
+        "ventas.venta": "fas fa-chart-column",
+        "productos.categoria": "fas fa-boxes-stacked",
+        "productos.producto": "fas fa-tag",
+        "productos.suministradores": "fas fa-user-tag",
+        "auth.group": "fas fa-gears",
     },
+    "custom_css": "admin/css/custom.css",
 }
 
 
@@ -178,7 +190,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = "empleados"
 LOGOUT_REDIRECT_URL = "/"
-LOGIN_URL = "/accounts/login/"
+LOGIN_URL = "/accounts/login"
+PASSWORD_RESET_TIMEOUT = 3600  # Opcional: Expira en 1 hora
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

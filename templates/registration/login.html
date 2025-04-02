@@ -44,6 +44,13 @@
                             <button type="button" id="togglePassword" class="bg-gray-200 p-2"><img src="{% static 'icons/eye.svg' %}" alt=""></button>
                         </div>
                     </div>
+                    <!-- Enlace para recuperar contraseña -->
+                    <div class="text-right">
+                        <a href="{% url 'password_reset' %}" class="text-sm font-medium text-blue-700 hover:text-blue-800 transition">
+                          ¿Olvidaste tu contraseña?
+                        </a>
+                      </div>
+                    
                     <button type="submit" class="w-full bg-primary text-white p-2 rounded-lg mt-2">Iniciar Sesión</button>
                 </form>
 

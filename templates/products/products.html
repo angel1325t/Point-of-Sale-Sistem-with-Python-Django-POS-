@@ -3,148 +3,227 @@
 {% block section1 %}
 <link rel="stylesheet" href="{% static 'css/products/check_scroll.css' %}">
 <style>
-  .filters-container {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-  }
-  .filters-container.active {
-    max-height: 500px;
-    transition: max-height 0.5s ease-in;
-  }
-  .filter-toggle {
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .filter-toggle svg {
-    transition: transform 0.3s ease;
-  }
-  .filter-toggle.active svg {
-    transform: rotate(180deg);
-  }
-  .search-container {
-    position: relative;
-  }
-  .search-container input {
-    padding-left: 2.5rem;
-  }
-  .search-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-  }
-  .animate-bounce-x {
-    animation: bounce-x 1s infinite;
-  }
-  @keyframes bounce-x {
-    0%, 100% {
-      transform: translateX(0);
+    .filters-container {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
     }
-    50% {
-      transform: translateX(5px);
-    }
-  }
-</style>
 
+    .filters-container.active {
+        max-height: 500px;
+        transition: max-height 0.5s ease-in;
+    }
+
+    .filter-toggle {
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-toggle svg {
+        transition: transform 0.3s ease;
+    }
+
+    .filter-toggle.active svg {
+        transform: rotate(180deg);
+    }
+
+    .search-container {
+        position: relative;
+    }
+
+    .search-container input {
+        padding-left: 2.5rem;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+    }
+
+    .animate-bounce-x {
+        animation: bounce-x 1s infinite;
+    }
+
+    @keyframes bounce-x {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        50% {
+            transform: translateX(5px);
+        }
+    }
+</style>
+<link rel="stylesheet" href="{% static 'css/login/login_alert.css' %}">
+<div class="fixed bottom-4 right-4 z-50 space-y-2">
+    {% for message in messages %}
+    <div class="relative transition-transform duration-300 ease-in-out transform animate-slide-in alert-box">
+        <div class="p-4 rounded-lg shadow-lg text-sm relative 
+                    {% if message.tags == 'error' %} 
+                        bg-red-100 border border-red-400 text-red-700 
+                    {% elif message.tags == 'success' %} 
+                        bg-green-100 border border-green-400 text-green-700 
+                    {% else %}
+                        bg-yellow-100 border border-yellow-400 text-yellow-700 
+                    {% endif %}">
+            {{ message }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
 <section class="container px-4 mx-auto w-full">
-    <div class="flex justify-between items-center">
-        <h2 class="text-lg font-medium text-gray-800">Productos</h2>
-        <div class="filter-toggle flex items-center text-primary hover:text-primary-dark">
-            <span>Filtros</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <h2 class="text-xl font-medium text-gray-800 text-center md:text-left">Inventario</h2>
+
+            <div
+                class="flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 w-full md:w-auto">
+                <div
+                    class="filter-toggle flex items-center w-full md:w-auto justify-center px-5 py-3 font-semibold text-[#23328C] cursor-pointer">
+                    <span class="mr-2">Filtros</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#23328C]" viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+
+            </div>
         </div>
     </div>
 
     <!-- Barra de búsqueda a lo largo -->
     <div class="mt-4 search-container">
         <span class="search-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#23328C]/70" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
         </span>
         <input type="text" id="search" placeholder="Buscar productos por nombre, descripción, marca..."
-            class="px-4 py-3 border rounded-md text-sm w-full focus:ring-2 focus:ring-primary focus:border-primary transition-colors" />
+            class="px-4 py-3 border rounded-md text-sm w-full transition-colors placeholder-[#23328C]/70"
+            autocomplete="off" />
     </div>
 
     <!-- Filtros desplegables -->
-<div class="filters-container mt-2">
-    <div class="p-4 bg-gray-50 rounded-md border border-gray-200">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <select id="category" class="px-4 py-2 border rounded-md text-sm w-full focus:ring-2 focus:ring-primary focus:border-primary">
-                <option value="">Todas las categorías</option>
-                {% for category in categories %}
+    <div class="filters-container mt-2">
+        <div class="p-4 bg-gray-50 rounded-md border border-gray-100">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <select id="category" class="px-4 py-2 border rounded-md text-sm w-full">
+                    <option value="">Todas las categorías</option>
+                    {% for category in categories %}
                     <option value="{{ category.id_categoria }}">{{ category.nombre_categoria }}</option>
-                {% endfor %}
-            </select>
-            <select id="order_by" class="px-4 py-2 border rounded-md text-sm w-full focus:ring-2 focus:ring-primary focus:border-primary">
-                <option value="">Ordenar por</option>
-                <option value="nombre_asc">Nombre A - Z</option>
-                <option value="nombre_desc">Nombre Z - A</option>
-                <option value="precio_asc">Precio menor a mayor</option>
-                <option value="precio_desc">Precio mayor a menor</option>
-            </select>
-            <select id="estado" class="px-4 py-2 border rounded-md text-sm w-full focus:ring-2 focus:ring-primary focus:border-primary">
-                <option value="">Estado</option>
-                <option value="en_stock">En Stock</option>
-                <option value="bajo_stock">Bajo Stock</option>
-                <option value="agotado">Agotado</option>
-            </select>
-            <div class="flex space-x-2">
-                <input type="number" id="precio_min" placeholder="Precio mín"
-                    class="px-4 py-2 border rounded-md text-sm w-1/2 focus:ring-2 focus:ring-primary focus:border-primary" />
-                <input type="number" id="precio_max" placeholder="Precio máx"
-                    class="px-4 py-2 border rounded-md text-sm w-1/2 focus:ring-2 focus:ring-primary focus:border-primary" />
+                    {% endfor %}
+                </select>
+                <select id="order_by" class="px-4 py-2 border rounded-md text-sm w-full">
+                    <option value="">Ordenar por</option>
+                    <option value="nombre_asc">Nombre A - Z</option>
+                    <option value="nombre_desc">Nombre Z - A</option>
+                    <option value="precio_asc">Precio menor a mayor</option>
+                    <option value="precio_desc">Precio mayor a menor</option>
+                </select>
+                <select id="estado" class="px-4 py-2 border rounded-md text-sm w-full">
+                    <option value="">Estado</option>
+                    <option value="en_stock">En Stock</option>
+                    <option value="bajo_stock">Bajo Stock</option>
+                    <option value="agotado">Agotado</option>
+                </select>
+                <div class="flex space-x-2">
+                    <input type="number" id="precio_min" placeholder="Precio mín"
+                        class="px-4 py-2 border rounded-md text-sm w-1/2" />
+                    <input type="number" id="precio_max" placeholder="Precio máx"
+                        class="px-4 py-2 border rounded-md text-sm w-1/2" />
+                </div>
+            </div>
+            <!-- Botón de limpiar filtros -->
+            <div class="mt-4 flex justify-end">
+                <button id="clear-filters"
+                    class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100">
+                    Limpiar filtros
+                </button>
             </div>
         </div>
-        <!-- Botón de limpiar filtros -->
-        <div class="mt-4 flex justify-end">
-            <button id="clear-filters" class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary">
-                Limpiar filtros
-            </button>
+    </div>
+    <div class="filters-container mt-2">
+        <div class="p-4 bg-[#23328C]/5 rounded-md border border-[#23328C]/10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <select class="px-4 py-2 border rounded-md text-sm w-full ">
+                    <option value="">Todas las categorías</option>
+                    <option value="1">Electrónica</option>
+                    <option value="2">Ropa</option>
+                </select>
+                <select class="px-4 py-2 border rounded-md text-sm w-full ">
+                    <option value="">Ordenar por</option>
+                    <option value="nombre_asc">Nombre A - Z</option>
+                    <option value="nombre_desc">Nombre Z - A</option>
+                </select>
+                <select class="px-4 py-2 border rounded-md text-sm w-full ">
+                    <option value="">Estado</option>
+                    <option value="en_stock">En Stock</option>
+                    <option value="bajo_stock">Bajo Stock</option>
+                    <option value="agotado">Agotado</option>
+                </select>
+                <div class="flex space-x-2">
+                    <input type="number" placeholder="Precio mín" class="px-4 py-2 border rounded-md text-sm w-1/2" />
+                    <input type="number" placeholder="Precio máx" class="px-4 py-2 border rounded-md text-sm w-1/2" />
+                </div>
+            </div>
+            <!-- Clear Filters Button -->
+            <div class="mt-4 flex justify-end">
+                <button
+                    class="px-4 py-2 text-sm text-[#23328C] bg-[#23328C]/10 border border-[#23328C]/20 rounded-md hover:bg-[#23328C]/20">
+                    Limpiar filtros
+                </button>
+            </div>
         </div>
     </div>
-</div>
+
 
     <!-- Contenedor de productos -->
     <div class="relative mt-4 overflow-x-auto" id="scroll-container">
         <div id="scroll-indicator"
             class="hidden absolute bottom-3 flex items-center space-x-2 bg-gray-900/80 text-white text-xs px-3 py-1 rounded-full">
             <span>Desliza</span>
-            <svg class="w-4 h-4 animate-bounce-x" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 animate-bounce-x" fill="none" stroke="currentColor" stroke-width="2"
+                viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 4l4 4m0 0l-4 4m4-4H4"></path>
             </svg>
         </div>
         <div class="w-full border border-gray-200 md:rounded-lg">
             <table class="w-full table-auto divide-y divide-gray-200 min-w-[800px]" id="products-table">
-                <thead class="bg-gray-50">
+                <thead class="bg-gray-100">
                     <tr>
-                        <th class="py-3 px-4 text-sm font-normal text-left text-gray-500">Nombre</th>
-                        <th class="px-6 py-3 text-sm font-normal text-left text-gray-500">Cantidad</th>
-                        <th class="px-6 py-3 text-sm font-normal text-left text-gray-500">Descripción</th>
-                        <th class="px-6 py-3 text-sm font-normal text-left text-gray-500">Imagen</th>
-                        <th class="px-6 py-3 text-sm font-normal text-left text-gray-500">Precio</th>
-                        <th class="px-6 py-3 text-sm font-normal text-left text-gray-500">Estado</th>
+                        <th class="py-3 px-4 text-sm font-normal text-left text-[#23328C]">Nombre</th>
+                        <th class="px-6 py-3 text-sm font-normal text-left text-[#23328C]">Cantidad</th>
+                        <th class="px-6 py-3 text-sm font-normal text-left text-[#23328C]">Descripción</th>
+                        <th class="px-6 py-3 text-sm font-normal text-left text-[#23328C]">Imagen</th>
+                        <th class="px-6 py-3 text-sm font-normal text-left text-[#23328C]">Precio</th>
+                        <th class="px-6 py-3 text-sm font-normal text-left text-[#23328C]">Estado</th>
+                        <th class="px-6 py-3 text-sm font-normal text-left text-[#23328C]">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200" id="products-body">
                     {% for product in products %}
                     <tr data-nombre="{{ product.nombre|lower }}" data-categoria="{{ product.categoria.id_categoria }}"
-                        data-stock="{{ product.stock }}" data-precio="{{ product.precio }}" data-marca="{{ product.marca }}"
-                        data-descripcion="{{ product.descripcion|lower }}">
-                        <td class="px-4 py-4 text-sm font-medium">
-                            <h2 class="font-medium text-gray-800">{{ product.nombre }}</h2>
-                            <p class="text-sm text-gray-500">{{ product.marca }}</p>
+                        data-stock="{{ product.stock }}" data-precio="{{ product.precio }}"
+                        data-marca="{{ product.marca }}" data-descripcion="{{ product.descripcion|lower }}">
+                        <td class="px-4 py-4 text-sm">
+                            <h1 class="font-medium text-gray-800 font-bold">{{ product.nombre }}</h1>
+                            <p class="text-sm text-gray-500 font-medium">{{ product.marca }}</p>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ product.stock }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">
-                            <h4>{{ product.categoria }}</h4>
+                            <h4 class="font-bold">{{ product.categoria }}</h4>
                             <p class="text-gray-500">{{ product.descripcion }}</p>
                         </td>
                         <td class="px-6 py-4 text-sm">
@@ -154,92 +233,419 @@
                         <td class="px-6 py-4 text-sm text-gray-700">${{ product.precio }}</td>
                         <td class="px-6 py-4 text-sm">
                             {% if product.stock == 0 %}
-                            <div class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-red-500 bg-red-100/60">
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 3L3 9M3 3L9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <div class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider 
+                border border-red-200 bg-red-50 text-red-600 shadow-sm">
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                                    </path>
                                 </svg>
-                                <span class="text-sm font-normal">Agotado</span>
+                                <span>Agotado</span>
                             </div>
-                            {% elif product.stock <= 25 %}
-                            <div class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-orange-500 bg-orange-100/60">
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2.5 6.5H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            {% elif product.stock <= 25 %} <div class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider 
+                border border-orange-200 bg-orange-50 text-orange-600 shadow-sm">
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                    </path>
                                 </svg>
-                                <span class="text-sm font-normal">Bajo Stock</span>
-                            </div>
-                            {% else %}
-                            <div class="inline-flex items-center px-3 py-1 rounded-full gap-x-2 text-emerald-500 bg-emerald-100/60">
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <span class="text-sm font-normal">En Stock</span>
-                            </div>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6" class="px-4 py-4 text-center text-gray-500">
-                            <div class="flex flex-col items-center">
-                                <img src="{% static 'icons/not_found.svg' %}" alt="No encontrado" class="w-16 h-16">
-                                <p class="mt-2 text-lg font-semibold">No se encontraron productos</p>
-                                <p class="text-gray-500">Intenta con otra búsqueda o categoría.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                <span>Bajo Stock</span>
         </div>
+        {% else %}
+        <div class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider 
+                border border-emerald-200 bg-emerald-50 text-emerald-600 shadow-sm">
+            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>En Stock</span>
+        </div>
+        {% endif %}
+        </td>
+        <td class="px-6 py-4 text-sm">
+            <div class="flex">
+                <button data-modal-target="product-{{ product.id_producto }}"
+                    data-modal-toggle="product-{{ product.id_producto }}"
+                    class="text-blue-800 hover:bg-blue-50 p-2 rounded-full transition-colors" title="Ver">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+                <!-- Extra Large Modal -->
+
+
+                <div id="product-{{ product.id_producto }}" tabindex="-1"
+                    class="fixed top-0 left-0 right-0 z-50 w-full hidden p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div class="relative w-full max-w-3xl max-h-full">
+                        <div class="relative bg-white rounded-lg shadow-sm">
+                            <!-- Modal header -->
+                            <div
+                                class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                                <h3 class="text-xl font-medium text-blue-900">
+                                    Detalles del Producto
+                                </h3>
+                                <button type="button"
+                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                                    data-modal-hide="product-{{ product.id_producto }}">
+                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
+                            </div>
+                            <!-- Modal body -->
+                            <div class="p-4 md:p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="aspect-video">
+                                    <img src="../../media/{{ product.image }}" alt="{{ product.nombre }}"
+                                        class="w-full h-full object-contain rounded-lg">
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div class="flex flex-wrap md:flex-col">
+                                        <div class="grow">
+
+                                            <p
+                                                class="text-lg text-blue-800 font-bold pb-2 grow text-center min-[450px]:text-start">
+                                                Nombre: <span class="text-sm font-normal text-gray-600">{{ product.nombre }}</span>
+                                            </p>
+                                            <p
+                                                class="text-2xl font-bold text-blue-800 md:mt-2 pb-2 grow text-center min-[450px]:text-start">
+                                                ${{ product.precio }}</p>
+                                        </div>
+                                        <div class="grow">
+                                            <p
+                                                class="text-lg text-blue-800 font-bold pb-2 grow text-center min-[450px]:text-start">
+                                                Categoría: <span class="text-sm font-normal text-gray-600">{{ product.categoria }}</span>
+                                            </p>
+                                            <div class="text-center min-[450px]:text-start">
+                                                {% if product.stock == 0 %}
+                                                <div
+                                                    class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider border border-red-200 bg-red-50 text-red-600 shadow-sm grow">
+                                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                                                        </path>
+                                                    </svg>
+                                                    <span>Agotado</span>
+                                                </div>
+                                                {% elif product.stock <= 25 %} <div
+                                                    class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider border border-orange-200 bg-orange-50 text-orange-600 shadow-sm grow">
+                                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                                        </path>
+                                                    </svg>
+                                                    <span>Bajo Stock ({{ product.stock }} Unidades)</span>
+                                            </div>
+                                            {% else %}
+                                            <div
+                                                class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider border border-emerald-200 bg-emerald-50 text-emerald-600 shadow-sm grow">
+                                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                <span>En Stock ({{ product.stock }} Unidades)</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-span-1 md:col-span-2 bg-gray-50 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold text-blue-800 mb-2">Descripción</h4>
+                                <p class="text-gray-700">{{ product.descripcion }}</p>
+                            </div>
+
+                            <div class="space-y-2">
+                                <h4 class="font-bold text-blue-800 mb-2">Detalles Adicionales</h4>
+                                <p class="text-sm text-gray-600 font-semibold">
+                                    Fecha de ingreso: <span class="font-medium">{{ product.created_at|date:"Y-m-d" }}</span>
+                                </p>
+                                <p class="text-sm text-gray-600 font-semibold">
+                                    Última actualización: <span class="font-medium">{{ product.updated_at|date:"Y-m-d" }}</span>
+                                </p>
+                                <p class="text-sm text-gray-600 font-semibold">
+                                    Proveedor: <span class="font-medium">{{ product.suministrador }}</span>
+                                </p>
+                            </div>
+
+                            <div class="space-y-2">
+                                <h4 class="font-semibold text-blue-800 mb-2">Historial de Movimientos</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>19/09/2023: Entrada 10 unidades (Ana López)</li>
+                                    <li>04/08/2023: Salida 2 unidades (Carlos Ruiz)</li>
+                                    <li>21/07/2023: Ajuste -1 unidades (María Gómez)</li>
+                                    <li>14/06/2023: Entrada inicial 17 unidades (José Martínez)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div
+                            class="flex flex-col sm:flex-row items-center justify-start gap-3 p-4 md:p-5 border-t border-gray-200 rounded-b">
+                            <button data-modal-target="edit-modal-id-{{ product.id_producto }}" data-modal-toggle="edit-modal-id-{{ product.id_producto }}" data-modal-hide="product-{{ product.id_producto }}" type="button"
+                                class="flex items-center justify-center w-full sm:w-auto text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2.5 space-x-2">
+                                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+                                    height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                                        d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4" />
+                                </svg>
+                                <span>Ajustar Stock</span>
+                            </button>
+                            <button data-modal-hide="product-{{ product.id_producto }}" type="button"
+                                class="flex items-center justify-center w-full sm:w-auto text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700  font-medium text-sm px-4 py-2.5 space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                                </svg>
+                                <span>Salir</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal toggle -->
+            <button data-modal-target="edit-modal-id-{{ product.id_producto }}"
+                data-modal-toggle="edit-modal-id-{{ product.id_producto }}"
+                class="text-yellow-500 hover:bg-yellow-50 p-2 rounded-full transition-colors" title="Editar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+            </button>
+
+
+
+            <!-- Main modal -->
+                <div id="edit-modal-id-{{ product.id_producto }}" tabindex="-1" aria-hidden="true"
+                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50  justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div class="relative p-4 w-full max-w-md max-h-full">
+                        <!-- Modal content -->
+                        <div class="relative bg-white rounded-lg shadow-sm">
+                            <!-- Modal header -->
+                            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
+                                <h3 class="text-xl font-semibold text-gray-900">
+                                    Actualizar producto
+                                </h3>
+                                <button type="button"
+                                    class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                                    data-modal-hide="edit-modal-id-{{ product.id_producto }}">
+                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
+                            </div>
+                            <link rel="stylesheet" href="{% static 'css/login/create_credentials.css' %}">
+                            <!-- Modal body -->
+                            <div class="p-4 md:p-5">
+                                <!-- products/products.html -->
+                                <form class="space-y-6" action="{% url 'update_product' product.id_producto %}"
+                                    method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="flex justify-center mb-4">
+                                        <label for="profile_picture"
+                                            class="relative w-32 h-32 rounded-full border-4 border-blue-800 cursor-pointer hover:border-blue-700 transition-all group">
+                                            <input type="file" id="profile_picture-{{ product.id_producto }}" name="profile_image" accept="image/*"
+                                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                                            <img id="profile_preview"
+                                                src="{{ product.image.url }}"
+                                                alt="Profile Picture" class="w-full h-full object-cover rounded-full" />
+                                            <div
+                                                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-50 text-white rounded-full">
+                                                <img src="{% static 'icons/camera.svg' %}" alt="camera svg" class="h-8 w-8">
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label for="description"
+                                            class="block mb-2 text-sm font-medium text-gray-900">Descripción</label>
+                                        <textarea id="description" name="description" rows="4"
+                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300"
+                                            placeholder="Escriba la nueva descripción del producto">{{ product.description }}</textarea>
+                                    </div>
+
+                                    <div>
+                                        <label for="price"
+                                            class="block mb-2 text-sm font-medium text-gray-900">Precio</label>
+                                        <div class="relative">
+                                            <div
+                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="price" name="price"
+                                                value="{{ product.price|floatformat:2 }}"
+                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-7 p-2.5"
+                                                placeholder="0.00" min="0" step="0.01" />
+                                        </div>
+                                    </div>
+                                    <!-- Nuevo campo para aumentar stock -->
+        <div>
+            <label for="quantity-input-{{ product.id_producto }}"
+                class="block mb-2 text-sm font-medium text-gray-900">Aumentar Stock</label>
+            <div class="relative flex items-center max-w-xs">
+                <button type="button" id="decrement-button-{{ product.id_producto }}" data-input-counter-decrement="quantity-input-{{ product.id_producto }}" 
+                    class="bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none">
+                    <svg class="w-3 h-3 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
+                    </svg>
+                </button>
+                <input type="number" id="quantity-input-{{ product.id_producto }}" name="stock" data-input-counter value="{{ product.stock|default:0 }}" class="bg-gray-50 border-x-0 border-gray-300 h-11 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5" placeholder="0" min="0" required />
+                <button type="button" id="increment-button-{{product.id_producto}}" data-input-counter-increment="quantity-input-{{ product.id_producto }}" class="bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none">
+                    <svg class="w-3 h-3 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="mt-2 text-sm text-gray-500">Stock actual: {{ product.stock }}</p>
+        </div>
+
+                                    <button type="submit"
+                                        class="w-full text-white bg-blue-800 hover:bg-blue-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                        Actualizar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Seleccionar todos los modales
+                        const modals = document.querySelectorAll('[id^="edit-modal-id-"]');
+                        
+                        modals.forEach(modal => {
+                            const modalId = modal.id;
+                            const closeButton = modal.querySelector('[data-modal-hide]');
+                            
+                            // Seleccionar los inputs dentro de este modal específico
+                            const quantityInput = modal.querySelector(`#quantity-input-${modalId.split('edit-modal-id-')[1]}`);
+                            const descriptionInput = modal.querySelector('#description');
+                            const priceInput = modal.querySelector('#price');
+                            const fileInput = modal.querySelector('#profile_picture');
+                    
+                            // Guardar valores originales exactos del servidor
+                            const originalValues = {
+                                quantity: quantityInput?.value || '0',  // Stock por defecto 0 si no hay valor
+                                description: descriptionInput?.value || '',  // Descripción vacía si no hay valor
+                                price: priceInput?.value || '',  // Usar el valor original, vacío si no hay nada
+                                file: ''  // No podemos guardar el valor original del file input por seguridad
+                            };
+                    
+                            // Función para resetear los inputs a sus valores originales
+                            function resetInputs() {
+                                if (quantityInput) quantityInput.value = originalValues.quantity;
+                                if (descriptionInput) descriptionInput.value = originalValues.description;
+                                if (priceInput) priceInput.value = originalValues.price;  // Restaurar valor original
+                                if (fileInput) fileInput.value = '';  // Resetear input file
+                            }
+                    
+                            // Evento para el botón de cerrar (X)
+                            if (closeButton) {
+                                closeButton.addEventListener('click', function() {
+                                    resetInputs();
+                                    modal.classList.add('hidden'); // Ocultar el modal
+                                });
+                            }
+                    
+                            // Evento para clic fuera del modal (backdrop)
+                            modal.addEventListener('click', function(e) {
+                                // Verificar si el clic fue en el backdrop (fuera del contenido del modal)
+                                if (e.target === modal) {
+                                    resetInputs();
+                                    modal.classList.add('hidden');
+                                }
+                            });
+                        });
+                    });
+                    </script>
+
+
+    </div>
+    </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="7" class="px-4 py-4 text-center text-gray-500">
+            <div class="flex flex-col items-center">
+                <img src="{% static 'icons/not_found.svg' %}" alt="No encontrado" class="w-16 h-16">
+                <p class="mt-2 text-lg font-semibold">No se encontraron productos</p>
+                <p class="text-gray-500">Intenta con otra búsqueda o categoría.</p>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
     </div>
 
     <!-- Paginación (mantenida por el backend) -->
-    <div class="flex items-center justify-between mt-4">
+    <div class="flex items-center justify-between mt-4 mb-4">
         {% if products.has_previous %}
-            <a href="?page={{ products.previous_page_number }}"
-                class="flex items-center px-5 py-2 text-sm text-gray-700 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
-                </svg>
-                <span>Anterior</span>
-            </a>
+        <a href="?page={{ products.previous_page_number }}"
+            class="flex items-center px-5 py-2 text-sm text-gray-700 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-5 h-5 text-[#23328C]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+            </svg>
+            <span class="text-[#23328C] ">Anterior</span>
+        </a>
         {% else %}
-            <span class="px-5 py-2 text-sm text-gray-400 bg-white border rounded-md cursor-not-allowed">Anterior</span>
+        <span class="px-5 py-2 text-sm bg-white border rounded-md cursor-not-allowed text-gray-500">Anterior</span>
         {% endif %}
 
         <div class="hidden md:flex gap-x-3">
             {% for num in products.paginator.page_range %}
-                {% if products.number == num %}
-                    <span class="px-2 py-1 text-sm color-primary bg-blue-100/60 rounded-md">{{ num }}</span>
-                {% else %}
-                    <a href="?page={{ num }}"
-                        class="px-2 py-1 text-sm text-gray-500 rounded-md hover:bg-gray-100">{{ num }}</a>
-                {% endif %}
+            {% if products.number == num %}
+            <span class="px-2 py-1 text-sm color-primary bg-blue-100/60 rounded-md">{{ num }}</span>
+            {% else %}
+            <a href="?page={{ num }}" class="px-2 py-1 text-sm text-gray-500 rounded-md hover:bg-gray-100">{{ num }}</a>
+            {% endif %}
             {% endfor %}
         </div>
 
         {% if products.has_next %}
-            <a href="?page={{ products.next_page_number }}"
-                class="flex items-center px-5 py-2 text-sm text-gray-700 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
-                <span>Siguiente</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                </svg>
-            </a>
+        <a href="?page={{ products.next_page_number }}"
+            class="flex items-center px-5 py-2 text-sm text-gray-700 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
+            <span class="text-[#23328C] ">Siguiente</span>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-5 h-5 text-[#23328C]">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+            </svg>
+        </a>
         {% else %}
-            <span class="px-5 py-2 text-sm text-gray-400 bg-white border rounded-md cursor-not-allowed">Siguiente</span>
+        <span
+            class="px-5 py-2 text-sm text-gray-400 bg-white border rounded-md cursor-not-allowed text-[#23328C]">Siguiente</span>
         {% endif %}
     </div>
+    </div>
 </section>
-
+<script src="{% static 'js/login/alerts_login.js' %}"></script>
+<script src="{% static 'js/products/image_view.js' %}"></script>
 <script src="{% static 'js/products/check_scroll.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Toggle de filtros
         const filterToggle = document.querySelector('.filter-toggle');
         const filtersContainer = document.querySelector('.filters-container');
-        
-        filterToggle.addEventListener('click', function() {
+
+        filterToggle.addEventListener('click', function () {
             filtersContainer.classList.toggle('active');
             filterToggle.classList.toggle('active');
         });
@@ -277,10 +683,10 @@
                 const marca = row.dataset.marca;
 
                 // Filtro de búsqueda
-                const matchesSearch = !search || 
-                                     nombre.includes(search) || 
-                                     descripcion.includes(search) || 
-                                     (marca && marca.toLowerCase().includes(search));
+                const matchesSearch = !search ||
+                    nombre.includes(search) ||
+                    descripcion.includes(search) ||
+                    (marca && marca.toLowerCase().includes(search));
 
                 // Filtro de categoría
                 const matchesCategory = !category || categoria === category;

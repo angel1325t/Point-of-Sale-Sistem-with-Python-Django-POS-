@@ -1,6 +1,5 @@
 from django import forms
-from .models import Producto, Categoria
-
+from .models import Producto, Categoria, Suministradores
 
 class AddProductForm(forms.ModelForm):
     class Meta:
@@ -14,6 +13,7 @@ class AddProductForm(forms.ModelForm):
             "activo",
             "marca",
             "categoria",
+            "suministrador",
         ]
         widgets = {
             "nombre": forms.TextInput(
@@ -56,18 +56,18 @@ class AddProductForm(forms.ModelForm):
                     "accept": "image/*",
                     "placeholder": "Seleccionar imagen",
                     "style": """
-            display: block;
-            width: 100%;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #fff;
-            background-color: #343A40;
-            border: 1px solid #fff;
-            border-radius: 0.375rem;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        """,
+                        display: block;
+                        width: 100%;
+                        padding: 0.375rem 0.75rem;
+                        font-size: 1rem;
+                        font-weight: 400;
+                        line-height: 1.5;
+                        color: #fff;
+                        background-color: #343A40;
+                        border: 1px solid #fff;
+                        border-radius: 0.375rem;
+                        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                    """,
                 }
             ),
             "activo": forms.CheckboxInput(
@@ -81,9 +81,13 @@ class AddProductForm(forms.ModelForm):
                     "placeholder": "Seleccionar categoría",
                 }
             ),
+            "suministrador": forms.Select(
+                attrs={
+                    "class": "form-control mb-3",
+                    "placeholder": "Seleccionar suministrador",
+                }
+            ),
         }
-
-
 class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
@@ -108,3 +112,40 @@ class CategoriaForm(forms.ModelForm):
         ),
         required=False,
     )
+
+
+class SuministradoresForm(forms.ModelForm):
+    class Meta:
+        model = Suministradores
+        fields = ["nombre_proveedor", "telefono", "email", "direccion"]
+
+        widgets = {
+            "nombre_proveedor": forms.TextInput(
+                attrs={
+                    "class": "form-control mb-3",
+                    "placeholder": "Nombre del proveedor",
+                    "autofocus": "true",
+                }
+            ),
+            "telefono": forms.TextInput(
+            attrs={
+                "class": "form-control mb-3",
+                "placeholder": "Número de teléfono",
+                "pattern": "[0-9+()-\s]+",  # Solo permite números, +, (), - y espacios
+                "title": "Ingrese un número de teléfono válido.",
+            }
+        ),
+            "email": forms.EmailInput(
+                attrs={
+                    "class": "form-control mb-3",
+                    "placeholder": "Correo electrónico",
+                }
+            ),
+            "direccion": forms.Textarea(
+                attrs={
+                    "class": "form-control mb-3",
+                    "rows": 3,
+                    "placeholder": "Dirección del proveedor",
+                }
+            ),
+        }

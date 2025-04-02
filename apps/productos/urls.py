@@ -19,5 +19,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path("productos/", views.product_view, name='productos'),
+    path("productos/", views.product_view, name='products'),
+    path("update_product/<int:product_id>", views.update_product, name='update_product'),
 ]

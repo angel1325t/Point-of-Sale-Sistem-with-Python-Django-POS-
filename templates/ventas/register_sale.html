@@ -11,7 +11,7 @@
     <div
       class="flex flex-col lg:flex-row justify-between items-center mb-4 sm:mb-6"
     >
-      <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Productos</h2>
+      <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Ventas</h2>
       <div
         class="flex flex-col md:flex-row sm:space-x-2 w-full sm:w-auto mt-2 sm:mt-0"
       >
@@ -129,8 +129,8 @@
               Pagar con Tarjeta
           </h2>
           <div class="flex space-x-2 justify-center sm:justify-end w-full">
-              <img src="/static/icons/mastercard.svg" alt="MasterCard" class="h-8 sm:h-10 w-auto opacity-75 hover:opacity-100 transition-opacity"/>
-              <img src="/static/icons/visa.svg" alt="Visa" class="h-8 sm:h-10 w-auto opacity-75 hover:opacity-100 transition-opacity"/>
+              <img src="{% static 'icons/mastercard.svg' %}" alt="MasterCard" class="h-8 sm:h-10 w-auto opacity-75 hover:opacity-100 transition-opacity"/>
+              <img src="{% static 'icons/visa.svg' %}" alt="Visa" class="h-8 sm:h-10 w-auto opacity-75 hover:opacity-100 transition-opacity"/>
           </div>
       </div>
 
@@ -398,9 +398,6 @@
     </div>
     
   </div>
-    <div class="relative flex items-center max-w-[8rem]">
-
-    <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">Please select a 5 digit number from 0 to 9.</p>
 
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{% static 'js/sales/card/stripeConfig.js' %}"></script>

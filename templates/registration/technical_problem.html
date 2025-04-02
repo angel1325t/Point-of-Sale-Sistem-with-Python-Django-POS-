@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}Problema Técnico{% endblock %}
+{% block content %}
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full">
+        <div class="flex justify-center">
+            <i class="fas fa-exclamation-triangle text-yellow-500 text-6xl"></i>
+        </div>
+        <h1 class="text-2xl font-semibold text-gray-800 mt-4">Problema Técnico</h1>
+        <p class="text-gray-600 mt-2">
+            Ha ocurrido un problema con tu cuenta. Por favor, contacta con soporte para más información.
+        </p>
+        
+        <div class="flex gap-4 mt-6 flex-wrap">
+            <a href="https://wa.me/8492842781?text=Hola,%20estoy%20experimentando%20un%20problema%20técnico%20al%20iniciar%20sesión.%20Mi%20usuario%20es%20[tu_usuario]." 
+   class="flex justify-center items-center bg-red-600 text-white px-4 py-2 rounded-md shadow hover:bg-red-700 transition w-full sm:w-[48%]">
+    <img src="{% static 'icons/contact_support.svg' %}" alt="" class="mr-2 w-5 h-5"> 
+    <span>Soporte</span>
+</a>
+
+            <a href="#" onclick="document.getElementById('logout-form').submit(); return false;" 
+               class="flex justify-center items-center bg-blue-800 text-white px-4 py-2 rounded-md shadow hover:bg-blue-900 transition w-full sm:w-[48%]">
+                <span class="ms-3">Salir</span>
+            </a>
+        </div>
+        
+
+        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+            {% csrf_token %}
+        </form>
+    </div>
+</div>
+{% endblock %}
