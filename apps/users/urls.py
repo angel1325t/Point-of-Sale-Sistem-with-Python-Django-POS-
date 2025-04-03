@@ -19,10 +19,14 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path("", views.login_view, name='login'),  
+    path("login/", views.login_view, name='login'),  
+    path("", views.splash, name='splash'), 
     path("disabled/", views.disabled_user_view, name='disabled_user'),  
     path("problem/", views.technical_problem_view, name="technical_problem"), 
     path("logout/", views.logout_view, name='logout'), 
     path('email/<int:id>/', views.CreateCredentialsView.as_view(), name='email'),
+    path('profile/', views.profile, name='profile'),
+    path('profile/update-picture/', views.update_profile_picture, name='update_profile_picture'),
+    path('verify-email/<uuid:token>/', views.verify_email, name='verify_email'),
     
 ]

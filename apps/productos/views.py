@@ -6,17 +6,17 @@ from django.shortcuts import redirect
 from .models import Producto, Categoria
 from django.contrib.auth.decorators import login_required
 
-def user_is_almacen(user):
-    # Verifica si el usuario pertenece al grupo 'Vendedor'
-    return "Almacen" in user.groups.values_list("name", flat=True)
+def user_is_not_vendedor(user):
+    # Verifica si el usuario NO pertenece al grupo 'Vendedor'
+    return "Vendedor" not in user.groups.values_list("name", flat=True)
 
 def almacen_required(view_func):
     """
-    Decorador para asegurar que solo los usuarios del grupo 'Vendedor' pueden acceder a la vista.
-    Si no tienen el grupo, se devuelve un error 403.
+    Decorador que permite acceso a todos los usuarios excepto los del grupo 'Vendedor'.
+    Si pertenecen a 'Vendedor', se devuelve un error 403.
     """
     from django.contrib.auth.decorators import user_passes_test
-    return user_passes_test(user_is_almacen, login_url=None)(view_func)
+    return user_passes_test(user_is_not_vendedor, login_url=None)(view_func)
 
 
 @almacen_required
@@ -105,7 +105,7 @@ def product_view(request):
         'products': products,
         'categories': categories,
         'empleado': empleado,
-        "es_gerente": "Gerente" in user_groups,
+        "es_almacen": "Almacen" in user_groups,
         "es_vendedor": "Vendedor" in user_groups,
     }
 

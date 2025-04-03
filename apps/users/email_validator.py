@@ -12,19 +12,18 @@ class EmailValidator:
     # la funcion esta comentada por ahora para no gastar las validaciones gratis de email
     def validate(self):
     #     # Hacer la solicitud a la API de Hunter.io
-    #     response = requests.get(self.api_url, params={
-    #         'email': self.email,
-    #         'api_key': self.api_key
-    #     })
+        response = requests.get(self.api_url, params={
+            'email': self.email,
+            'api_key': self.api_key
+        })
 
-    #     if response.status_code == 200:
-    #         data = response.json()
+        if response.status_code == 200:
+            data = response.json()
             
-    #         # Verificar si el correo es válido
-    #         if data['data']['result'] == 'deliverable':
-    #             return True
-    #         else:
-    #             raise ValidationError(f"El correo electrónico {self.email} no es válido.")
-    #     else:
-    #         raise ValidationError("Hubo un error al verificar el correo electrónico. Intenta nuevamente más tarde.")
-        return True
+            # Verificar si el correo es válido
+            if data['data']['result'] == 'deliverable':
+                return True
+            else:
+                raise ValidationError(f"El correo electrónico {self.email} no es válido.")
+        else:
+            raise ValidationError("Hubo un error al verificar el correo electrónico. Intenta nuevamente más tarde.")

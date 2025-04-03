@@ -3,6 +3,7 @@ from .models import CustomUser
 from .utils import generate_random_password
 from .email_service import EmailService
 from django.contrib.auth.models import Group
+from .email_validator import EmailValidator
 
 
 class CustomUserForm(forms.ModelForm):
@@ -69,7 +70,7 @@ class CustomUserForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        # Validar el correo electrónico usando la API de Hunter.io
+        # # Validar el correo electrónico usando la API de Hunter.io
         # email_validator = EmailValidator(email)
         # email_validator.validate()
         return email

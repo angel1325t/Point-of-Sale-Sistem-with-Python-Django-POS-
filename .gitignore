@@ -11,7 +11,7 @@ venv/
 .venv/
 env/
 .env/
-
+.env
 # Archivos de configuración de IDEs y editores
 .vscode/
 .idea/

@@ -1,68 +1,12 @@
 {% extends 'empleados/empleado.html' %}
 {% load static %}
 {% block section1 %}
-<link rel="stylesheet" href="{% static 'css/products/check_scroll.css' %}">
-<style>
-    .filters-container {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-    }
-
-    .filters-container.active {
-        max-height: 500px;
-        transition: max-height 0.5s ease-in;
-    }
-
-    .filter-toggle {
-        cursor: pointer;
-        user-select: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .filter-toggle svg {
-        transition: transform 0.3s ease;
-    }
-
-    .filter-toggle.active svg {
-        transform: rotate(180deg);
-    }
-
-    .search-container {
-        position: relative;
-    }
-
-    .search-container input {
-        padding-left: 2.5rem;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-    }
-
-    .animate-bounce-x {
-        animation: bounce-x 1s infinite;
-    }
-
-    @keyframes bounce-x {
-
-        0%,
-        100% {
-            transform: translateX(0);
-        }
-
-        50% {
-            transform: translateX(5px);
-        }
-    }
-</style>
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/login/login_alert.css' %}">
+<link rel="stylesheet" href="{% static 'css/products/inventory.css' %}">
+<link rel="stylesheet" href="{% static 'css/products/check_scroll.css' %}">
+<link rel="stylesheet" href="{% static 'css/login/create_credentials.css' %}">
+{% endblock %}
 <div class="fixed bottom-4 right-4 z-50 space-y-2">
     {% for message in messages %}
     <div class="relative transition-transform duration-300 ease-in-out transform animate-slide-in alert-box">
@@ -110,7 +54,7 @@
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
         </span>
-        <input type="text" id="search" placeholder="Buscar productos por nombre, descripción, marca..."
+        <input type="text" id="search" placeholder="Buscar productos por nombre y descripción"
             class="px-4 py-3 border rounded-md text-sm w-full transition-colors placeholder-[#23328C]/70"
             autocomplete="off" />
     </div>
@@ -252,17 +196,17 @@
                                     </path>
                                 </svg>
                                 <span>Bajo Stock</span>
-        </div>
-        {% else %}
-        <div class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider 
-                border border-emerald-200 bg-emerald-50 text-emerald-600 shadow-sm">
-            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            <span>En Stock</span>
-        </div>
-        {% endif %}
+                                {% else %}
+                                <div class="inline-flex items-center px-3 py-1 rounded-full font-medium text-xs uppercase tracking-wider 
+                                border border-emerald-200 bg-emerald-50 text-emerald-600 shadow-sm">
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span>En Stock</span>
+                        </div>
+                        {% endif %}
+                    </div>
         </td>
         <td class="px-6 py-4 text-sm">
             <div class="flex">
@@ -451,7 +395,6 @@
                                     <span class="sr-only">Close modal</span>
                                 </button>
                             </div>
-                            <link rel="stylesheet" href="{% static 'css/login/create_credentials.css' %}">
                             <!-- Modal body -->
                             <div class="p-4 md:p-5">
                                 <!-- products/products.html -->
@@ -524,59 +467,6 @@
                         </div>
                     </div>
                 </div>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        // Seleccionar todos los modales
-                        const modals = document.querySelectorAll('[id^="edit-modal-id-"]');
-                        
-                        modals.forEach(modal => {
-                            const modalId = modal.id;
-                            const closeButton = modal.querySelector('[data-modal-hide]');
-                            
-                            // Seleccionar los inputs dentro de este modal específico
-                            const quantityInput = modal.querySelector(`#quantity-input-${modalId.split('edit-modal-id-')[1]}`);
-                            const descriptionInput = modal.querySelector('#description');
-                            const priceInput = modal.querySelector('#price');
-                            const fileInput = modal.querySelector('#profile_picture');
-                    
-                            // Guardar valores originales exactos del servidor
-                            const originalValues = {
-                                quantity: quantityInput?.value || '0',  // Stock por defecto 0 si no hay valor
-                                description: descriptionInput?.value || '',  // Descripción vacía si no hay valor
-                                price: priceInput?.value || '',  // Usar el valor original, vacío si no hay nada
-                                file: ''  // No podemos guardar el valor original del file input por seguridad
-                            };
-                    
-                            // Función para resetear los inputs a sus valores originales
-                            function resetInputs() {
-                                if (quantityInput) quantityInput.value = originalValues.quantity;
-                                if (descriptionInput) descriptionInput.value = originalValues.description;
-                                if (priceInput) priceInput.value = originalValues.price;  // Restaurar valor original
-                                if (fileInput) fileInput.value = '';  // Resetear input file
-                            }
-                    
-                            // Evento para el botón de cerrar (X)
-                            if (closeButton) {
-                                closeButton.addEventListener('click', function() {
-                                    resetInputs();
-                                    modal.classList.add('hidden'); // Ocultar el modal
-                                });
-                            }
-                    
-                            // Evento para clic fuera del modal (backdrop)
-                            modal.addEventListener('click', function(e) {
-                                // Verificar si el clic fue en el backdrop (fuera del contenido del modal)
-                                if (e.target === modal) {
-                                    resetInputs();
-                                    modal.classList.add('hidden');
-                                }
-                            });
-                        });
-                    });
-                    </script>
-
-
     </div>
     </td>
     </tr>
@@ -636,120 +526,11 @@
     </div>
     </div>
 </section>
+{% endblock section1 %}
+{% block scripts %}
 <script src="{% static 'js/login/alerts_login.js' %}"></script>
 <script src="{% static 'js/products/image_view.js' %}"></script>
+<script src="{% static 'js/products/edit_product_modal.js' %}"></script>
 <script src="{% static 'js/products/check_scroll.js' %}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Toggle de filtros
-        const filterToggle = document.querySelector('.filter-toggle');
-        const filtersContainer = document.querySelector('.filters-container');
-
-        filterToggle.addEventListener('click', function () {
-            filtersContainer.classList.toggle('active');
-            filterToggle.classList.toggle('active');
-        });
-
-        const productsBody = document.getElementById('products-body');
-        const allRows = Array.from(productsBody.getElementsByTagName('tr'));
-
-        // Función para limpiar filtros
-        function clearFilters() {
-            document.getElementById('search').value = '';
-            document.getElementById('category').value = '';
-            document.getElementById('order_by').value = '';
-            document.getElementById('estado').value = '';
-            document.getElementById('precio_min').value = '';
-            document.getElementById('precio_max').value = '';
-            applyFiltersAndSort(); // Reaplicar filtros después de limpiar
-        }
-
-        // Función para filtrar en tiempo real
-        function applyFiltersAndSort() {
-            const search = document.getElementById('search').value.toLowerCase();
-            const category = document.getElementById('category').value;
-            const orderBy = document.getElementById('order_by').value;
-            const estado = document.getElementById('estado').value;
-            const precioMin = parseFloat(document.getElementById('precio_min').value) || -Infinity;
-            const precioMax = parseFloat(document.getElementById('precio_max').value) || Infinity;
-
-            // Filtrar productos
-            let filteredRows = allRows.filter(row => {
-                const nombre = row.dataset.nombre;
-                const categoria = row.dataset.categoria;
-                const stock = parseInt(row.dataset.stock);
-                const precio = parseFloat(row.dataset.precio);
-                const descripcion = row.dataset.descripcion;
-                const marca = row.dataset.marca;
-
-                // Filtro de búsqueda
-                const matchesSearch = !search ||
-                    nombre.includes(search) ||
-                    descripcion.includes(search) ||
-                    (marca && marca.toLowerCase().includes(search));
-
-                // Filtro de categoría
-                const matchesCategory = !category || categoria === category;
-
-                // Filtro de estado
-                const matchesEstado = !estado ||
-                    (estado === 'en_stock' && stock > 25) ||
-                    (estado === 'bajo_stock' && stock <= 25 && stock > 0) ||
-                    (estado === 'agotado' && stock === 0);
-
-                // Filtro de precio
-                const matchesPrecio = precio >= precioMin && precio <= precioMax;
-
-                return matchesSearch && matchesCategory && matchesEstado && matchesPrecio;
-            });
-
-            // Ordenar productos
-            filteredRows.sort((a, b) => {
-                const nombreA = a.dataset.nombre;
-                const nombreB = b.dataset.nombre;
-                const precioA = parseFloat(a.dataset.precio);
-                const precioB = parseFloat(b.dataset.precio);
-
-                if (orderBy === 'nombre_asc') return nombreA.localeCompare(nombreB);
-                if (orderBy === 'nombre_desc') return nombreB.localeCompare(nombreA);
-                if (orderBy === 'precio_asc') return precioA - precioB;
-                if (orderBy === 'precio_desc') return precioB - precioA;
-                return 0;
-            });
-
-            // Limpiar y actualizar la tabla
-            productsBody.innerHTML = '';
-            if (filteredRows.length > 0) {
-                filteredRows.forEach(row => productsBody.appendChild(row));
-            } else {
-                productsBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-4 py-4 text-center text-gray-500">
-                            <div class="flex flex-col items-center">
-                                <img src="{% static 'icons/not_found.svg' %}" alt="No encontrado" class="w-16 h-16">
-                                <p class="mt-2 text-lg font-semibold">No se encontraron productos</p>
-                                <p class="text-gray-500">Intenta con otra búsqueda o categoría.</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        // Escuchar cambios en tiempo real en los inputs
-        const inputs = ['search', 'category', 'order_by', 'estado', 'precio_min', 'precio_max'];
-        inputs.forEach(id => {
-            const element = document.getElementById(id);
-            ['input', 'change'].forEach(event => {
-                element.addEventListener(event, applyFiltersAndSort);
-            });
-        });
-
-        // Añadir evento al botón de limpiar
-        document.getElementById('clear-filters').addEventListener('click', clearFilters);
-
-        // Inicializar la aplicación de filtros
-        applyFiltersAndSort();
-    });
-</script>
-{% endblock section1 %}
+<script src="{% static 'js/products/filter.js' %}"></script>
+{% endblock %}

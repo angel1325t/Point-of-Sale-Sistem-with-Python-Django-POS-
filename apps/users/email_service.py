@@ -6,14 +6,15 @@ from smtplib import SMTPException
 logger = logging.getLogger(__name__)
 
 class EmailService:
-    def __init__(self, id, user, password):
-        self.id = id  # Guardamos el ID del usuario
+    def __init__(self, id, user, password=None):
+        self.id = id  # Guardamos el ID del usuario o token
         self.user = user
         self.password = password
         self.subject = "Tus credenciales de acceso"
         self.html_content = self.generate_html_content()
 
     def generate_html_content(self):
+        """Genera el HTML para el email de bienvenida/registro"""
         return f"""
         <!DOCTYPE html>
         <html>
@@ -46,6 +47,38 @@ class EmailService:
         </html>
         """
 
+    def generate_verification_html(self, verification_url):
+        """Genera el HTML para el email de verificación"""
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Verificación de Email</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+            <table align="center" width="100%" style="max-width: 600px; background-color: white; padding: 20px; border-radius: 5px; 
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                <tr>
+                    <td>
+                        <h2 style="color: #2234B9; text-align: center;">Verifica tu nuevo email</h2>
+                        <p>Hola {self.user.username},</p>
+                        <p>Has solicitado cambiar tu email en PuntoXpress. Por favor verifica tu nueva dirección de correo electrónico haciendo clic en el botón de abajo:</p>
+                        
+                        <p style="text-align: center; margin-top: 20px;">
+                            <a href="{verification_url}" style="background-color: #2234B9; color: white; padding: 12px 25px; text-decoration: none; 
+                            border-radius: 5px; display: inline-block; font-size: 16px; font-weight: bold;">Verificar Email</a>
+                        </p>
+
+                        <p style="margin-top: 20px; color: #666;">
+                            Si no has solicitado este cambio, por favor ignora este mensaje.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
+        """
+
     def send_email(self):
         try:
             send_mail(
@@ -63,4 +96,3 @@ class EmailService:
             logger.error(f"Error SMTP: {e}")
         except Exception as e:
             logger.error(f"Error general al enviar el correo: {e}")
-

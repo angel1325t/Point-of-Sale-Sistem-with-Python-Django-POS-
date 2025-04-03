@@ -189,8 +189,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 LOGIN_REDIRECT_URL = "empleados"
-LOGOUT_REDIRECT_URL = "/"
-LOGIN_URL = "/accounts/login"
+LOGOUT_REDIRECT_URL = "/login"
+LOGIN_URL = "/login"
 PASSWORD_RESET_TIMEOUT = 3600  # Opcional: Expira en 1 hora
 
 

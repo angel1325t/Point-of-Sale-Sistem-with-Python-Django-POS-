@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,34 +10,20 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.css" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.js"></script>
-    {% comment %} <script src="https://cdn.jsdelivr.net/npm/tailgrids@2.2.2/plugin.min.js"></script> {% endcomment %}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">  
-<!-- Carga de Notyf desde CDN -->
-<link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
-
-
-
-
-
+    <link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% block styles %}{% endblock %}
 </head>
 <body>
     <div class="backdrop" id="loading-spinner">
         <div class="loader"></div>
     </div>
-    
-    
     {% block content %}{% endblock %}
-    
     <script src="{% static 'js/lazy.js' %}"></script>
     <script src="{% static 'js/global_loader.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.js"></script>
-
-
-    
+    {% block scripts %}{% endblock %}
 </body>
 </html>
 

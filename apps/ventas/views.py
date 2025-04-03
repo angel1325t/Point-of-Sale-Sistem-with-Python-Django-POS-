@@ -19,29 +19,30 @@ from django.db.models.functions import ExtractYear
 stripe.api_key = settings.STRIPE_SECRET_KEY
 from django.core.exceptions import PermissionDenied
 
-def user_is_vendedor(user):
-    # Verifica si el usuario pertenece al grupo 'Vendedor'
-    return "Vendedor" in user.groups.values_list("name", flat=True)
+def user_is_not_almacen(user):
+    # Verifica si el usuario NO pertenece al grupo 'Almacen'
+    return "Almacen" not in user.groups.values_list("name", flat=True)
 
 def vendedor_required(view_func):
     """
-    Decorador para asegurar que solo los usuarios del grupo 'Vendedor' pueden acceder a la vista.
-    Si no tienen el grupo, se devuelve un error 403.
+    Decorador que permite acceso a todos los usuarios excepto los del grupo 'Almacen'.
+    Si pertenecen a 'Almacen', se devuelve un error 403.
     """
     from django.contrib.auth.decorators import user_passes_test
-    return user_passes_test(user_is_vendedor, login_url=None)(view_func)
+    return user_passes_test(user_is_not_almacen, login_url=None)(view_func)
 
-def user_is_gerente(user):
-    # Verifica si el usuario pertenece al grupo 'Vendedor'
-    return "Gerente" in user.groups.values_list("name", flat=True)
+def user_is_gerente_or_admin(user):
+    # Verifica si el usuario es superusuario o pertenece al grupo 'Gerente'
+    return user.is_superuser or "Gerente" in user.groups.values_list("name", flat=True)
 
-def gerente_required(view_func):
+
+def gerente_or_admin_required(view_func):
     """
-    Decorador para asegurar que solo los usuarios del grupo 'Vendedor' pueden acceder a la vista.
-    Si no tienen el grupo, se devuelve un error 403.
+    Decorador para asegurar que solo los usuarios del grupo 'Gerente' o los superusuarios puedan acceder a la vista.
+    Si no tienen los permisos requeridos, se devuelve un error 403.
     """
     from django.contrib.auth.decorators import user_passes_test
-    return user_passes_test(user_is_gerente, login_url=None)(view_func)
+    return user_passes_test(user_is_gerente_or_admin, login_url=None)(view_func)
 
 
 @vendedor_required
@@ -58,7 +59,7 @@ def ventas(request):
     context = {
         "empleado": employe,
         "productos": products,
-        "es_gerente": "Gerente" in user_groups,
+        "es_almacen": "Almacen" in user_groups,
         "es_vendedor": "Vendedor" in user_groups,
     }
 
@@ -457,10 +458,9 @@ def process_card_payment(request):
     return JsonResponse(
         {"success": False, "message": "Método no permitido"}, status=405
     )
-@gerente_required
+@gerente_or_admin_required
 def chart_data(request):
     filtro = request.GET.get('filtro', None)
-    print(f"Filtro recibido: {filtro}")
 
     hoy = timezone.localtime(timezone.now())  # Usa timezone.now() para tener la fecha "aware"
     
@@ -470,7 +470,6 @@ def chart_data(request):
     if filtro == "mensual":
         primer_dia_mes = hoy.replace(day=1)
         ultimo_dia_mes = (primer_dia_mes + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-        print(f"Rango de fechas (mensual): {primer_dia_mes} - {ultimo_dia_mes}")
         ventas = Venta.objects.filter(fecha__gte=primer_dia_mes, fecha__lte=ultimo_dia_mes)
 
     elif filtro == "semanal":
@@ -482,7 +481,6 @@ def chart_data(request):
         primer_dia_semana = primer_dia_semana.replace(hour=0, minute=0, second=0, microsecond=0)
         ultimo_dia_semana = ultimo_dia_semana.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-        print(f"Rango de fechas (semanal): {primer_dia_semana} - {ultimo_dia_semana}")
 
         # Filtrar las ventas dentro del rango de fechas semanal
         ventas = Venta.objects.filter(fecha__gte=primer_dia_semana, fecha__lte=ultimo_dia_semana)
@@ -490,28 +488,22 @@ def chart_data(request):
     elif filtro == "diario":
         primer_dia = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
         ultimo_dia = hoy.replace(hour=23, minute=59, second=59, microsecond=999999)
-        print(f"Rango de fechas (diario): {primer_dia} - {ultimo_dia}")
         ventas = Venta.objects.filter(fecha__gte=primer_dia, fecha__lte=ultimo_dia)
 
     else:
         labels = []
         values = []
-        print(f"Filtro no válido: {filtro}")
         return JsonResponse({"labels": labels, "values": values})
 
     # Verificar si `ventas` se ha definido y contiene resultados
     if ventas:
-        print(f"Ventas encontradas: {ventas.count()}")
         
         if ventas.exists():
             labels = [venta.fecha.strftime('%d-%m-%Y') for venta in ventas]
             values = [str(venta.total) for venta in ventas]
-            print(f"Labels: {labels}")
-            print(f"Values: {values}")
         else:
             labels = []
             values = []
-            print("No se encontraron ventas en el rango de fechas.")
     else:
         labels = []
         values = []

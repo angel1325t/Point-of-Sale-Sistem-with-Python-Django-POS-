@@ -1,12 +1,58 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error Interno del Servidor</title>
-</head>
-<body>
-    <h1>Oops! Algo salió mal.</h1>
-    <p>Estamos experimentando problemas técnicos. Intenta nuevamente más tarde.</p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %} 
+
+{% block title %}Error interno del servidor{% endblock %}
+
+{% block content %}
+<section class="bg-gradient-to-b from-white to-gray-100 min-h-screen flex items-center justify-center px-4">
+    <div class="py-12 px-6 mx-auto max-w-4xl text-center">
+        <!-- Barra de color azul en la parte superior -->
+        <div class="w-full h-1 bg-blue-800 mb-12 rounded-full mx-auto max-w-sm"></div>
+        
+        <!-- Ilustración de error (opcional) -->
+        <div class="mb-8">
+            <img src="{% static 'img/500.svg' %}" alt="500 Error" class="w-64 h-64 mx-auto opacity-90" onerror="this.style.display='none'">
+        </div>
+        
+        <!-- Código de error -->
+        <h1 class="mb-6 text-8xl font-extrabold tracking-tight text-blue-800 drop-shadow-md">
+            <span class="animate-pulse">5</span><span>0</span><span class="animate-pulse">0</span>
+        </h1>
+        
+        <!-- Título del error -->
+        <p class="mb-6 text-4xl font-bold text-gray-900">
+            Error Interno del Servidor
+        </p>
+        
+        <!-- Mensaje explicativo -->
+        <p class="mb-10 text-xl font-light text-gray-600 max-w-xl mx-auto">
+            Ya estamos trabajando para resolver este problema. 
+            Disculpa las molestias ocasionadas.
+        </p>
+        
+        <!-- Acciones -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <a href="/" class="px-6 py-3 bg-blue-800 text-white font-medium rounded-lg hover:bg-blue-900 transition-colors duration-300 shadow-md hover:shadow-lg">
+                Volver al inicio
+            </a>
+            <button onclick="window.location.reload()" class="px-6 py-3 bg-white text-blue-800 font-medium rounded-lg border border-blue-800 hover:bg-blue-50 transition-colors duration-300">
+                Intentar nuevamente
+            </button>
+        </div>
+        
+        <!-- Información adicional -->
+        <div class="mt-12 text-sm text-gray-500">
+            Si el problema persiste, contacta con soporte técnico
+        </div>
+        
+        <!-- Animación de carga -->
+        <div class="flex justify-center mt-8">
+            <div class="flex space-x-2">
+                <div class="w-2 h-2 rounded-full bg-blue-800 animate-bounce"></div>
+                <div class="w-2 h-2 rounded-full bg-blue-800 animate-bounce" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 rounded-full bg-blue-800 animate-bounce" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

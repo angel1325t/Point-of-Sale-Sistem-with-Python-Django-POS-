@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Email{% endblock %}
+{% if error %}
+<div class="bg-white p-6 rounded-xl shadow-md w-full border-t-4 border-red-500 mb-4">
+    <div class="flex items-start">
+        <div class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-red-100 text-red-500 mr-4 flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">Error</h3>
+            <p class="text-gray-600">{{ error }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if success %}
+<div class="bg-white p-6 rounded-xl shadow-md w-full border-t-4 border-[#2234B9] mb-4">
+    <div class="flex items-start">
+        <div class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-[#2234B9]/10 text-[#2234B9] mr-4 flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-1">Éxito</h3>
+            <p class="text-gray-600">{{ success }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

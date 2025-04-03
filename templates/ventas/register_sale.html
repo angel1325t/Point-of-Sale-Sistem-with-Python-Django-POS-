@@ -1,10 +1,9 @@
 {% extends 'empleados/empleado.html' %} {% load static %} {% block section1 %}
+{% block styles %}
 
 <link rel="stylesheet" href="{% static 'css/products/search_product.css' %}" />
-<link
-  href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css"
-  rel="stylesheet"
-/>
+<link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet"/>
+{% endblock %}
 <div class="grid grid-cols-1 gap-6 sm:p-4">
   <!-- Panel de productos -->
   <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-2 sm:p-4">
@@ -399,6 +398,8 @@
     
   </div>
 
+{% endblock section1 %}
+{% block scripts %}
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{% static 'js/sales/card/stripeConfig.js' %}"></script>
 <script src="{% static 'js/sales/transfer/multiStep.js' %}"></script>
@@ -411,5 +412,4 @@
 <script src="{% static 'js/sales/cash/process_cash.js' %}"></script>
 <script src="{% static 'js/products/search_product.js' %}"></script>
 <script src="https://unpkg.com/html5-qrcode" defer></script>
-
-{% endblock section1 %}
+{% endblock %}

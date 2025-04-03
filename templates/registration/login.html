@@ -2,7 +2,9 @@
 {% load static %} 
 {% block title %}Iniciar sesión{% endblock %}
 {% block content %}
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/login/login_alert.css' %}">
+{% endblock %}
 <div class="fixed top-4 right-4 z-50 space-y-2">
     {% for message in messages %}
     <div class="relative transition-transform duration-300 ease-in-out transform animate-slide-in alert-box">
@@ -30,10 +32,10 @@
                 <form action="{% url 'login' %}" method="post" class="w-full" id="login-form">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="block text-gray-700">Nombre de usuario</label>
+                        <label class="block text-gray-700">Nombre de usuario o email</label>
                         <div class="flex border rounded-lg overflow-hidden">
                             <span class="bg-gray-200 p-2"><img src="{% static 'icons/user.svg' %}" alt=""></span>
-                            <input type="text" class="w-full p-2 focus:outline-none" placeholder="Ingresa tu nombre de usuario" name="username">
+                            <input type="text" class="w-full p-2 focus:outline-none" placeholder="Ingresa tu nombre de usuario o email" name="login_input">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -62,7 +64,8 @@
         </div>
     </div>
 </div>
-
+{% endblock %}
+{% block scripts %}
 <script src="{% static 'js/login/toogle_icon.js' %}"></script>
 <script src="{% static 'js/login/alerts_login.js' %}"></script>
 {% endblock %}

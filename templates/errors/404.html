@@ -1,12 +1,61 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página no encontrada</title>
-</head>
-<body>
-    <h1>Oops! No hemos podido encontrar la página que buscas.</h1>
-    <p>Por favor, verifica la URL o vuelve a la página de inicio.</p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %} 
+
+{% block title %}Página no encontrada{% endblock %}
+
+{% block content %}
+<main class="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 px-6 py-16 sm:py-24 lg:px-8">
+    <div class="max-w-2xl text-center">
+        <!-- Ilustración de error 404 -->
+        <div class="mb-8 flex justify-center">
+            <img src="{% static 'img/404.svg' %}" alt="404 Error" class="h-64 w-auto" onerror="this.style.display='none'">
+        </div>
+        
+        <!-- Código de error -->
+        <div class="inline-block px-6 py-2 mb-6">
+            <p class="text-3xl font-bold text-blue-800">404</p>
+        </div>
+        
+        <!-- Título principal -->
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-balance text-gray-900 sm:text-5xl md:text-6xl">
+            Página no encontrada
+        </h1>
+        
+        <!-- Mensaje explicativo -->
+        <p class="mt-6 text-xl font-normal text-pretty text-gray-600 max-w-xl mx-auto">
+            Lo sentimos, no pudimos encontrar la página que estás buscando. Es posible que haya sido movida o eliminada.
+        </p>
+        
+        <!-- Acciones -->
+        <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-x-6 gap-y-4">
+            <a href="/" id="goBackButton" class="w-full sm:w-auto rounded-lg bg-blue-800 px-5 py-3 text-base font-semibold text-white shadow-md hover:bg-blue-900 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-900">
+                Volver al inicio
+            </a>
+            <a href="https://wa.me/8492842781?text=Estimado%20soporte,%20intento%20acceder%20al%20sistema,%20pero%20recibo%20un%20error%20404.%20Por%20favor,%20necesito%20asistencia." class="w-full sm:w-auto px-5 py-3 text-base font-semibold text-gray-800 hover:text-blue-800 transition-colors duration-300 flex items-center justify-center">
+                Contactar soporte <span aria-hidden="true" class="ml-2">&rarr;</span>
+            </a>
+        </div>
+        
+        <!-- Sugerencias adicionales -->
+        <div class="mt-16 border-t border-gray-200 pt-8">
+            <p class="text-base text-gray-500 mb-4">También puedes intentar:</p>
+            <ul class="text-left max-w-md mx-auto text-gray-600 space-y-2">
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-blue-800 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    Verificar la URL en busca de errores de escritura
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 text-blue-800 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    Utilizar la barra de búsqueda para encontrar lo que necesitas
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/history_back.js' %}"></script>{% endblock %}

@@ -1,0 +1,58 @@
+.filters-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.filters-container.active {
+    max-height: 500px;
+    transition: max-height 0.5s ease-in;
+}
+
+.filter-toggle {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-toggle svg {
+    transition: transform 0.3s ease;
+}
+
+.filter-toggle.active svg {
+    transform: rotate(180deg);
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-container input {
+    padding-left: 2.5rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.animate-bounce-x {
+    animation: bounce-x 1s infinite;
+}
+
+@keyframes bounce-x {
+    
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    
+    50% {
+        transform: translateX(5px);
+    }
+}

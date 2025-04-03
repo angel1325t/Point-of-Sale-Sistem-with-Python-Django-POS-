@@ -4,12 +4,48 @@
 {% block title %}Acceso Denegado{% endblock %}
 
 {% block content %}
-    <div>
-        <div>
-            <img src="{% static 'img/403.svg' %}" alt="403 Error">
-            <h1>🚫 ¡Acceso Denegado!</h1>
-            <p>No tienes los permisos necesarios para acceder a esta página.</p>
-            <a href="/">Volver al inicio</a>
+<div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12">
+    <!-- Barra superior con color principal -->
+    <div class="fixed top-0 left-0 w-full h-2 bg-[#2234B9]"></div>
+    
+    <!-- Contenido principal -->
+    <div class="w-full max-w-4xl text-center">
+        <!-- Código de error grande -->
+        <h1 class="text-[#2234B9] text-8xl font-bold mb-2 drop-shadow-md">403</h1>
+        
+        <!-- Ilustración -->
+        <div class="flex justify-center my-6">
+            <img src="{% static 'img/403.svg' %}" alt="403 Error" class="w-64 h-64 mx-auto">
+        </div>
+        
+        <!-- Icono y título -->
+        <div class="mb-8">
+            <h2 class="text-4xl font-bold text-gray-800 flex items-center justify-center">
+                <span class="text-[#2234B9] mr-3 text-5xl">🚫</span> 
+                ¡Acceso Denegado!
+            </h2>
+            <p class="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">
+                No tienes los permisos necesarios para acceder a esta página.
+                Si crees que esto es un error, contacta al administrador del sistema.
+            </p>
+        </div>
+        
+        <!-- Botón para volver -->
+        <div class="mt-10">
+            <a href="/login" class="px-8 py-4 text-lg font-medium text-white bg-[#2234B9] rounded-lg hover:bg-[#3a4cc7] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                Volver al inicio
+            </a>
+        </div>
+        
+        <!-- Separador decorativo -->
+        <div class="mt-16 flex items-center justify-center">
+            <div class="w-24 h-1 bg-[#2234B9] opacity-30 rounded-full"></div>
+        </div>
+        
+        <!-- Detalles adicionales -->
+        <div class="mt-6 text-sm text-gray-500">
+            Código de error: 403 Forbidden
         </div>
     </div>
+</div>
 {% endblock %}
