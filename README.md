@@ -62,39 +62,6 @@ Esta aplicación de punto de venta optimizará la gestión de ventas e inventari
   - Gmail API (para envío de correos electrónicos).
   - HTML5-QRCode (para escaneo de códigos QR).
 
-## Plan de Trabajo
-
-### Semana 1:
-- Análisis de requisitos y planificación del flujo de la aplicación.
-- Selección de tecnologías y librerías para UI/UX.
-
-### Semana 2:
-- Creación de la estructura de carpetas del proyecto.
-
-### Semana 3:
-- Configuración de la base de datos y tabla de usuarios.
-- Implementación del login y primeras vistas.
-- Desarrollo inicial del dashboard (gestión de usuarios, envío de correos y manejo de errores).
-
-### Semana 4:
-- Desarrollo de funcionalidades de productos y categorías.
-- Implementación parcial del apartado de empleados.
-
-### Semana 5:
-- Desarrollo de la funcionalidad de escaneo de productos con QR.
-- Implementación del front-end para pagos en efectivo y transferencia.
-
-### Semana 6:
-- Finalización de la funcionalidad de escaneo de productos con QR y métodos de pago.
-- Inicio del front-end del inventario y sus tablas.
-
-### Semana 7:
-- Implementación de gráficos de ventas.
-- Finalización del módulo de inventario.
-
-### Semana 8:
-- Corrección de roles de usuario.
-- Implementación de vistas "Forgot Password" y edición de perfil.
 
 ## Documentación de APIs
 
