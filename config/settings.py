@@ -60,7 +60,6 @@ JAZZMIN_SETTINGS = {
             "url": "https://github.com/farridav/django-jazzmin/issues",
             "new_window": True,
         },
-        {"name": "Usuarios", "model": "users.CustomUser"},
         {
             "name": "Empleados",
             "url": "/empleados/",
@@ -79,6 +78,8 @@ JAZZMIN_SETTINGS = {
         "auth.group": "fas fa-gears",
     },
     "custom_css": "admin/css/custom.css",
+    "changeform_format": "vertical",
+    
 }
 
 

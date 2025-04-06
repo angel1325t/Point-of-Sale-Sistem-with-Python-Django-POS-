@@ -458,6 +458,113 @@ def process_card_payment(request):
     return JsonResponse(
         {"success": False, "message": "Método no permitido"}, status=405
     )
+
+
+
+def ingresos_egresos_data(request):
+    filtro = request.GET.get('filtro', None)
+    hoy = timezone.localtime(timezone.now())
+
+    # Definir rango de fechas según el filtro
+    if filtro == "mensual":
+        primer_dia = hoy.replace(day=1)
+        ultimo_dia = (primer_dia + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    elif filtro == "semanal":
+        primer_dia = hoy - timedelta(days=hoy.weekday())  # Lunes
+        ultimo_dia = primer_dia + timedelta(days=6)  # Domingo
+        primer_dia = primer_dia.replace(hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = ultimo_dia.replace(hour=23, minute=59, second=59, microsecond=999999)
+    elif filtro == "diario":
+        primer_dia = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = hoy.replace(hour=23, minute=59, second=59, microsecond=999999)
+    else:
+        return JsonResponse({'labels': [], 'ingresos': [], 'egresos': []})
+
+    # Ingresos: Suma del total de las ventas en el rango
+    ingresos = Venta.objects.filter(fecha__gte=primer_dia, fecha__lte=ultimo_dia).values('fecha__date').annotate(total=Sum('total')).order_by('fecha__date')
+
+    # Egresos: Suma de cantidad * costo por producto vendido en el rango
+    egresos = DetalleVenta.objects.filter(venta__fecha__gte=primer_dia, venta__fecha__lte=ultimo_dia).values('venta__fecha__date').annotate(
+        total=Sum(F('cantidad') * F('producto__costo'))
+    ).order_by('venta__fecha__date')
+
+    # Crear listas para los datos
+    fechas_ingresos = {d['fecha__date'] or hoy.date(): float(d['total']) for d in ingresos}
+    fechas_egresos = {d['venta__fecha__date'] or hoy.date(): float(d['total']) for d in egresos}
+
+    # Unificar fechas
+    todas_fechas = sorted(set(fechas_ingresos.keys()) | set(fechas_egresos.keys()))
+    labels = [fecha.strftime('%Y-%m-%d') for fecha in todas_fechas if fecha is not None]
+    ingresos_data = [fechas_ingresos.get(fecha, 0) for fecha in todas_fechas]
+    egresos_data = [fechas_egresos.get(fecha, 0) for fecha in todas_fechas]
+
+    data = {
+        'labels': labels,
+        'ingresos': ingresos_data,
+        'egresos': egresos_data,
+    }
+    return JsonResponse(data)
+
+def top_productos_data(request):
+    filtro = request.GET.get('filtro', None)
+    hoy = timezone.localtime(timezone.now())
+
+    # Definir rango de fechas según el filtro
+    if filtro == "mensual":
+        primer_dia = hoy.replace(day=1)
+        ultimo_dia = (primer_dia + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    elif filtro == "semanal":
+        primer_dia = hoy - timedelta(days=hoy.weekday())  # Lunes
+        ultimo_dia = primer_dia + timedelta(days=6)  # Domingo
+        primer_dia = primer_dia.replace(hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = ultimo_dia.replace(hour=23, minute=59, second=59, microsecond=999999)
+    elif filtro == "diario":
+        primer_dia = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = hoy.replace(hour=23, minute=59, second=59, microsecond=999999)
+    else:
+        return JsonResponse({'labels': [], 'data': []})
+
+    # Filtrar productos más vendidos en el rango de fechas
+    top_productos = DetalleVenta.objects.filter(
+        venta__fecha__gte=primer_dia, venta__fecha__lte=ultimo_dia
+    ).values('producto__nombre').annotate(total=Sum('cantidad')).order_by('-total')[:5]
+
+    data = {
+        'labels': [p['producto__nombre'] for p in top_productos],
+        'data': [int(p['total']) for p in top_productos],  # Cantidad es entero
+    }
+    return JsonResponse(data)
+
+def ventas_por_categoria_data(request):
+    filtro = request.GET.get('filtro', None)
+    hoy = timezone.localtime(timezone.now())
+
+    # Definir rango de fechas según el filtro
+    if filtro == "mensual":
+        primer_dia = hoy.replace(day=1)
+        ultimo_dia = (primer_dia + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    elif filtro == "semanal":
+        primer_dia = hoy - timedelta(days=hoy.weekday())  # Lunes
+        ultimo_dia = primer_dia + timedelta(days=6)  # Domingo
+        primer_dia = primer_dia.replace(hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = ultimo_dia.replace(hour=23, minute=59, second=59, microsecond=999999)
+    elif filtro == "diario":
+        primer_dia = hoy.replace(hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = hoy.replace(hour=23, minute=59, second=59, microsecond=999999)
+    else:
+        return JsonResponse({'labels': [], 'data': []})
+
+    # Filtrar ventas por categoría en el rango de fechas
+    ventas = DetalleVenta.objects.filter(
+        venta__fecha__gte=primer_dia, venta__fecha__lte=ultimo_dia
+    ).values('producto__categoria__nombre_categoria').annotate(total=Sum('subtotal'))
+
+    total_ventas = sum(float(v['total']) for v in ventas)
+    data = {
+        'labels': [v['producto__categoria__nombre_categoria'] for v in ventas],
+        'data': [float(v['total']) / total_ventas * 100 if total_ventas > 0 else 0 for v in ventas],
+    }
+    return JsonResponse(data)
 @gerente_or_admin_required
 def chart_data(request):
     filtro = request.GET.get('filtro', None)
@@ -512,4 +619,3 @@ def chart_data(request):
         "labels": labels,
         "values": values
     })
-

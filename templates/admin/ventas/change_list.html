@@ -1,0 +1,326 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<style>
+    :root {
+        --darkly-card: #454d55;
+        --darkly-card-hover: #343a40;
+        --darkly-border: #444;
+        --darkly-text: #fff;
+        --darkly-text-secondary: #adb5bd;
+        --darkly-primary-hover: #2b4764;
+        --darkly-success: #00bc8c;
+        --darkly-success-light: rgba(0, 188, 140, 0.2);
+        --darkly-info: #3498DB;
+        --darkly-info-light: rgba(52, 152, 219, 0.2);
+        --darkly-warning: #F39C12;
+        --darkly-warning-light: rgba(243, 156, 18, 0.2);
+        --darkly-danger: #E74C3C;
+    }
+    
+    .stats-container {
+        padding: 20px;
+        background-color: var(--darkly-card);
+        border-radius: 0.375rem;
+        margin: 15px 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,.18), 0 2px 4px rgba(0,0,0,.12);
+    }
+    
+    .stats-header {
+        color: var(--darkly-text);
+        border-bottom: 2px solid var(--darkly-border);
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+    
+    .stats-header i {
+        margin-right: 10px;
+        color: var(--darkly-primary);
+        font-size: 1.5rem;
+    }
+    
+    .chart-wrapper {
+        position: relative;
+        min-height: 350px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        background-color: var(--darkly-card);
+        padding: 20px;
+        border-radius: 0.375rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,.18), 0 2px 4px rgba(0,0,0,.12);
+        transition: all 0.3s ease;
+    }
+    
+    .chart-wrapper:hover {
+        background-color: var(--darkly-card-hover);
+        box-shadow: 0 6px 12px rgba(0,0,0,.25), 0 3px 6px rgba(0,0,0,.18);
+    }
+    .filter-card {
+        background-color: var(--darkly-card);
+        padding: 20px;
+        border-radius: 0.375rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    
+        /* Responsive width */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .filter-card:hover {
+        background-color: var(--darkly-card-hover);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.18);
+    }
+    
+    .form-select {
+        background-color: var(--darkly-card);
+        color: var(--darkly-text);
+        border: 1px solid var(--darkly-border);
+        border-radius: 0.25rem;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+    
+        /* Full width */
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .form-select:focus {
+        border-color: var(--darkly-primary);
+        box-shadow: 0 0 0 0.25rem rgba(55, 90, 127, 0.25);
+        background-color: var(--darkly-card);
+        color: var(--darkly-text);
+    }
+    
+    .form-select option {
+        background-color: var(--darkly-card);
+        color: var(--darkly-text);
+    }
+    
+    .form-label {
+        color: var(--darkly-text);
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    
+        /* Full width labels for alignment */
+        display: block;
+    }
+    
+    
+    .chart-title {
+        color: var(--darkly-text);
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+        font-size: 1.15rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .text-muted {
+        color: var(--darkly-text-secondary) !important;
+    }
+    
+    .text-success {
+        color: var(--darkly-success) !important;
+    }
+    
+    .text-info {
+        color: var(--darkly-info) !important;
+    }
+    
+    .text-warning {
+        color: var(--darkly-warning) !important;
+    }
+    
+    .stat-card {
+        background-color: var(--darkly-card);
+        border-radius: 0.375rem;
+        padding: 1.5rem;
+        text-align: center;
+        height: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card.success {
+        border-left: 4px solid var(--darkly-success);
+    }
+    
+    .stat-card.info {
+        border-left: 4px solid var(--darkly-info);
+    }
+    
+    .stat-card.warning {
+        border-left: 4px solid var(--darkly-warning);
+    }
+    
+    .stat-card:hover {
+        background-color: var(--darkly-card-hover);
+        transform: translateY(-5px);
+    }
+    
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 30%;
+        height: 40%;
+        border-radius: 50% 0 0 0;
+        opacity: 0.1;
+        z-index: 1;
+    }
+    
+    .stat-card.success::after {
+        background-color: var(--darkly-success);
+    }
+    
+    .stat-card.info::after {
+        background-color: var(--darkly-info);
+    }
+    
+    .stat-card.warning::after {
+        background-color: var(--darkly-warning);
+    }
+    
+    .stat-card h6 {
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-card h3, .stat-card h4 {
+        font-weight: 600;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .bx {
+        vertical-align: middle;
+    }
+    
+    @media (max-width: 768px) {
+        .stats-header {
+            font-size: 1.4rem;
+        }
+        
+        .stats-container {
+            padding: 15px 10px;
+        }
+        
+        .chart-wrapper {
+            min-height: 300px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card {
+            margin-bottom: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if show_chart %}
+{% block breadcrumbs %}{% endblock %}
+<div class="container-fluid stats-container">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="stats-header">
+                <i class="bx bx-bar-chart-alt-2"></i> Estadísticas de Ventas
+            </h2>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="stat-card success">
+                <h6 class="text-muted">
+                    <i class="bx bx-money"></i> Total de Ganancias
+                </h6>
+                <h3 class="text-success">${{ total_ganancias|floatformat:2 }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="stat-card info">
+                <h6 class="text-muted">
+                    <i class="bx bx-cart"></i> Total de Ventas
+                </h6>
+                <h3 class="text-info">{{ total_ventas }}</h3>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+            <div class="stat-card warning">
+                <h6 class="text-muted">
+                    <i class="bx bx-star"></i> Producto Más Vendido
+                </h6>
+                <h4 class="text-warning">{{ producto_mas_vendido }}</h4>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="filter-card">
+                <div class="form-group">
+                    <label for="filtroFechas" class="form-label fw-bold">
+                        <i class="bx bx-calendar"></i> Filtrar:
+                    </label>
+                    <select id="filtroFechas" class="form-select">
+                        <option value="mensual" selected>Último mes</option>
+                        <option value="semanal">Última semana</option>
+                        <option value="diario">Hoy</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Gráficos -->
+    <div class="row">
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-wrapper">
+                <h5 class="chart-title">Ingresos vs Egresos</h5>
+                <canvas id="ingresosEgresosChart"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-wrapper">
+                <h5 class="chart-title">Top 5 Productos Más Vendidos</h5>
+                <canvas id="topProductosChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-wrapper">
+                <h5 class="chart-title">Ventas por Período</h5>
+                <canvas id="ventasPeriodoChart"></canvas>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <div class="chart-wrapper">
+                <h5 class="chart-title">Ventas por Categoría</h5>
+                <canvas id="ventasCategoriaChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/admin/chart2.js' %}"></script>
+{% endif %}
+{% endblock %}  
