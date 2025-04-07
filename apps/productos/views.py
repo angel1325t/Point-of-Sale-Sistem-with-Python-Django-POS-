@@ -1,9 +1,10 @@
+from django.db.models import Prefetch
+from .models import Producto, Categoria, MovimientoProducto
 from django.core.paginator import Paginator
 from django.shortcuts import render,get_object_or_404
 from .forms import AddProductForm
 from django.contrib import messages
 from django.shortcuts import redirect
-from .models import Producto, Categoria
 from django.contrib.auth.decorators import login_required
 
 def user_is_not_vendedor(user):
@@ -83,21 +84,29 @@ def update_product(request, product_id):
         return redirect("products")
     
     return render(request, "products/products.html", {"product": product})  
+
 @almacen_required
 @login_required
 def product_view(request):
     empleado = request.user
     user_groups = request.user.groups.values_list("name", flat=True)
 
-    # Obtener todos los productos activos
-    products_list = Producto.objects.filter(activo=True)
+    # Definir el Prefetch para movimientos, ordenados por fecha
+    movimientos_prefetch = Prefetch(
+        'movimientos',
+        queryset=MovimientoProducto.objects.order_by('-fecha'),
+        to_attr='ultimos_movimientos'
+    )
+
+    # Obtener productos activos con movimientos precargados
+    products_list = Producto.objects.filter(activo=True).prefetch_related(movimientos_prefetch)
 
     # Paginación
-    paginator = Paginator(products_list, 5)  # 5 productos por página
-    page_number = request.GET.get('page')  # Número de página desde la URL
+    paginator = Paginator(products_list, 5)
+    page_number = request.GET.get('page')
     products = paginator.get_page(page_number)
 
-    # Obtener todas las categorías
+    # Obtener categorías
     categories = Categoria.objects.all()
 
     # Contexto para el template

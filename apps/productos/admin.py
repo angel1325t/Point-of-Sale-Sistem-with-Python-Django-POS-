@@ -36,7 +36,7 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('nombre', 'marca', 'descripcion', 'image', 'activo', 'categoria','suministrador')
         }),
         ('Precios y Descuentos', {
-            'fields': ('precio', 'stock', 'descuento')
+            'fields': ('precio','costo', 'stock', 'descuento')
         }),
     )
 

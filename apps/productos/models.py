@@ -51,20 +51,11 @@ class Producto(models.Model):
     codigo_qr = models.ImageField(upload_to='qrcodes/', null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        # Si el objeto ya existe, verifica cambios en stock
-        if self.pk is not None:
-            original = Producto.objects.get(pk=self.pk)
+        if not self.pk:
+            # Primero guarda para obtener el ID
+            super().save(*args, **kwargs)
 
-            if self.stock < original.stock:
-                # Si el stock disminuyó, evitar actualizar updated_at
-                kwargs['update_fields'] = ['stock']
-                super().save(*args, **kwargs)
-                return
-
-        # Guardar normalmente si hay cambios en otros campos o stock aumenta
-        super().save(*args, **kwargs)
-
-        # Generar código QR solo si no existe
+        # Luego genera el QR si no existe
         if not self.codigo_qr:
             qr_data = json.dumps({
                 "id": self.id_producto,
@@ -88,7 +79,6 @@ class Producto(models.Model):
             qr.make(fit=True)
 
             qr_img = qr.make_image(fill_color='black', back_color='white')
-
             if not isinstance(qr_img, Image.Image):
                 qr_img = qr_img.convert("RGB")
 
@@ -98,7 +88,30 @@ class Producto(models.Model):
             qr_file = File(qr_io, name=f'producto_{self.id_producto}_qr.png')
 
             self.codigo_qr.save(f'producto_{self.id_producto}_qr.png', qr_file, save=False)
-            super().save(update_fields=['codigo_qr'])
+
+        # Finalmente, guarda con el QR
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.nombre
+
+
+class MovimientoProducto(models.Model):
+    TIPO_MOVIMIENTO = [
+        ('ENTRADA', 'Entrada'),
+        ('SALIDA', 'Salida'),
+        ('ACTUALIZACION', 'Actualización'),
+        ('CREACION', 'Creación'),  # ← agregado aquí
+    ]
+
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='movimientos')
+    tipo_movimiento = models.CharField(max_length=20, choices=TIPO_MOVIMIENTO)
+    cantidad = models.PositiveIntegerField()
+    stock_antes = models.PositiveIntegerField()
+    stock_despues = models.PositiveIntegerField()
+    descripcion = models.TextField(null=True, blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.tipo_movimiento} - {self.producto.nombre} ({self.cantidad})'
+

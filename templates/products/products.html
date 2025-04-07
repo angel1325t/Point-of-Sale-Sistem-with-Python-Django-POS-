@@ -327,12 +327,15 @@
 
                             <div class="space-y-2">
                                 <h4 class="font-semibold text-blue-800 mb-2">Historial de Movimientos</h4>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                    <li>19/09/2023: Entrada 10 unidades (Ana López)</li>
-                                    <li>04/08/2023: Salida 2 unidades (Carlos Ruiz)</li>
-                                    <li>21/07/2023: Ajuste -1 unidades (María Gómez)</li>
-                                    <li>14/06/2023: Entrada inicial 17 unidades (José Martínez)</li>
-                                </ul>
+                                {% if product.ultimos_movimientos %}
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        {% for movimiento in product.ultimos_movimientos|slice:":5" %}
+                                            <li>{{ movimiento.fecha|date:"d/m/Y H:i" }}: {{ movimiento.get_tipo_movimiento_display }} {{ movimiento.cantidad }} unidades</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="text-sm text-gray-600">No hay movimientos registrados.</p>
+                                {% endif %}
                             </div>
                         </div>
                         <!-- Modal footer -->

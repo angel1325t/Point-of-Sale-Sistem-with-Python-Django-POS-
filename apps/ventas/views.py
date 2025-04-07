@@ -176,11 +176,6 @@ def process_sale(request):
                         subtotal=subtotal,
                         itbis=tax,
                     )
-
-                # Actualizar stock usando update()
-                Producto.objects.filter(id_producto=product.id_producto).update(
-                    stock=F("stock") - int(quantity)
-                )
             return JsonResponse(
                 {
                     "success": True,
@@ -297,8 +292,6 @@ def process_transfer(request):
                         descuento=bool(discount),
                         cantidad_descuento=discount if discount else 0,
                     )
-                    product.stock -= int(quantity)
-                    product.save()
 
             return JsonResponse(
                 {
@@ -424,8 +417,6 @@ def process_card_payment(request):
                     descuento=bool(discount),
                     cantidad_descuento=discount if discount else 0,
                 )
-                product.stock -= quantity
-                product.save()
 
             return JsonResponse(
                 {
