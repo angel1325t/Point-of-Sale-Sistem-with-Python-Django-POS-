@@ -95,15 +95,22 @@ document.getElementById("pay-button").addEventListener("click", async function (
                 icon: 'success',
                 title: 'Venta procesada correctamente',
                 text: 'La venta ha sido procesada exitosamente.',
-                timer: 3000,
+                timer: 2000,
                 timerProgressBar: true,
                 customClass: {
-                    confirmButton: 'bg-primary text-white'  // Aplicamos la clase bg-primary y el color blanco al texto
+                    confirmButton: 'bg-primary text-white'
                 }
             }).then(() => {
-                location.reload(); // Esperamos a que la alerta termine antes de recargar
+                // Redirige a la URL del PDF, después de un pequeño retraso
+                window.location.href = `/empleados/factura/${result.sale_id}/pdf`;
+                
+                // También podrías redirigir a la página de ventas después de la descarga
+                setTimeout(function() {
+                    window.location.href = '/empleados'; // Cambia esta URL por la ruta de ventas
+                }, 3000);  // Espera 3 segundos antes de redirigir
             });
-        } else {
+        }
+         else {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',

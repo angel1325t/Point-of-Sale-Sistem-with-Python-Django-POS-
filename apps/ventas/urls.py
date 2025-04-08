@@ -24,5 +24,6 @@ urlpatterns = [
     path('procesar-venta/', views.process_sale, name='process_sale'),
     path('procesar-transferencia/', views.process_transfer, name='procesar_transferencia'),
     path("process-card-payment/", views.process_card_payment, name="process_card_payment"),
+    path('factura/<int:sale_id>/pdf/', views.descargar_factura_pdf, name='descargar_factura_pdf'),
 ]
 

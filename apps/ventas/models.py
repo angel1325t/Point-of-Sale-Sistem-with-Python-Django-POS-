@@ -76,3 +76,19 @@ class DetalleVenta(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} - {self.cantidad} unidades"
+
+class Factura(models.Model):
+    venta = models.OneToOneField(
+        Venta,
+        on_delete=models.CASCADE,
+        related_name='factura'
+    )
+    numero_factura = models.CharField(
+        max_length=20,
+        unique=True,
+        help_text="Ej: F-000001"
+    )
+    fecha_emision = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Factura {self.numero_factura} - Venta #{self.venta.id_venta}"

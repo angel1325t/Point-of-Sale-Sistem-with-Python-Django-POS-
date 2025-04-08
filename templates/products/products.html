@@ -327,10 +327,10 @@
 
                             <div class="space-y-2">
                                 <h4 class="font-semibold text-blue-800 mb-2">Historial de Movimientos</h4>
-                                {% if product.ultimos_movimientos %}
+                                {% if product.last_movements %}
                                     <ul class="text-sm text-gray-600 space-y-1">
-                                        {% for movimiento in product.ultimos_movimientos|slice:":5" %}
-                                            <li>{{ movimiento.fecha|date:"d/m/Y H:i" }}: {{ movimiento.get_tipo_movimiento_display }} {{ movimiento.cantidad }} unidades</li>
+                                        {% for movements in product.last_movements|slice:":5" %}
+                                            <li>{{ movements.fecha|date:"d/m/Y H:i" }}: {{ movements.get_tipo_movements_display }} {{ movements.cantidad }} unidades</li>
                                         {% endfor %}
                                     </ul>
                                 {% else %}

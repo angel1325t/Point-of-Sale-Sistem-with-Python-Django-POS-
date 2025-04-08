@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Factura {{ factura.numero_factura }}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            width: 80mm;  /* Ancho adecuado para una impresora térmica */
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 14px;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+
+        p {
+            font-size: 12px;
+            margin: 0;
+            padding: 2px 0;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 2px 5px;
+            font-size: 12px;
+        }
+
+        th {
+            border-bottom: 1px solid #000;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .footer small {
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Factura {{ factura.numero_factura }}</h1>
+
+    <p><strong>Fecha:</strong> {{ factura.fecha_emision }}</p>
+    <p><strong>Empleado:</strong> {{ factura.venta.empleado.username }}</p>
+    <p><strong>Método de pago:</strong> {{ factura.venta.metodo_pago }}</p>
+
+    <h3>Detalle</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for detalle in factura.venta.detalles.all %}
+            <tr>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>{{ detalle.subtotal }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="total"><strong>Total:</strong> {{ factura.venta.total }}</p>
+
+    <div class="footer">
+        <p>Gracias por su compra!</p>
+        <small>Visítenos nuevamente.</small>
+    </div>
+
+</body>
+</html>

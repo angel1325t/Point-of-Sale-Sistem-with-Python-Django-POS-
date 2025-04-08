@@ -11,7 +11,7 @@ def user_is_not_vendedor(user):
     # Verifica si el usuario NO pertenece al grupo 'Vendedor'
     return "Vendedor" not in user.groups.values_list("name", flat=True)
 
-def almacen_required(view_func):
+def inventory_required(view_func):
     """
     Decorador que permite acceso a todos los usuarios excepto los del grupo 'Vendedor'.
     Si pertenecen a 'Vendedor', se devuelve un error 403.
@@ -20,7 +20,7 @@ def almacen_required(view_func):
     return user_passes_test(user_is_not_vendedor, login_url=None)(view_func)
 
 
-@almacen_required
+@inventory_required
 @login_required
 def update_product(request, product_id):
     product = get_object_or_404(Producto, id_producto=product_id)
@@ -85,21 +85,20 @@ def update_product(request, product_id):
     
     return render(request, "products/products.html", {"product": product})  
 
-@almacen_required
+@inventory_required
 @login_required
 def product_view(request):
     empleado = request.user
     user_groups = request.user.groups.values_list("name", flat=True)
 
     # Definir el Prefetch para movimientos, ordenados por fecha
-    movimientos_prefetch = Prefetch(
+    movements_prefetch = Prefetch(
         'movimientos',
         queryset=MovimientoProducto.objects.order_by('-fecha'),
-        to_attr='ultimos_movimientos'
+        to_attr='last_movements'
     )
-
     # Obtener productos activos con movimientos precargados
-    products_list = Producto.objects.filter(activo=True).prefetch_related(movimientos_prefetch)
+    products_list = Producto.objects.filter(activo=True).prefetch_related(movements_prefetch)
 
     # Paginación
     paginator = Paginator(products_list, 5)
