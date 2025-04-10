@@ -154,6 +154,12 @@
                     <span class="ms-3">Registrar Venta</span>
                 </a>
             </li>
+            <li>
+                <a href="{% url 'returns' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                    <img src="{% static 'icons/return.svg' %}" alt="" srcset="">
+                    <span class="ms-3">Devoluciones</span>
+                </a>
+            </li>
         {% else %}
             
         <li>
@@ -166,6 +172,12 @@
             <a href="{% url 'ventas' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
                 <img src="{% static 'icons/register_sale.svg' %}" alt="" srcset="">
                 <span class="ms-3">Registrar Venta</span>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'returns' %}" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <img src="{% static 'icons/return.svg' %}" alt="" srcset="">
+                <span class="ms-3">Devoluciones</span>
             </a>
         </li>
         <li>

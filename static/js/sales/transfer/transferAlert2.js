@@ -90,10 +90,14 @@ document.addEventListener("DOMContentLoaded", function () {
                       text: data.message || 'La transferencia y venta se registraron correctamente.',
                       confirmButtonText: 'OK'
                   }).then(() => {
-                      console.log('Alerta de éxito cerrada, recargando la página'); // Depuración
-                      form.reset(); // Reiniciar el formulario
-                      location.reload(); // Recargar la página inmediatamente
-                  });
+                // Redirige a la URL del PDF, después de un pequeño retraso
+                window.location.href = `/empleados/factura/${data.sale_id}/pdf`;
+                
+                // También podrías redirigir a la página de ventas después de la descarga
+                setTimeout(function() {
+                    window.location.href = '/empleados'; // Cambia esta URL por la ruta de ventas
+                }, 2000);
+            });
               } else {
                   // Mostrar mensaje de error
                   Swal.fire({

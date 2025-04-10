@@ -1,6 +1,7 @@
-from django.http import JsonResponse
-from django.utils.timezone import now
-from datetime import timedelta
+from django.http import HttpResponse
+from django.template.loader import get_template
+from datetime import datetime
+from weasyprint import HTML
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 import stripe
@@ -15,11 +16,9 @@ from .models import DetalleVenta, Venta, Transferencia, Factura
 from ..productos.models import Producto
 from django.db.models import F
 from django.db.models import Sum
-from django.db.models.functions import ExtractYear
 stripe.api_key = settings.STRIPE_SECRET_KEY
-from django.core.exceptions import PermissionDenied
 
-def user_is_not_almacen(user):
+def user_is_not_wareHouse(user):
     # Verifica si el usuario NO pertenece al grupo 'Almacen'
     return "Almacen" not in user.groups.values_list("name", flat=True)
 
@@ -29,7 +28,7 @@ def seller_required(view_func):
     Si pertenecen a 'Almacen', se devuelve un error 403.
     """
     from django.contrib.auth.decorators import user_passes_test
-    return user_passes_test(user_is_not_almacen, login_url=None)(view_func)
+    return user_passes_test(user_is_not_wareHouse, login_url=None)(view_func)
 
 def user_is_gerente_or_manager(user):
     # Verifica si el usuario es superusuario o pertenece al grupo 'Gerente'
@@ -60,7 +59,7 @@ def ventas(request):
         "empleado": employe,
         "productos": products,
         "es_almacen": "Almacen" in user_groups,
-        "es_seller": "Vendedor" in user_groups,
+        "es_vendedor": "Vendedor" in user_groups,
     }
 
     return render(request, "ventas/register_sale.html", context)
@@ -130,7 +129,8 @@ def process_sale(request):
                 empleado=employee, total=total, metodo_pago=payment_method, fecha=now()
             )
             # Crear número de factura
-            numero_factura = f"F-{str(sale.id_venta).zfill(6)}"
+            parte_fecha = datetime.now().strftime("%Y") if True else ""
+            numero_factura = f"EF{parte_fecha}-{str(sale.id_venta).zfill(6)}"
             # Crear la factura
             factura = Factura.objects.create(venta=sale, numero_factura=numero_factura)
 
@@ -244,7 +244,8 @@ def process_transfer(request):
                 fecha=now(),
             )
             # Crear número de factura
-            numero_factura = f"F-{str(sale.id_venta).zfill(6)}"
+            parte_fecha = datetime.now().strftime("%Y") if True else ""
+            numero_factura = f"TR{parte_fecha}-{str(sale.id_venta).zfill(6)}"
             # Crear la factura
             factura = Factura.objects.create(venta=sale, numero_factura=numero_factura)
             
@@ -385,7 +386,8 @@ def process_card_payment(request):
                 fecha=timezone.now(),
             )
             # Crear número de factura
-            numero_factura = f"F-{str(sale.id_venta).zfill(6)}"
+            parte_fecha = datetime.now().strftime("%Y") if True else ""
+            numero_factura = f"T{parte_fecha}-{str(sale.id_venta).zfill(6)}"
             # Crear la factura
             factura = Factura.objects.create(venta=sale, numero_factura=numero_factura)
 
@@ -466,10 +468,6 @@ def process_card_payment(request):
     return JsonResponse(
         {"success": False, "message": "Método no permitido"}, status=405
     )
-from django.http import HttpResponse
-from django.template.loader import get_template
-from weasyprint import HTML
-from .models import Factura
 
 @login_required
 def descargar_factura_pdf(request, sale_id):

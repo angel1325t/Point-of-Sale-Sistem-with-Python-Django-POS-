@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 
-def user_is_not_vendedor(user):
+def user_is_not_seller(user):
     # Verifica si el usuario NO pertenece al grupo 'Vendedor'
     return "Vendedor" not in user.groups.values_list("name", flat=True)
 
@@ -17,7 +17,7 @@ def inventory_required(view_func):
     Si pertenecen a 'Vendedor', se devuelve un error 403.
     """
     from django.contrib.auth.decorators import user_passes_test
-    return user_passes_test(user_is_not_vendedor, login_url=None)(view_func)
+    return user_passes_test(user_is_not_seller, login_url=None)(view_func)
 
 
 @inventory_required

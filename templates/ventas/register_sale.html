@@ -314,6 +314,7 @@
             placeholder="Nombre completo"
             class="w-full border px-3 py-2 mb-2"
             required
+            autocomplete="off"
           />
           <input
             type="tel"
@@ -323,6 +324,7 @@
             class="w-full border px-3 py-2 mb-2"
             required
             maxlength="15"
+            autocomplete="off"
           />
           <input
             type="email"
@@ -330,6 +332,7 @@
             placeholder="Correo Electrónico"
             class="w-full border px-3 py-2 mb-2"
             required
+            autocomplete="off"
           />
         </div>
 
@@ -342,6 +345,7 @@
             placeholder="Número de Referencia"
             class="w-full border px-3 py-2 mb-2"
             required
+            autocomplete="off"
           />
           <input
             type="text"
@@ -349,6 +353,7 @@
             placeholder="Banco Emisor"
             class="w-full border px-3 py-2 mb-2"
             required
+            autocomplete="off"
           />
           <select
             name="tipo_cuenta"
@@ -403,8 +408,8 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{% static 'js/sales/card/stripeConfig.js' %}"></script>
 <script src="{% static 'js/sales/transfer/multiStep.js' %}"></script>
-<script src="{% static 'js/sales/transfer/transferAlert.js' %}"></script>
-<script src="{% static 'js/sales/card/cardAlert.js' %}"></script>
+<script src="{% static 'js/sales/transfer/transferAlert2.js' %}"></script>
+<script src="{% static 'js/sales/card/cardAlert2.js' %}"></script>
 <script src="{% static 'js/sales/card/cardSummary.js' %}"></script>
 <script src="{% static 'js/sales/transfer/transferSummary.js' %}"></script>
 <script src="{% static 'js/sales/paymentMethodController.js' %}"></script>

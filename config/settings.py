@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.productos",
     "apps.ventas",
+    "apps.returns",
     "django_extensions",
     'widget_tweaks',
 ]

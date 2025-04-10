@@ -107,10 +107,10 @@ document.getElementById("pay-button").addEventListener("click", async function (
                 // También podrías redirigir a la página de ventas después de la descarga
                 setTimeout(function() {
                     window.location.href = '/empleados'; // Cambia esta URL por la ruta de ventas
-                }, 3000);  // Espera 3 segundos antes de redirigir
+                }, 2000);
             });
         }
-         else {
+        else {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',

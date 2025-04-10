@@ -34,8 +34,13 @@ function processCardPayment(token, productsList, totalWithTax, form, payButton) 
                     text: data.message || 'El pago y la venta se registraron correctamente.',
                     confirmButtonText: 'OK'
                 }).then(() => {
-                    form.reset();
-                    location.reload();
+                    // Redirige a la URL del PDF, después de un pequeño retraso
+                    window.location.href = `/empleados/factura/${data.sale_id}/pdf`;
+                    
+                    // También podrías redirigir a la página de ventas después de la descarga
+                    setTimeout(function() {
+                        window.location.href = '/empleados'; // Cambia esta URL por la ruta de ventas
+                    }, 2000);
                 });
             } else {
                 Swal.fire({

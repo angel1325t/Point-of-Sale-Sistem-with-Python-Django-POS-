@@ -34,6 +34,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("", include("apps.users.urls")),
     path("empleados/", include("apps.productos.urls")),
+    path("empleados/", include("apps.returns.urls")),
     path("empleados/", include("apps.ventas.urls")),
     path("i18n/", include("django.conf.urls.i18n")),
     path('ingresos_egresos_data/', views.income_expenses_data, name='ingresos_egresos_data'),
