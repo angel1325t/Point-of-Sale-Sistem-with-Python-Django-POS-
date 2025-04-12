@@ -1,252 +1,414 @@
 {% extends 'empleados/empleado.html' %}
-{% load static %} 
+{% load static %}
 {% block title %}Sistema de Devoluciones{% endblock %}
 {% block section1 %}
-    <div class="min-h-screen p-6 bg-gray-50">
-      <!-- Header con mejoras visuales -->
-      <header class="mb-8 bg-white rounded-lg shadow-sm p-6 border-l-4 border-[#2234B9]">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">Devoluciones de Productos</h1>
-            <p class="text-gray-600">Gestión de devoluciones y reembolsos</p>
-          </div>
-        </div>
-      </header>
-
-      <!-- Search Section mejorado -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-100">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-[#2234B9]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-          Buscar Venta
-        </h2>
-        <form action="{% url 'buscar_facturas' %}" method="post">
-        {% csrf_token %}
-        <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Número de Factura</label>
-            <div class="relative">
-              <input type="text" placeholder="Ej: F-0012345" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2234B9] focus:border-[#2234B9]" name="numero_factura">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="flex items-center justify-between">
-          <button class="bg-[#2234B9] text-white px-6 py-2 rounded-md hover:bg-blue-900 transition-colors flex items-center">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            Buscar
-          </button>
-        </div>
-      </form>
+<link rel="stylesheet" href="{% static 'css/login/login_alert.css' %}">
+<div class="fixed top-4 right-4 z-50 space-y-2">
+  {% for message in messages %}
+  <div class="relative transition-transform duration-300 ease-in-out transform animate-slide-in alert-box">
+      <div class="p-4 rounded-lg shadow-lg text-sm relative 
+                  {% if message.tags == 'error' %} 
+                      bg-red-100 border border-red-400 text-red-700 
+                  {% elif message.tags == 'success' %} 
+                      bg-green-100 border border-green-400 text-green-700 
+                  {% else %}
+                      bg-yellow-100 border border-yellow-400 text-yellow-700 
+                  {% endif %}">
+          {{ message }}
       </div>
-
-      <!-- Información de Venta (Nueva sección) -->
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-100">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-[#2234B9]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-          Información de Venta
-        </h2>
-        {% if facturas %}
-  {% for factura in facturas %}
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-    <div class="bg-gray-50 p-4 rounded-lg">
-      <p class="text-sm text-gray-500">Factura</p>
-      <p class="font-medium">{{ factura.numero_factura }}</p>
-    </div>
-    <div class="bg-gray-50 p-4 rounded-lg">
-      <p class="text-sm text-gray-500">Fecha</p>
-      <p class="font-medium">{{ factura.fecha_venta }}</p>
-    </div>
-    <div class="bg-gray-50 p-4 rounded-lg">
-      <p class="text-sm text-gray-500">Vendedor</p>
-      <p class="font-medium">{{ factura.vendedor }}</p>
-    </div>
   </div>
   {% endfor %}
-{% else %}
-  <p class="text-gray-600">No se encontraron facturas.</p>
-{% endif %}
-
+</div>
+<div class="min-h-screen bg-gray-50 px-4 py-6 md:px-6">
+  <!-- Header mejorado -->
+  <header class="mb-8 bg-white rounded-lg shadow-sm p-4 md:p-6 border-l-4 border-blue-700">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Devoluciones de Productos</h1>
+        <p class="text-gray-600">Gestión de devoluciones y reembolsos</p>
       </div>
+    </div>
+  </header>
 
+<!-- Search Section mejorado -->
+<div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 border border-gray-100">
+  <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+    <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+    </svg>
+    Buscar Venta
+  </h2>
+  <form action="{% url 'returns' %}" method="post">
+    {% csrf_token %}
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Número de Factura</label>
+        <div class="relative">
+          <input 
+            type="text" 
+            placeholder="Ej: F-0012345" 
+            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-700 focus:border-blue-700" 
+            name="numero_factura"
+            id="search-input"
+          >
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button 
+        id="search-button"
+        type="submit" 
+        class="bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition-colors flex items-center" 
+        disabled
+      >
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        Buscar
+      </button>
+    </div>
+  </form>
+</div>
+
+  <!-- Información de Venta -->
+  <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 border border-gray-100">
+    <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+      <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      Información de Venta
+    </h2>
+    {% if facturas %}
       {% for factura in facturas %}
-<div class="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-100">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
-    <svg class="w-5 h-5 mr-2 text-[#2234B9]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="text-sm text-gray-500">Factura</p>
+          <p class="font-medium">{{ factura.numero_factura }}</p>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="text-sm text-gray-500">Fecha</p>
+          <p class="font-medium">{{ factura.fecha_venta }}</p>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-lg">
+          <p class="text-sm text-gray-500">Vendedor</p>
+          <p class="font-medium">{{ factura.vendedor }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-gray-600">No se encontraron facturas.</p>
+    {% endif %}
+  </div>
+
+<!-- Productos a Devolver -->
+{% for factura in facturas %}
+<div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 border border-gray-100">
+  <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+    <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
     </svg>
     Factura {{ factura.numero_factura }} - Productos a Devolver
   </h2>
   <p class="text-gray-600 mb-4">Selecciona los productos que se devolverán y especifica el motivo</p>
-  <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="w-4 p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            <div class="flex items-center">
-              <input id="select-all" type="checkbox" class="h-4 w-4 text-[#2234B9] rounded border-gray-300 bg-gray-200 focus:ring-[#2234B9]">
-              <label class="sr-only">Seleccionar</label>
-            </div>
-          </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio Unitario</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Decuento</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Motivo</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        {% for producto in factura.productos %}
-        <tr class="hover:bg-gray-50">
-          <td class="w-4 p-4 whitespace-nowrap">
-            <div class="flex items-center">
-              <input type="checkbox" class="item-checkbox h-4 w-4 text-[#2234B9] rounded bg-gray-200 border-gray-300 focus:ring-[#2234B9]">
-              <label class="sr-only">Seleccionar item</label>
-            </div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="flex items-center">
-              <div class="h-10 w-10 flex items-center justify-center mr-3">
-                <img src="{{ producto.image }}" alt="{{ producto.nombre }}" class="h-8 w-8">
-              </div>
-              <div>
-                <div class="text-sm font-medium text-gray-900">{{ producto.nombre }}</div>
-                <div class="text-sm text-gray-500">Subtotal: {{ producto.subtotal }}</div>
-              </div>
-            </div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <div class="flex items-center">
-              <input type="number" value="{{ producto.cantidad }}" min="1" max="{{ producto.cantidad }}" class="w-12 h-6 text-center bg-transparent">
-            </div>
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {{ producto.precio_unitario }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {% if producto.descuento %}
-              {{ producto.cantidad_descuento }}%
-            {% else %}
-              0%
-            {% endif %}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap">
-            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#2234B9] focus:border-[#2234B9]">
-              <option>Seleccionar motivo</option>
-              <option>Producto defectuoso</option>
-              <option>Producto dañado</option>
-              <option>Otro motivo</option>
-            </select>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="5" class="px-6 py-4 text-center text-gray-500">No hay productos asociados a esta factura.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endfor %}
-
-      <!-- Return Details mejorado -->
-      <div class="bg-white rounded-lg shadow-md p-6 border border-gray-100">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
-          <svg class="w-5 h-5 mr-2 text-[#2234B9]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          Detalles de la Devolución
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Método de Reembolso</label>
-              <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#2234B9] focus:border-[#2234B9]">
-                <option>Método original de pago</option>
-                <option>Crédito en tienda</option>
-                <option>Transferencia bancaria</option>
-                <option>Efectivo</option>
-              </select>
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Comentarios Adicionales</label>
-              <textarea class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#2234B9] focus:border-[#2234B9]" rows="4" placeholder="Detalles adicionales sobre la devolución..."></textarea>
-            </div>
-          </div>
-          
-          <div>
-            <div class="bg-gray-50 p-6 rounded-lg mb-4">
-              <h3 class="font-medium text-gray-900 mb-4">Resumen de Devolución</h3>
-              <div class="space-y-3">
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600">Subtotal Productos:</span>
-                  <span class="font-medium">$45.98</span>
+  <form action="{% url 'process_return' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="factura_id" value="{{ factura.id }}">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200" data-factura-id="{{ factura.id }}">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <input type="checkbox" class="select-all h-4 w-4 text-blue-700 rounded bg-gray-200 border-gray-300 focus:ring-blue-700">
+            </th>
+            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Precio</th>
+            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Descuento</th>
+            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Motivo</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for producto in factura.productos %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+              <input type="checkbox" name="productos_devueltos" value="{{ producto.nombre }}" id="item-{{ producto.id }}" class="item-checkbox h-4 w-4 text-blue-700 rounded bg-gray-200 border-gray-300 focus:ring-blue-700">
+              <label for="item-{{ producto.id }}" class="sr-only">Seleccionar producto</label>
+            </td>
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
+                  <img src="{{ producto.image }}" alt="{{ producto.nombre }}" class="h-8 w-8 sm:h-10 sm:w-10 object-cover rounded-md">
                 </div>
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600">ITBIS (18%):</span>
-                  <span class="font-medium">$8.28</span>
-                </div>
-                <div class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600">Descuentos aplicados:</span>
-                  <span class="font-medium text-red-600">-$5.99</span>
-                </div>
-                <div class="pt-3 border-t border-gray-200">
-                  <div class="flex justify-between items-center text-lg font-bold">
-                    <span>Total a Devolver:</span>
-                    <span class="text-[#2234B9]">$48.27</span>
+                <div class="ml-2 sm:ml-3">
+                  <div class="text-xs sm:text-sm font-medium text-gray-900">{{ producto.nombre }}</div>
+                  <div class="text-xs sm:text-sm text-gray-500 sm:hidden">{{ producto.precio_unitario }}</div>
+                  <div class="text-xs sm:text-sm text-gray-500">Subtotal: {{ producto.subtotal }}</div>
+                  <div class="text-xs text-gray-500 sm:hidden">
+                    {% if producto.descuento %}
+                      Desc: {{ producto.cantidad_descuento }}%
+                    {% else %}
+                      0%
+                    {% endif %}
                   </div>
                 </div>
               </div>
+            </td>
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+              <input type="number" name="cantidad_{{ producto.nombre }}" value="{{ producto.cantidad }}" min="1" max="{{ producto.cantidad }}" class="cantidad-input w-12 sm:w-16 h-8 text-center text-xs sm:text-sm border border-gray-300 rounded-md" readonly>
+            </td>
+            <td class="precio-unitario px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 hidden sm:table-cell">{{ producto.precio_unitario }}</td>
+            <td class="descuento-porcentaje px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 hidden sm:table-cell">
+              {% if producto.descuento %}
+                {{ producto.cantidad_descuento }}%
+              {% else %}
+                0%
+              {% endif %}
+            </td>
+            <td class="px-2 sm:px-4 py-2 sm:py-3">
+              <select name="motivo_{{ producto.nombre }}" class="w-full px-1 sm:px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-blue-700 focus:border-blue-700">
+                <option value="">Seleccionar</option>
+                <option value="defectuoso">Defectuoso</option>
+                <option value="danado">Dañado</option>
+                <option value="otro">Otro</option>
+              </select>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm text-gray-500">No hay productos asociados a esta factura.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- Mover el formulario de Detalles de la Devolución aquí -->
+    <div class="mt-6">
+      <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Detalles de la Devolución
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Método de Reembolso</label>
+            <select name="metodo_reembolso" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-700 focus:border-blue-700">
+              <option value="seleccionar">Seleccionar</option>
+              <option value="transferencia">Transferencia bancaria</option>
+              <option value="efectivo">Efectivo</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Comentarios Adicionales</label>
+            <textarea name="comentarios" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-700 focus:border-blue-700" rows="4" placeholder="Detalles adicionales sobre la devolución..."></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="bg-gray-50 p-4 md:p-6 rounded-lg mb-4">
+            <h3 class="font-medium text-gray-900 mb-4">Resumen de la Devolución</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600">Subtotal Productos:</span>
+                <span id="subtotal-products-{{ factura.id }}" class="font-medium">$0.00</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600">ITBIS (18%):</span>
+                <span id="itbis-{{ factura.id }}" class="font-medium">$0.00</span>
+              </div>
+              <div class="flex justify-between items-center text-sm">
+                <span class="text-gray-600">Descuentos Aplicados:</span>
+                <span id="discounts-{{ factura.id }}" class="font-medium text-red-600">$0.00</span>
+              </div>
+              <div class="pt-3 border-t border-gray-200">
+                <div class="flex justify-between items-center text-lg font-bold">
+                  <span>Total a Devolver:</span>
+                  <span id="total-return-{{ factura.id }}" class="text-blue-700">$0.00</span>
+                </div>
+              </div>
             </div>
-            
-            <div class="flex flex-col space-y-3">
-              <button class="w-full bg-[#2234B9] text-white px-6 py-3 rounded-md hover:bg-blue-900 transition-colors font-medium flex items-center justify-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                Procesar Devolución
-              </button>
-            </div>
+          </div>
+          <div class="flex flex-col space-y-3">
+            <button type="submit" class="w-full bg-blue-700 text-white px-4 py-3 rounded-md hover:bg-blue-800 transition-colors font-medium flex items-center justify-center">
+              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              Procesar Devolución
+            </button>
           </div>
         </div>
       </div>
-      
-      <!-- Política de Devoluciones (Nueva sección) -->
-      <div class="bg-white rounded-lg shadow-md p-6 mt-6 border-t-4 border-[#2234B9]">
-        <h2 class="text-lg font-semibold mb-2 text-gray-800">Política de Devoluciones</h2>
-        <div class="text-sm text-gray-600">
-          <p class="mb-2">• Las devoluciones deben realizarse dentro de los <strong>30 días</strong> posteriores a la compra.</p>
-          <p class="mb-2">• Los productos deben estar en su embalaje original y en buenas condiciones.</p>
-          <p class="mb-2">• Se requiere presentar el comprobante de compra original para todas las devoluciones.</p>
-        </div>
-      </div>
+      <!-- Campos ocultos para los valores financieros calculados por JavaScript -->
+      <input type="hidden" name="subtotal" id="subtotal-hidden-{{ factura.id }}" value="0">
+      <input type="hidden" name="impuesto" id="impuesto-hidden-{{ factura.id }}" value="0">
+      <input type="hidden" name="descuento" id="descuento-hidden-{{ factura.id }}" value="0">
+      <input type="hidden" name="total_devolver" id="total-devolver-hidden-{{ factura.id }}" value="0">
     </div>
-    <script>
-      const selectAllCheckbox = document.getElementById('select-all');
-      const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-    
-      selectAllCheckbox.addEventListener('change', function () {
+  </form>
+</div>
+{% endfor %}
+
+<!-- Eliminar el formulario de Detalles de la Devolución que estaba fuera del bucle -->
+
+  <!-- Política de Devoluciones -->
+  <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mt-6 border-t-4 border-blue-700">
+    <h2 class="text-lg font-semibold mb-2 text-gray-800">Política de Devoluciones</h2>
+    <div class="text-sm text-gray-600">
+      <p class="mb-2">• Las devoluciones deben realizarse dentro de los <strong>30 días</strong> posteriores a la compra.</p>
+      <p class="mb-2">• Los productos deben estar en su embalaje original y en buenas condiciones.</p>
+      <p class="mb-2">• Se requiere presentar el comprobante de compra original para todas las devoluciones.</p>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+
+    // Función para actualizar el estado del botón
+    function updateButtonState() {
+      if (searchInput.value.trim() === '') {
+        searchButton.disabled = true;
+        searchButton.classList.remove('bg-blue-700', 'hover:bg-blue-800');
+        searchButton.classList.add('bg-blue-400', 'cursor-not-allowed');
+      } else {
+        searchButton.disabled = false;
+        searchButton.classList.remove('bg-blue-400', 'cursor-not-allowed');
+        searchButton.classList.add('bg-blue-700', 'hover:bg-blue-800');
+      }
+    }
+
+    // Ejecutar al cargar la página
+    updateButtonState();
+
+    // Escuchar cambios en el input
+    searchInput.addEventListener('input', updateButtonState);
+  });
+</script>
+<script src="{% static 'js/login/alerts_login.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Función para inicializar cada tabla
+    function initializeTable(table, facturaId) {
+      const selectAllCheckbox = table.querySelector('.select-all');
+      const itemCheckboxes = table.querySelectorAll('.item-checkbox');
+  
+      if (!selectAllCheckbox || itemCheckboxes.length === 0) {
+        console.warn('No se encontraron checkboxes en la tabla:', table);
+        return;
+      }
+  
+      // Manejar "select all" checkbox
+      selectAllCheckbox.addEventListener('change', function() {
         itemCheckboxes.forEach(cb => {
           cb.checked = this.checked;
         });
+        updateReturnSummary(facturaId);
       });
-    
+  
+      // Actualizar "select all" si un checkbox individual cambia
       itemCheckboxes.forEach(cb => {
         cb.addEventListener('change', () => {
           const allChecked = [...itemCheckboxes].every(cb => cb.checked);
           selectAllCheckbox.checked = allChecked;
+          updateReturnSummary(facturaId);
         });
       });
-    </script>
-    {% endblock %}
+  
+      // Manejar cambios en inputs de cantidad
+      const quantityInputs = table.querySelectorAll('.cantidad-input');
+      quantityInputs.forEach(input => {
+        input.addEventListener('input', () => updateReturnSummary(facturaId));
+      });
+    }
+  
+    // Función para calcular y actualizar el resumen de la devolución
+    function updateReturnSummary(facturaId) {
+      let subtotalProducts = 0;
+      let totalDiscounts = 0;
+  
+      // Encontrar la tabla correspondiente a la factura
+      const table = document.querySelector(`table[data-factura-id="${facturaId}"]`);
+      if (!table) {
+        console.warn(`No se encontró tabla para factura ID: ${facturaId}`);
+        return;
+      }
+  
+      const rows = table.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const checkbox = row.querySelector('.item-checkbox');
+        if (checkbox && checkbox.checked) {
+          // Obtener cantidad
+          const quantityInput = row.querySelector('.cantidad-input');
+          const quantity = quantityInput ? parseInt(quantityInput.value, 10) || 0 : 0;
+  
+          // Obtener precio unitario
+          const priceCell = row.querySelector('.precio-unitario');
+          let price = 0;
+          if (priceCell) {
+            const priceText = priceCell.textContent.trim();
+            price = parseFloat(priceText.replace(/[^0-9.-]+/g, '')) || 0;
+          } else {
+            console.warn('No se encontró precio-unitario en la fila:', row);
+          }
+  
+          // Obtener porcentaje de descuento
+          const discountCell = row.querySelector('.descuento-porcentaje');
+          let discountPercentage = 0;
+          if (discountCell) {
+            const discountText = discountCell.textContent.trim();
+            discountPercentage = parseFloat(discountText.replace('%', '')) || 0;
+          }
+  
+          // Calcular subtotal y descuento para este producto
+          const productSubtotal = quantity * price;
+          const productDiscount = (productSubtotal * discountPercentage) / 100;
+  
+          // Acumular totales
+          subtotalProducts += productSubtotal;
+          totalDiscounts += productDiscount;
+        }
+      });
+  
+      // Calcular ITBIS (18%) y total a devolver
+      const itbis = (subtotalProducts - totalDiscounts) * 0.18;
+      const totalReturn = subtotalProducts + itbis - totalDiscounts;
+  
+      // Actualizar el resumen en el DOM
+      try {
+        document.getElementById(`subtotal-products-${facturaId}`).textContent = `$${subtotalProducts.toFixed(2)}`;
+        document.getElementById(`itbis-${facturaId}`).textContent = `$${itbis.toFixed(2)}`;
+        document.getElementById(`discounts-${facturaId}`).textContent = `-$${totalDiscounts.toFixed(2)}`;
+        document.getElementById(`total-return-${facturaId}`).textContent = `$${totalReturn.toFixed(2)}`;
+  
+        // Actualizar campos ocultos para enviar al servidor
+        document.getElementById(`subtotal-hidden-${facturaId}`).value = subtotalProducts.toFixed(2);
+        document.getElementById(`impuesto-hidden-${facturaId}`).value = itbis.toFixed(2);
+        document.getElementById(`descuento-hidden-${facturaId}`).value = totalDiscounts.toFixed(2);
+        document.getElementById(`total-devolver-hidden-${facturaId}`).value = totalReturn.toFixed(2);
+      } catch (e) {
+        console.error('Error al actualizar el resumen:', e);
+      }
+    }
+  
+    // Inicializar cada tabla
+    const tables = document.querySelectorAll('table');
+    tables.forEach(table => {
+      const facturaId = table.closest('form').querySelector('input[name="factura_id"]').value;
+      table.dataset.facturaId = facturaId; // Añadir atributo para identificar la factura
+      initializeTable(table, facturaId);
+    });
+  
+    // Ejecutar el cálculo inicial para cada factura
+    tables.forEach(table => {
+      const facturaId = table.closest('form').querySelector('input[name="factura_id"]').value;
+      updateReturnSummary(facturaId);
+    });
+  });
+</script>
+{% endblock %}

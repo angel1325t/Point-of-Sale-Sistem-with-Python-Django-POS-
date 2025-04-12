@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 
 class Devolucion(models.Model):
-    # Relación con la factura (una devolución está vinculada a una factura específica)
     factura = models.ForeignKey(
         'ventas.Factura',
         on_delete=models.CASCADE,
@@ -10,20 +10,17 @@ class Devolucion(models.Model):
         help_text="Factura asociada a esta devolución"
     )
     
-    # Fecha de la devolución
     fecha_devolucion = models.DateTimeField(
         auto_now_add=True,
         help_text="Fecha en que se registró la devolución"
     )
     
-    # Motivos predefinidos para la devolución
     MOTIVOS_DEVOLUCION = (
         ('DEFECTUOSO', 'Producto defectuoso'),
         ('DAÑADO', 'Producto dañado'),
         ('OTRO', 'Otro motivo'),
     )
     
-    # Campo para el motivo general de la devolución
     motivo_general = models.CharField(
         max_length=20,
         choices=MOTIVOS_DEVOLUCION,
@@ -31,7 +28,6 @@ class Devolucion(models.Model):
         help_text="Motivo principal de la devolución"
     )
     
-    # Métodos de reembolso disponibles
     METODOS_REEMBOLSO = (
         ('ORIGINAL', 'Método original de pago'),
         ('CREDITO', 'Crédito en tienda'),
@@ -39,7 +35,6 @@ class Devolucion(models.Model):
         ('EFECTIVO', 'Efectivo'),
     )
     
-    # Método de reembolso seleccionado
     metodo_reembolso = models.CharField(
         max_length=20,
         choices=METODOS_REEMBOLSO,
@@ -47,7 +42,6 @@ class Devolucion(models.Model):
         help_text="Método utilizado para el reembolso"
     )
     
-    # Subtotal de los productos devueltos (sin impuestos ni descuentos)
     subtotal = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -55,7 +49,6 @@ class Devolucion(models.Model):
         help_text="Subtotal de los productos devueltos"
     )
     
-    # Impuesto aplicado (ej. ITBIS 18%)
     impuesto = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -64,7 +57,6 @@ class Devolucion(models.Model):
         help_text="Impuesto aplicado (ej. ITBIS)"
     )
     
-    # Descuentos aplicados a la devolución (si aplica)
     descuento = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -73,7 +65,6 @@ class Devolucion(models.Model):
         help_text="Descuentos aplicados a la devolución"
     )
     
-    # Total a devolver
     total_devolver = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -81,7 +72,6 @@ class Devolucion(models.Model):
         help_text="Total a devolver al cliente"
     )
     
-    # Comentarios adicionales
     comentarios = models.TextField(
         blank=True,
         null=True,
@@ -89,7 +79,12 @@ class Devolucion(models.Model):
     )
     
     def save(self, *args, **kwargs):
-        # Calcular el total a devolver automáticamente antes de guardar
+        # Validar que no exista otra devolución para la misma factura
+        if self.pk is None:  # Solo para nuevas devoluciones
+            if Devolucion.objects.filter(factura=self.factura).exists():
+                raise ValidationError("Ya existe una devolución para esta factura.")
+        
+        # Calcular el total a devolver automáticamente
         self.total_devolver = self.subtotal + self.impuesto - self.descuento
         super().save(*args, **kwargs)
 
@@ -102,7 +97,6 @@ class Devolucion(models.Model):
 
 
 class DetalleDevolucion(models.Model):
-    # Relación con la devolución principal
     devolucion = models.ForeignKey(
         'Devolucion',
         on_delete=models.CASCADE,
@@ -110,22 +104,19 @@ class DetalleDevolucion(models.Model):
         help_text="Devolución a la que pertenece este detalle"
     )
     
-    # Producto devuelto (suponiendo que existe un modelo Producto)
     producto = models.ForeignKey(
-        'productos.Producto',  # Ajusta esto según el nombre de tu modelo de Producto
+        'productos.Producto',
         on_delete=models.SET_NULL,
         null=True,
         related_name='devoluciones',
         help_text="Producto que se está devolviendo"
     )
     
-    # Cantidad devuelta
     cantidad = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
         help_text="Cantidad de unidades devueltas"
     )
     
-    # Precio unitario del producto al momento de la devolución
     precio_unitario = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -133,7 +124,11 @@ class DetalleDevolucion(models.Model):
         help_text="Precio unitario del producto"
     )
     
-    # Motivo específico para este producto
+    inventario_repuesto = models.BooleanField(
+        default=False,
+        help_text="Marca si ya se repuso el inventario por esta devolución"
+    )
+    
     motivo = models.CharField(
         max_length=20,
         choices=Devolucion.MOTIVOS_DEVOLUCION,

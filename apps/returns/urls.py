@@ -19,7 +19,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path("devoluciones/", views.returns_view, name="returns"),
-    path('buscar-facturas/', views.find_invoice, name='buscar_facturas'),
+    path('devoluciones/', views.search_returns_view, name='returns'),
+    path('procesar_devolucion/', views.process_return_view, name='process_return'),
 ]
-
