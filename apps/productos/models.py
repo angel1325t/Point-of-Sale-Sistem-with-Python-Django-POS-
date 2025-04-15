@@ -49,6 +49,7 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos')
     suministrador = models.ForeignKey(Suministradores, on_delete=models.CASCADE, related_name='productos')
     codigo_qr = models.ImageField(upload_to='qrcodes/', null=True, blank=True)
+    ultima_alerta_stock = models.DateTimeField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:

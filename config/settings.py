@@ -33,6 +33,7 @@ stripe.api_key = STRIPE_SECRET_KEY  # Configura la clave secreta
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     "jazzmin",
     "django.contrib.admin",
     'django.contrib.sites',
@@ -123,7 +124,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
