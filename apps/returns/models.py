@@ -142,3 +142,4 @@ class DetalleDevolucion(models.Model):
     class Meta:
         verbose_name = "Detalle de Devolución"
         verbose_name_plural = "Detalles de Devoluciones"
+

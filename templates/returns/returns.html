@@ -115,7 +115,7 @@
     Factura {{ factura.numero_factura }} - Productos a Devolver
   </h2>
   <p class="text-gray-600 mb-4">Selecciona los productos que se devolverán y especifica el motivo</p>
-  <form action="{% url 'process_return' %}" method="post">
+  <form id="return-form" method="post">
     {% csrf_token %}
     <input type="hidden" name="factura_id" value="{{ factura.id }}">
     <div class="overflow-x-auto">
@@ -186,7 +186,6 @@
         </tbody>
       </table>
     </div>
-    <!-- Mover el formulario de Detalles de la Devolución aquí -->
     <div class="mt-6">
       <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
         <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -234,7 +233,7 @@
             </div>
           </div>
           <div class="flex flex-col space-y-3">
-            <button type="submit" class="w-full bg-blue-700 text-white px-4 py-3 rounded-md hover:bg-blue-800 transition-colors font-medium flex items-center justify-center">
+            <button type="submit" id="submit-return-btn" class="w-full bg-blue-700 text-white px-4 py-3 rounded-md hover:bg-blue-800 transition-colors font-medium flex items-center justify-center">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
@@ -243,13 +242,12 @@
           </div>
         </div>
       </div>
-      <!-- Campos ocultos para los valores financieros calculados por JavaScript -->
       <input type="hidden" name="subtotal" id="subtotal-hidden-{{ factura.id }}" value="0">
       <input type="hidden" name="impuesto" id="impuesto-hidden-{{ factura.id }}" value="0">
       <input type="hidden" name="descuento" id="descuento-hidden-{{ factura.id }}" value="0">
       <input type="hidden" name="total_devolver" id="total-devolver-hidden-{{ factura.id }}" value="0">
     </div>
-  </form>
+</form>
 </div>
 {% endfor %}
 
@@ -411,4 +409,6 @@
     });
   });
 </script>
+<script src="{% static 'js/returns/returns_process2.js' %}"></script>
+
 {% endblock %}

@@ -474,32 +474,60 @@ def descargar_factura_pdf(request, sale_id):
     # Obtiene la factura asociada con la venta
     factura = get_object_or_404(Factura, venta_id=sale_id)
     
+    # Calcula los totales para evitar problemas en la plantilla
+    detalles = factura.venta.detalles.all()
+    total_subtotal = sum(detalle.subtotal for detalle in detalles)
+    total_itbis = sum(detalle.itbis for detalle in detalles)
+    total_descuento = sum(detalle.cantidad_descuento for detalle in detalles)
+    
+    # Prepara el contexto para la plantilla
+    context = {
+        'factura': factura,
+        'total_subtotal': total_subtotal,
+        'total_itbis': total_itbis,
+        'total_descuento': total_descuento,
+    }
+    
     # Genera el contenido PDF a partir de la plantilla
-    pdf_content = render_to_pdf("ventas/factura_pdf.html", {"factura": factura})
+    pdf_content = render_to_pdf("ventas/factura_pdf.html", context)
     
     if pdf_content:
-        # Responde con el archivo PDF al navegador para que se descargue automáticamente
+        # Responde con el archivo PDF para descarga
         response = HttpResponse(pdf_content, content_type='application/pdf')
-        
-        # Define el nombre del archivo para la descarga
         filename = f"Factura_{factura.numero_factura}.pdf"
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        
         return response
     else:
         return HttpResponse("No se pudo generar el PDF", status=500)
 
-def render_to_pdf(template_src, context_dict={}):
-    # Carga la plantilla y renderiza el contenido HTML
-    template = get_template(template_src)
-    html_string = template.render(context_dict)
+def render_to_pdf(template_src, context_dict=None):
+    """
+    Renderiza una plantilla HTML a PDF usando WeasyPrint.
     
-    # Genera el PDF desde el HTML
-    html = HTML(string=html_string)
-    pdf_content = html.write_pdf()
+    Args:
+        template_src (str): Ruta de la plantilla.
+        context_dict (dict): Contexto para renderizar la plantilla.
     
-    return pdf_content
-
+    Returns:
+        bytes: Contenido del PDF, o None si falla.
+    """
+    if context_dict is None:
+        context_dict = {}
+    
+    try:
+        # Carga y renderiza la plantilla
+        template = get_template(template_src)
+        html_string = template.render(context_dict)
+        
+        # Genera el PDF
+        html = HTML(string=html_string)
+        pdf_content = html.write_pdf()
+        
+        return pdf_content
+    except Exception as e:
+        # Log the error for debugging (optional)
+        print(f"Error generando PDF: {e}")
+        return None
 
 def income_expenses_data(request):
     filtro = request.GET.get('filtro', None)

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="utf-8">
-    <title>Factura {{ factura.numero_factura }}</title>
+    <meta charset="UTF-8">
+    <title>Comprobante de Devolución</title>
     <style>
         body {
             font-family: sans-serif;
-            width: 80mm; /* Ancho para impresora térmica; cambiar a 210mm para A4 */
+            width: 80mm; /* Ancho para impresora térmica */
             margin: 0;
             padding: 0;
             font-size: 12px;
@@ -53,8 +53,8 @@
 
         th, td {
             text-align: left;
-            padding: 2px 3px; /* Reducido para acomodar más columnas */
-            font-size: 11px; /* Ligeramente más pequeño para ajustar */
+            padding: 2px 3px;
+            font-size: 11px;
         }
 
         th {
@@ -76,17 +76,12 @@
             font-size: 12px;
         }
 
-        .itbis {
+        .impuesto {
             margin-top: 5px;
             font-size: 12px;
         }
 
         .descuento {
-            margin-top: 5px;
-            font-size: 12px;
-        }
-
-        .total-productos {
             margin-top: 5px;
             font-size: 12px;
         }
@@ -106,22 +101,17 @@
             margin-top: 5px;
         }
 
-        .politica {
+        .comentarios {
             margin-top: 15px;
             border-top: 1px dashed #000;
             padding-top: 10px;
             font-size: 10px;
         }
 
-        .politica h4 {
+        .comentarios h4 {
             font-size: 11px;
             margin: 0 0 5px 0;
             text-align: center;
-        }
-
-        .politica ul {
-            padding-left: 15px;
-            margin: 5px 0;
         }
 
         .encabezado {
@@ -142,6 +132,12 @@
             font-size: 10px;
             text-align: center;
         }
+        
+        .documento-id {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -155,21 +151,20 @@
         </div>
     </div>
 
-    <h1>Factura {{ factura.numero_factura }}</h1>
+    <div class="documento-id">
+        <p>Comprobante N°: {{ devolucion.id }}</p>
+    </div>
 
-    <p><strong>Fecha:</strong> {{ factura.fecha_emision|date:"d/m/Y" }}</p>
-    <p><strong>Hora:</strong> {{ factura.fecha_emision|time:"H:i" }}</p>
-    <p><strong>Empleado:</strong> {{ factura.venta.empleado.username|default:"N/A" }}</p>
-    <p><strong>Método de pago:</strong> {{ factura.venta.get_metodo_pago_display|default:"N/A" }}</p>
-    
-    {% if factura.venta.transferencia %}
-    <h3>Datos de Transferencia</h3>
-    <p><strong>Referencia:</strong> {{ factura.venta.transferencia.numero_referencia|default:"N/A" }}</p>
-    <p><strong>Banco:</strong> {{ factura.venta.transferencia.banco_emisor|default:"N/A" }}</p>
-    <p><strong>Tipo de cuenta:</strong> {{ factura.venta.transferencia.get_tipo_cuenta_display|default:"N/A" }}</p>
-    {% endif %}
+    <h1>COMPROBANTE DE DEVOLUCIÓN</h1>
 
-    <h3>Detalle de productos</h3>
+    <p><strong>Fecha:</strong> {{ devolucion.fecha_devolucion|date:"d/m/Y" }}</p>
+    <p><strong>Hora:</strong> {{ devolucion.fecha_devolucion|time:"H:i" }}</p>
+
+    <h3>Información de la Factura Original</h3>
+    <p><strong>Número de Factura:</strong> {{ devolucion.factura.numero_factura }}</p>
+    <p><strong>Fecha de Emisión:</strong> {{ devolucion.factura.fecha_emision|date:"d/m/Y" }}</p>
+
+    <h3>Detalle de la Devolución</h3>
     <table>
         <thead>
             <tr>
@@ -177,43 +172,36 @@
                 <th>Cant.</th>
                 <th>Precio</th>
                 <th>Subtotal</th>
-                <th>ITBIS</th>
-                <th>Desc.</th>
+                <th>Motivo</th>
             </tr>
         </thead>
         <tbody>
-        {% for detalle in factura.venta.detalles.all %}
+            {% for detalle in detalles %}
             <tr>
-                <td>{{ detalle.producto.nombre }}</td>
-                <td>{{ detalle.cantidad }}</td>
-                <td>{{ detalle.precio_unitario|floatformat:2 }}</td>
+                <td>{{ detalle.detalle.producto.nombre }}</td>
+                <td>{{ detalle.detalle.cantidad }}</td>
+                <td>{{ detalle.detalle.precio_unitario|floatformat:2 }}</td>
                 <td>{{ detalle.subtotal|floatformat:2 }}</td>
-                <td>{{ detalle.itbis|floatformat:2 }}</td>
-                <td>{{ detalle.cantidad_descuento|floatformat:2 }}</td>
+                <td>{{ detalle.detalle.get_motivo_display }}</td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 
-    <p class="subtotal"><strong>Subtotal:</strong> {{ total_subtotal|floatformat:2 }}</p>
-    <p class="itbis"><strong>ITBIS (18%):</strong> {{ total_itbis|floatformat:2 }}</p>
-    {% if total_descuento > 0 %}
-        <p class="descuento"><strong>Descuento:</strong> {{ total_descuento|floatformat:2 }}</p>
-    {% endif %}
-    <p class="total"><strong>Total:</strong> {{ factura.venta.total|floatformat:2 }}</p>
+    <p class="subtotal"><strong>Subtotal:</strong> {{ devolucion.subtotal|floatformat:2 }}</p>
+    <p class="impuesto"><strong>Impuesto:</strong> {{ devolucion.impuesto|floatformat:2 }}</p>
+    <p class="descuento"><strong>Descuento:</strong> {{ devolucion.descuento|floatformat:2 }}</p>
+    <p class="total"><strong>Total a Devolver:</strong> {{ devolucion.total_devolver|floatformat:2 }}</p>
 
-    <div class="politica">
-        <h4>Política de Devoluciones</h4>
-        <ul>
-            <li>Las devoluciones deben realizarse dentro de los <strong>30 días</strong> posteriores a la compra.</li>
-            <li>Los productos deben estar en su embalaje original y en buenas condiciones.</li>
-            <li>Se requiere presentar el comprobante de compra original para todas las devoluciones.</li>
-        </ul>
+    <div class="comentarios">
+        <h4>Comentarios</h4>
+        <p>{{ devolucion.comentarios|default:"Sin comentarios" }}</p>
     </div>
 
     <div class="footer">
-        <p>Gracias por su compra!</p>
-        <small>Visítenos nuevamente.</small>
+        <p>Este documento es un comprobante oficial de devolución.</p>
+        <small>Conserve este documento para cualquier consulta posterior.</small>
+        <small>Generado el {{ devolucion.fecha_devolucion|date:"d/m/Y H:i" }}</small>
     </div>
 </body>
 </html>
