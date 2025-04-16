@@ -34,12 +34,14 @@ def seller_required(view_func):
 def search_returns_view(request):
     employe = request.user
     user_groups = request.user.groups.values_list("name", flat=True)
+    low_stock_products = Producto.objects.filter(stock__lte=25)
 
     context = {
         "empleado": employe,
         "es_almacen": "Almacen" in user_groups,
         "es_vendedor": "Vendedor" in user_groups,
-        "facturas": [],  # Por si acaso se quiere usar sin resultados
+        "facturas": [],
+        'low_stock_products': low_stock_products,
     }
 
     if request.method == 'POST':

@@ -51,12 +51,14 @@ def ventas(request):
     products = Producto.objects.all()
     search_query = request.GET.get("search", "")
     user_groups = request.user.groups.values_list("name", flat=True)
+    low_stock_products = Producto.objects.filter(stock__lte=25)
 
     if search_query:
         products = products.filter(nombre__icontains=search_query)
 
     context = {
         "empleado": employe,
+        'low_stock_products': low_stock_products,
         "productos": products,
         "es_almacen": "Almacen" in user_groups,
         "es_vendedor": "Vendedor" in user_groups,

@@ -107,9 +107,11 @@ def product_view(request):
 
     # Obtener categorías
     categories = Categoria.objects.all()
+    low_stock_products = Producto.objects.filter(stock__lte=25)
 
     # Contexto para el template
     context = {
+        'low_stock_products': low_stock_products,
         'products': products,
         'categories': categories,
         'empleado': empleado,
