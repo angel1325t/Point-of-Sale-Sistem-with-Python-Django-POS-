@@ -25,8 +25,8 @@ urlpatterns = [
     path("problem/", views.technical_problem_view, name="technical_problem"), 
     path("logout/", views.logout_view, name='logout'), 
     path('email/<int:id>/', views.CreateCredentialsView.as_view(), name='email'),
-    path('profile/', views.profile, name='profile'),
-    path('profile/update-picture/', views.update_profile_picture, name='update_profile_picture'),
-    path('verify-email/<uuid:token>/', views.verify_email, name='verify_email'),
+    path('empleados/perfil/', views.profile, name='profile'),
+    path('empleados/perfil/cambiar-imagen/', views.update_profile_picture, name='update_profile_picture'),
+    path('empleados/verificar-email/<uuid:token>/', views.verify_email, name='verify_email'),
     
 ]

@@ -222,7 +222,7 @@ def profile(request):
                 "fecha_mostrada": fecha_mostrada,
                 "success": success
             }
-            return render(request, 'test/confirm_email_change.html', context)
+            return render(request, 'registration/confirm_email_change.html', context)
 
         except IntegrityError:
             error = "Este email ya está en uso por otro usuario."
@@ -237,13 +237,13 @@ def profile(request):
                 "fecha_mostrada": fecha_mostrada,
                 "error": error
             }
-            return render(request, 'test/confirm_email_change.html', context)
+            return render(request, 'registration/confirm_email_change.html', context)
 
     context = {
         "empleado": empleado,
         "fecha_mostrada": fecha_mostrada,
     }
-    return render(request, 'test/edit_profile.html', context)
+    return render(request, 'registration/edit_profile.html', context)
 
 @login_required
 def verify_email(request, token):
@@ -252,7 +252,7 @@ def verify_email(request, token):
         
         # Verificar si el email ya está en uso por otro usuario
         if User.objects.exclude(pk=request.user.pk).filter(email=verification_token.new_email).exists():
-            return render(request, 'test/confirm_email_change.html', {
+            return render(request, 'registration/confirm_email_change.html', {
                 "empleado": request.user,
                 "fecha_mostrada": "Nunca",
                 "error": "Este correo ya está en uso por otro usuario."
@@ -262,13 +262,13 @@ def verify_email(request, token):
         request.user.save()
         verification_token.is_verified = True
         verification_token.save()
-        return render(request, 'test/confirm_email_change.html', {
+        return render(request, 'registration/confirm_email_change.html', {
             "empleado": request.user,
             "fecha_mostrada": "Nunca",
             "success": "Email verificado correctamente."
         })
     except EmailVerificationToken.DoesNotExist:
-        return render(request, 'test/confirm_email_change.html', {
+        return render(request, 'registration/confirm_email_change.html', {
             "empleado": request.user,
             "fecha_mostrada": "Nunca",
             "error": "Token de verificación inválido o ya utilizado."
