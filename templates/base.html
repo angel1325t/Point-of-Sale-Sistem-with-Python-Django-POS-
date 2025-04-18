@@ -24,7 +24,7 @@
     <script src="{% static 'js/global_loader.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet">
-
+{% comment %} 
 <style>
   .notyf__toast {
     border-radius: 6px;
@@ -170,7 +170,7 @@
             }
         };
     });
-</script>
+</script> {% endcomment %}
     {% block scripts %}{% endblock %}
 </body>
 </html>

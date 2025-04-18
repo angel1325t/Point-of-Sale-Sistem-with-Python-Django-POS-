@@ -52,10 +52,10 @@
                                                 </span>
                                             </div>
                                             <div class="text-sm text-gray-600">
-                                                <span class="font-semibold text-gray-900">{{ product.name }}</span> está casi agotado.
+                                                <span class="font-semibold text-gray-900">{{ product.nombre }}</span> está casi agotado.
                                             </div>
                                             <div class="mt-1">
-                                                <a href="{% url 'products' %}" class="text-xs font-medium text-blue-600 hover:underline">Revisar inventario</a>
+                                                <a href="/empleados/productos/?search={{product.nombre}}&category={{product.categoria_id}}&precio_min={{product.precio}}&precio_max={{product.precio}}" class="text-xs font-medium text-blue-600 hover:underline">Revisar inventario</a>
                                             </div>
                                         </div>
                                     </div>

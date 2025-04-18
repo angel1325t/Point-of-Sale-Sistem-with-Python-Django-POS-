@@ -15,6 +15,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
+from django.http import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def user_is_not_wareHouse(user):
@@ -34,8 +36,7 @@ def seller_required(view_func):
 def search_returns_view(request):
     employe = request.user
     user_groups = request.user.groups.values_list("name", flat=True)
-    low_stock_products = Producto.objects.filter(stock__lte=25)
-
+    low_stock_products = Producto.objects.filter(stock__lte=25, activo=True).order_by('-created_at')
     context = {
         "empleado": employe,
         "es_almacen": "Almacen" in user_groups,
@@ -81,16 +82,7 @@ def search_returns_view(request):
         context['facturas'] = results
 
     return render(request, 'returns/returns.html', context)
-from django.http import JsonResponse
-from django.db import transaction
-from datetime import datetime, timedelta
-from django.core.exceptions import ValidationError
 
-from django.http import JsonResponse
-from django.db import transaction
-from datetime import datetime, timedelta
-from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
 
 @seller_required
 @login_required

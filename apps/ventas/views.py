@@ -51,7 +51,7 @@ def ventas(request):
     products = Producto.objects.all()
     search_query = request.GET.get("search", "")
     user_groups = request.user.groups.values_list("name", flat=True)
-    low_stock_products = Producto.objects.filter(stock__lte=25)
+    low_stock_products = Producto.objects.filter(stock__lte=25, activo=True).order_by('-created_at')
 
     if search_query:
         products = products.filter(nombre__icontains=search_query)

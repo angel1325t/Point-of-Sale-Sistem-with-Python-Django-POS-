@@ -20,5 +20,6 @@ from . import views
 
 urlpatterns = [
     path("productos/", views.product_view, name='products'),
-    path("update_product/<int:product_id>", views.update_product, name='update_product'),
+    path("actualizar_producto/<int:product_id>", views.update_product, name='update_product'),
+    path('imprimir_qr/<int:product_id>/generate-qr/', views.generate_qr_pdf, name='generate_qr_pdf'),
 ]

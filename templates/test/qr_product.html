@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Códigos QR</title>
+    <link rel="stylesheet" href="{% static 'css/globa.css' %}">
+    <link rel="stylesheet" href="{% static 'css/loader.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.0.0/dist/flowbite.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">  
+    <link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <!-- Botón para abrir el modal -->
+    <button id="openModalBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300">
+        Generar Código QR
+    </button>
+
+    <!-- Fondo oscuro del modal -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <!-- Modal -->
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <!-- Encabezado del modal -->
+            <div class="flex justify-between items-center border-b p-4">
+                <h3 class="text-lg font-semibold text-gray-700">Generador de Códigos QR</h3>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Contenido del modal -->
+            <div class="p-6">
+                <form>
+                    <!-- Cantidad de QR a imprimir -->
+                    <div class="mb-6">
+                        <label for="qrQuantity" class="block text-sm font-medium text-gray-700 mb-2">Cantidad de QR a imprimir</label>
+                        <input type="number" id="qrQuantity" min="1" value="1" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <!-- Tamaño del QR -->
+                    <div class="mb-6">
+                        <label for="qrSize" class="block text-sm font-medium text-gray-700 mb-2">Tamaño del QR</label>
+                        <select id="qrSize" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white">
+                            <option value="small">Pequeño (128px)</option>
+                            <option value="medium" selected>Mediano (256px)</option>
+                            <option value="large">Grande (512px)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Campo adicional: Datos para el QR -->
+                    <div class="mb-6">
+                        <label for="qrData" class="block text-sm font-medium text-gray-700 mb-2">Datos para el QR</label>
+                        <input type="text" id="qrData" placeholder="URL o texto para generar el QR" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Pie del modal con botón de acción -->
+            <div class="bg-gray-100 px-6 py-4 rounded-b-lg">
+                <button id="generateQRBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-md flex items-center justify-center transition duration-300">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Generar Código QR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos del DOM
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const generateQRBtn = document.getElementById('generateQRBtn');
+        
+        // Abrir el modal
+        openModalBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('hidden');
+        });
+        
+        // Cerrar el modal
+        closeModalBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('hidden');
+        });
+        
+        // Cerrar el modal haciendo clic fuera de él
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.add('hidden');
+            }
+        });
+        
+        // Botón de generar QR (aquí iría la lógica para generar el QR)
+        generateQRBtn.addEventListener('click', () => {
+            const quantity = document.getElementById('qrQuantity').value;
+            const size = document.getElementById('qrSize').value;
+            const data = document.getElementById('qrData').value;
+            
+            // Aquí iría la lógica para generar el QR con los valores seleccionados
+            alert(`Generando ${quantity} código(s) QR de tamaño ${size} con los datos: ${data}`);
+            
+            // Cerrar el modal después de generar
+            modalOverlay.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
