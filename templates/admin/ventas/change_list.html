@@ -35,6 +35,7 @@
         font-weight: 600;
         display: flex;
         align-items: center;
+        justify-content: space-between; /* Adjusted for button alignment */
     }
     
     .stats-header i {
@@ -68,8 +69,6 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-    
-        /* Responsive width */
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
@@ -86,8 +85,6 @@
         border-radius: 0.25rem;
         padding: 0.5rem 1rem;
         transition: all 0.2s ease;
-    
-        /* Full width */
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
@@ -109,11 +106,8 @@
         color: var(--darkly-text);
         margin-bottom: 0.5rem;
         font-weight: 500;
-    
-        /* Full width labels for alignment */
         display: block;
     }
-    
     
     .chart-title {
         color: var(--darkly-text);
@@ -207,11 +201,37 @@
     .bx {
         vertical-align: middle;
     }
+    .pdf-download-btn {
+        background-color: transparent;
+        color: white;
+        border: 2px solid #282828;
+        border-radius: 0.25rem;
+        padding: 10px 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-weight: 400;
+        transition: all 0.2s ease;
+    }
     
+    .pdf-download-btn:hover {
+        color: white;
+        text-decoration: none;
+        background-color: #282828;
+    }
+    
+    .pdf-download-btn i {
+        font-size: 1.2rem;
+        margin-right: 8px;
+    }
+
     @media (max-width: 768px) {
-        .stats-header {
-            font-size: 1.4rem;
-        }
+            .stats-header {
+                font-size: 1.4rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
         
         .stats-container {
             padding: 15px 10px;
@@ -226,6 +246,12 @@
         .stat-card {
             margin-bottom: 15px;
         }
+        
+        .pdf-download-btn {
+            margin-top: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 {% endblock %}
@@ -237,14 +263,19 @@
     <div class="row">
         <div class="col-12">
             <h2 class="stats-header">
-                <i class="bx bx-bar-chart-alt-2"></i> Estadísticas de Ventas
+                <span>
+                    <i class="bx bx-bar-chart-alt-2"></i> Estadísticas de Ventas
+                </span>
+                <a href="{% url 'sale_pdf' %}" class="pdf-download-btn btn">
+                    <i class="bx bx-file"></i> Descargar Reporte PDF
+                </a>
             </h2>
         </div>
     </div>
 
     <!-- Filtros -->
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3 mb-md-0">
+    <div class="mb-4 row">
+        <div class="mb-3 col-md-4 mb-md-0">
             <div class="stat-card success">
                 <h6 class="text-muted">
                     <i class="bx bx-money"></i> Total de Ganancias
@@ -252,7 +283,7 @@
                 <h3 class="text-success">${{ total_ganancias|floatformat:2 }}</h3>
             </div>
         </div>
-        <div class="col-md-4 mb-3 mb-md-0">
+        <div class="mb-3 col-md-4 mb-md-0">
             <div class="stat-card info">
                 <h6 class="text-muted">
                     <i class="bx bx-cart"></i> Total de Ventas
@@ -260,7 +291,7 @@
                 <h3 class="text-info">{{ total_ventas }}</h3>
             </div>
         </div>
-        <div class="col-md-4 mb-3 mb-md-0">
+        <div class="mb-3 col-md-4 mb-md-0">
             <div class="stat-card warning">
                 <h6 class="text-muted">
                     <i class="bx bx-star"></i> Producto Más Vendido
@@ -270,7 +301,7 @@
         </div>
     </div>
     
-    <div class="row mb-4">
+    <div class="mb-4 row">
         <div class="col-12">
             <div class="filter-card">
                 <div class="form-group">
@@ -319,6 +350,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'js/admin/chart2.js' %}"></script>
+<script src="{% static 'js/admin/charts.js' %}"></script>
 {% endif %}
-{% endblock %}  
+{% endblock %}

@@ -22,4 +22,5 @@ urlpatterns = [
     path('devoluciones/', views.search_returns_view, name='returns'),
     path('procesar_devolucion/', views.process_return_view, name='process_return'),
     path('devoluciones/<int:devolucion_id>/pdf/', views.download_return_receipt_pdf, name='descargar_comprobante_devolucion_pdf'),
+    
 ]

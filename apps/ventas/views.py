@@ -17,6 +17,7 @@ from ..productos.models import Producto
 from django.db.models import F
 from django.db.models import Sum
 stripe.api_key = settings.STRIPE_SECRET_KEY
+from io import BytesIO
 
 def user_is_not_wareHouse(user):
     # Verifica si el usuario NO pertenece al grupo 'Almacen'
@@ -128,14 +129,13 @@ def process_sale(request):
 
             # Crear la venta
             sale = Venta.objects.create(
-                empleado=employee, total=total, metodo_pago=payment_method, fecha=now()
+                empleado=employee, total=total, metodo_pago=payment_method, fecha=timezone.now()
             )
             # Crear número de factura
-            parte_fecha = datetime.now().strftime("%Y") if True else ""
+            parte_fecha = datetime.now().strftime("%Y")
             numero_factura = f"EF{parte_fecha}-{str(sale.id_venta).zfill(6)}"
             # Crear la factura
             factura = Factura.objects.create(venta=sale, numero_factura=numero_factura)
-
 
             # Obtener productos en una sola consulta
             product_ids = [item["id"] for item in data["products"]]
@@ -156,8 +156,17 @@ def process_sale(request):
 
                 product = products_dict[product_id]
 
-                discount = item["discount"]
                 quantity = Decimal(item["quantity"])
+                if product.stock < int(quantity):
+                    return JsonResponse(
+                        {
+                            "success": False,
+                            "message": f"Stock insuficiente para {product.nombre}",
+                        },
+                        status=400,
+                    )
+
+                discount = item["discount"]
                 unit_price = Decimal(str(item["price"]))
                 subtotal = quantity * unit_price
                 tax = subtotal * Decimal("0.18")
@@ -491,7 +500,7 @@ def descargar_factura_pdf(request, sale_id):
     }
     
     # Genera el contenido PDF a partir de la plantilla
-    pdf_content = render_to_pdf("ventas/factura_pdf.html", context)
+    pdf_content = render_to_pdf("ventas/bill_pdf.html", context)
     
     if pdf_content:
         # Responde con el archivo PDF para descarga
@@ -689,3 +698,108 @@ def chart_data(request):
         "labels": labels,
         "values": values
     })
+
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from io import BytesIO
+from weasyprint import HTML
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+from datetime import timedelta
+from django.db.models import Sum, F, DecimalField
+from django.db.models.expressions import ExpressionWrapper
+from .models import Venta, DetalleVenta
+
+def sale_pdf(request):
+    print("Iniciando generación de reporte PDF...")
+
+    # Fecha actual
+    current_date = timezone.now()
+    print(f"Fecha actual: {current_date}")
+
+    # Calcular inicio y fin del mes
+    start_of_month = current_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    end_of_month = start_of_month + relativedelta(months=1) - timedelta(seconds=1)
+    print(f"Inicio del mes: {start_of_month}, Fin del mes: {end_of_month}")
+
+    # Verificar presencia de datos
+    total_ventas = Venta.objects.count()
+    print(f"Total de ventas en la base de datos: {total_ventas}")
+    
+    earliest_sale = Venta.objects.order_by('fecha').first()
+    latest_sale = Venta.objects.order_by('-fecha').first()
+    print(f"Fecha más antigua: {earliest_sale.fecha if earliest_sale else 'Ninguna'}")
+    print(f"Fecha más reciente: {latest_sale.fecha if latest_sale else 'Ninguna'}")
+    
+    # Ventas del mes actual usando rango
+    ventas_this_month = Venta.objects.filter(
+        fecha__gte=start_of_month,
+        fecha__lte=end_of_month
+    ).count()
+    print(f"Ventas en el mes actual: {ventas_this_month}")
+
+    # Ingresos
+    income_total = Venta.objects.filter(
+        fecha__gte=start_of_month,
+        fecha__lte=end_of_month
+    ).aggregate(total=Sum('total'))['total'] or 0
+    print(f"Ingresos del mes: {income_total}")
+
+    # Egresos
+    expense_total = DetalleVenta.objects.filter(
+        venta__fecha__gte=start_of_month,
+        venta__fecha__lte=end_of_month
+    ).annotate(
+        costo_total=ExpressionWrapper(
+            F('cantidad') * F('producto__costo'),
+            output_field=DecimalField()
+        )
+    ).aggregate(total=Sum('costo_total'))['total'] or 0
+    print(f"Egresos del mes: {expense_total}")
+
+    # Top 5 productos más vendidos
+    top_products = DetalleVenta.objects.filter(
+        venta__fecha__gte=start_of_month,
+        venta__fecha__lte=end_of_month
+    ).values('producto__nombre').annotate(
+        total_sold=Sum('cantidad')
+    ).order_by('-total_sold')[:5]
+    print("Top 5 productos más vendidos:")
+    for p in top_products:
+        print(f" - {p['producto__nombre']}: {p['total_sold']} unidades")
+
+    # Ventas por categoría
+    sales_by_category = DetalleVenta.objects.filter(
+        venta__fecha__gte=start_of_month,
+        venta__fecha__lte=end_of_month
+    ).values('producto__categoria__nombre_categoria').annotate(
+        total_sales=Sum('subtotal')
+    ).order_by('-total_sales')
+    print("Ventas por categoría:")
+    for c in sales_by_category:
+        print(f" - {c['producto__categoria__nombre_categoria']}: ${c['total_sales']}")
+
+    # Generación del HTML desde la plantilla
+    print("Generando contenido HTML desde la plantilla...")
+    context = {
+        'current_date': current_date,
+        'income_total': income_total,
+        'expense_total': expense_total,
+        'balance': income_total - expense_total,
+        'top_products': top_products,
+        'sales_by_category': sales_by_category,
+    }
+    html_string = render_to_string('ventas/sales_report.html', context)
+
+    print("Convirtiendo HTML a PDF con WeasyPrint...")
+    pdf_file = BytesIO()
+    HTML(string=html_string).write_pdf(pdf_file)
+    pdf_file.seek(0)
+
+    print("Preparando respuesta HTTP con el PDF adjunto...")
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="reporte_ventas_{current_date.strftime("%Y_%m")}.pdf"'
+    response.write(pdf_file.read())
+
+    print("Reporte generado exitosamente.")
+    return response

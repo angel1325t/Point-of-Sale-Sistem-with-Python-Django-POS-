@@ -1,4 +1,3 @@
-# my_app/utils.py
 import random
 import string
 

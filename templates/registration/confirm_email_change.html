@@ -1,36 +1,87 @@
-
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Email{% endblock %}
-{% if error %}
-<div class="bg-white p-6 rounded-xl shadow-md w-full border-t-4 border-red-500 mb-4">
-    <div class="flex items-start">
-        <div class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-red-100 text-red-500 mr-4 flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen px-4 py-16 bg-gradient-to-br from-blue-100 to-indigo-200 sm:px-6 lg:px-8">
+    <!-- Tarjeta única principal -->
+    <div class="w-full max-w-lg overflow-hidden transition-all duration-300 bg-white shadow-2xl rounded-xl">
+        <!-- Franja superior de color -->
+        <div class="w-full h-3 bg-blue-800"></div>
+        
+        <!-- Cabecera con icono -->
+        <div class="p-8 text-center border-b border-gray-100">
+            <div class="inline-flex items-center justify-center w-20 h-20 mb-4 text-blue-800 bg-blue-100 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h2 class="mb-2 text-3xl font-extrabold text-gray-900">
+                Verificación de Email
+            </h2>
+            <p class="text-gray-600">
+                Sistema de verificación de correo electrónico
+            </p>
         </div>
-        <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-1">Error</h3>
-            <p class="text-gray-600">{{ error }}</p>
-        </div>
-    </div>
-</div>
-{% endif %}
+        
+        <!-- Contenido de estado (Error, Éxito o Default) -->
+        <div class="p-8 bg-gray-50">
+            {% if error %}
+            <div class="flex items-start p-4 mb-4 bg-white border-l-4 border-red-500 rounded-lg shadow-sm">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 mr-4 text-red-500 bg-red-100 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="mb-1 text-lg font-semibold text-gray-800">Error</h3>
+                    <p class="text-gray-600">
+                        {{ error }}
+                        {% if error == "Debes iniciar sesión para verificar tu correo." %}
+                        <a href="{% url 'login' %}" class="font-medium text-blue-600 hover:underline">Inicia sesión aquí</a>.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
 
-{% if success %}
-<div class="bg-white p-6 rounded-xl shadow-md w-full border-t-4 border-[#2234B9] mb-4">
-    <div class="flex items-start">
-        <div class="inline-flex items-center justify-center h-12 w-12 rounded-full bg-[#2234B9]/10 text-[#2234B9] mr-4 flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
+            {% if success %}
+            <div class="flex items-start p-4 mb-4 bg-white border-l-4 border-[#2234B9] rounded-lg shadow-sm">
+                <div class="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 mr-4 text-[#2234B9] bg-[#2234B9]/10 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="mb-1 text-lg font-semibold text-gray-800">Éxito</h3>
+                    <p class="text-gray-600">{{ success }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if not error and not success %}
+            <div class="p-4 text-center bg-white rounded-lg shadow-sm">
+                <div class="p-4 mb-4 rounded-lg bg-blue-50">
+                    <p class="font-medium text-blue-800">Por favor, verifica tu correo electrónico para continuar con el proceso de registro.</p>
+                </div>
+                <p class="text-sm text-gray-600">Hemos enviado un enlace de verificación a tu dirección de correo electrónico. Si no lo encuentras, revisa tu carpeta de spam.</p>
+            </div>
+            {% endif %}
         </div>
-        <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-1">Éxito</h3>
-            <p class="text-gray-600">{{ success }}</p>
+        
+        <!-- Botón de acción -->
+        <div class="flex justify-center p-8 border-t border-gray-100">
+            <a href="{% url 'login' %}" class="inline-flex items-center justify-center px-6 py-3 text-base font-medium text-white transition-all bg-blue-800 rounded-lg shadow-md hover:bg-blue-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Volver al inicio
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+            </a>
         </div>
     </div>
+
+    <!-- Pie de página -->
+    <div class="mt-6 text-sm text-center text-gray-500">
+        <p>&copy; {% now "Y" %} Tu Empresa. Todos los derechos reservados.</p>
+    </div>
 </div>
-{% endif %}
 {% endblock %}

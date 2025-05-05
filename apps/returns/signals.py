@@ -1,7 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import DetalleDevolucion
-from apps.productos.models import Producto
 
 @receiver(post_save, sender=DetalleDevolucion)
 def replenish_stock(sender, instance, created, **kwargs):

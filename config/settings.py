@@ -77,11 +77,12 @@ JAZZMIN_SETTINGS = {
         "productos.categoria": "fas fa-boxes-stacked",
         "productos.producto": "fas fa-tag",
         "productos.suministradores": "fas fa-user-tag",
+        "returns.devolucion": "fa-solid fa-arrow-rotate-left",
         "auth.group": "fas fa-gears",
     },
     "custom_css": "admin/css/custom.css",
     "changeform_format": "vertical",
-    
+    "hide_models": ["sites.Site"],
 }
 
 
@@ -208,9 +209,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'angelalexanderperezmartinez47@gmail.com'
-EMAIL_HOST_PASSWORD = 'mgvo xklt hpfh vpas'
+EMAIL_HOST_PASSWORD = 'bzze hhcd qurk ihde'
 DEFAULT_FROM_EMAIL = 'angelalexanderperezmartinez47@gmail.com'
-
 HUNTER_API_KEY = "70180b1a15e6904ef2d1314ca055ce27a0e28718"
-
 AUTH_USER_MODEL = "users.CustomUser"

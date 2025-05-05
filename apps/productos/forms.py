@@ -43,6 +43,19 @@ class AddProductForm(forms.ModelForm):
                     "placeholder": "Precio del producto",
                 }
             ),
+            "costo": forms.NumberInput(
+                attrs={
+                    "class": "form-control mb-3",
+                    "step": "0.01",
+                    "placeholder": "costo del producto",
+                }
+            ),
+            "descuento": forms.NumberInput(
+                attrs={
+                    "class": "form-control mb-3",
+                    "placeholder": "descuento del producto",
+                }
+            ),
             "stock": forms.NumberInput(
                 attrs={
                     "class": "form-control mb-3",

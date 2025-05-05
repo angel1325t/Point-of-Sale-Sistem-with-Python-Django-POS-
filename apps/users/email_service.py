@@ -79,17 +79,21 @@ class EmailService:
         </html>
         """
 
-    def send_email(self):
+    def send_email(self, recipient_email=None, subject=None, html_content=None):
+        """Envía un correo electrónico, permitiendo personalizar el destinatario, asunto y contenido HTML"""
+        recipient = recipient_email if recipient_email else self.user.email
+        subject = subject if subject else self.subject
+        html_content = html_content if html_content else self.html_content
+
         try:
             send_mail(
-                self.subject,
+                subject,
                 "",
                 'angelalexanderperezmartinez47@gmail.com',
-                [self.user.email],
-                html_message=self.html_content
+                [recipient],
+                html_message=html_content
             )
-            logger.info(f"Correo enviado correctamente a {self.user.email}")
-
+            logger.info(f"Correo enviado correctamente a {recipient}")
         except BadHeaderError:
             logger.error("Error: Cabecera inválida en el correo.")
         except SMTPException as e:

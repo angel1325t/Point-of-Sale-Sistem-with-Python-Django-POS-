@@ -15,80 +15,14 @@
                     <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">PuntoXpress</span>
             </div>
             <div class="flex items-center lg:order-2">
-                <!-- Notifications -->
-                <button type="button" data-dropdown-toggle="notification-dropdown" class="p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 focus:ring-4 focus:ring-gray-300">
-                    <span class="sr-only">View notifications</span>
-                    <!-- Bell icon -->
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 20"><path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z"/></svg>
-                </button>
-                <!-- Dropdown menu -->
-                <div class="hidden overflow-hidden z-50 my-4 max-w-sm md:max-w-md w-full bg-white rounded-lg shadow-lg border border-gray-200" id="notification-dropdown">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-                        <h5 class="text-lg font-semibold text-gray-900">Notifications</h5>
-                        {% if low_stock_products %}
-                            <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ low_stock_products|length }} Alerts</span>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Product notifications with scroll - fixed height -->
-                    <div class="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" id="notification-container">
-                        <div class="divide-y divide-gray-100">
-                            {% if low_stock_products %}
-                                {% for product in low_stock_products %}
-                                    <div class="flex items-center px-4 py-3 hover:bg-gray-50">
-                                        <div class="flex-shrink-0">
-                                            <img class="w-12 h-12 rounded-full object-cover border border-gray-200" 
-                                                 src="{% if product.image %}{{ product.image.url }}{% else %}https://via.placeholder.com/48{% endif %}" 
-                                                 alt="{{ product.name }} image">
-                                        </div>
-                                        <div class="pl-3 w-full">
-                                            <div class="flex justify-between items-start">
-                                                <div class="text-gray-800 font-medium">
-                                                    Alerta de Bajo Stock
-                                                </div>
-                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
-                                                    {{ product.stock }} unidades
-                                                </span>
-                                            </div>
-                                            <div class="text-sm text-gray-600">
-                                                <span class="font-semibold text-gray-900">{{ product.nombre }}</span> está casi agotado.
-                                            </div>
-                                            <div class="mt-1">
-                                                <a href="/empleados/productos/?search={{product.nombre}}&category={{product.categoria_id}}&precio_min={{product.precio}}&precio_max={{product.precio}}" class="text-xs font-medium text-blue-600 hover:underline">Revisar inventario</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="py-6 px-4 text-gray-500 font-normal text-sm text-center">
-                                    <svg class="mx-auto mb-2 w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <p>No low stock products at the moment.</p>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Footer -->
-                    <a href="{% url 'products' %}" class="block py-3 text-center font-medium text-gray-900 bg-gray-50 hover:bg-gray-100">
-                        <div class="inline-flex items-center">
-                            <svg aria-hidden="true" class="mr-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
-                            </svg>
-                            Ver inventario
-                        </div>
-                    </a>
-                </div>
+                {% if es_vendedor %}
                 <button type="button" class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
                     <span class="sr-only">Open user menu</span>
                     <img class="w-8 h-8 rounded-full" src="../../media/{{ empleado.profile_image }}" alt="user photo">
                 </button>
                 <!-- Dropdown menu -->
-                <div class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow" id="dropdown">
-                    <div class="py-3 px-4">
+                <div class="z-50 hidden w-56 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow" id="dropdown">
+                    <div class="px-4 py-3">
                         <span class="block text-sm font-semibold text-gray-900">{{empleado.username}}</span>
                         <div class="relative">
                             <span class="block text-sm text-gray-500 truncate cursor-pointer"
@@ -106,19 +40,133 @@
                     </div>
                     <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
                         <li>
-                            <a href="{% url 'profile' %}" class="block py-2 px-4 text-sm hover:bg-gray-100 hover:text-blue-800">Mi perfil</a>
+                            <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-800">Mi perfil</a>
                         </li>
                     </ul>   
                     <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
-                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                        <form id="logout-form-dropdown" action="{% url 'logout' %}" method="post" style="display: none;">
                             {% csrf_token %}
                         </form>
                         <li>
-                            <a href="#" onclick="document.getElementById('logout-form').submit(); return false;" class="block py-2 px-4 text-sm hover:bg-gray-100 hover:text-red-600 ">Cerrar sesion</a>
+                            <a href="#" onclick="document.getElementById('logout-form-dropdown').submit(); return false;" class="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-red-600 ">Cerrar sesion</a>
                         </li>
                     </ul>
                     
                 </div>
+                {% else %}
+                <!-- Notifications -->
+                <button type="button" data-dropdown-toggle="notification-dropdown" class="relative p-2 mr-1 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100">
+                    <span class="sr-only">View notificaciones</span>
+                    <!-- Bell icon -->
+                    <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 14 20">
+                        <path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z"/>
+                    </svg>
+                    <!-- Red notification badge -->
+                    {% if low_stock_products|length > 0 %}
+                    <div class="absolute inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full -bottom-1 -right-1">
+                        {{ low_stock_products|length }}
+                    </div>
+                    {% endif %}
+                </button>
+                <!-- Dropdown menu -->
+                <div class="z-50 hidden w-full max-w-sm my-4 overflow-hidden bg-white border border-gray-200 rounded-lg shadow-lg md:max-w-md" id="notification-dropdown">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                        <h5 class="text-lg font-semibold text-gray-900">Notificaciones</h5>
+                        {% if low_stock_products %}
+                            <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">{{ low_stock_products|length }} Alerts</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Product notifications with scroll - fixed height -->
+                    <div class="overflow-y-auto max-h-80 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" id="notification-container">
+                        <div class="divide-y divide-gray-100">
+                            {% if low_stock_products %}
+                                {% for product in low_stock_products %}
+                                    <div class="flex items-center px-4 py-3 hover:bg-gray-50">
+                                        <div class="flex-shrink-0">
+                                            <img class="object-cover w-12 h-12 border border-gray-200 rounded-full" 
+                                                 src="{% if product.image %}{{ product.image.url }}{% else %}https://via.placeholder.com/48{% endif %}" 
+                                                 alt="{{ product.name }} image">
+                                        </div>
+                                        <div class="w-full pl-3">
+                                            <div class="flex items-start justify-between">
+                                                <div class="font-medium text-gray-800">
+                                                    Alerta de Bajo Stock
+                                                </div>
+                                                <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded">
+                                                    {{ product.stock }} unidades
+                                                </span>
+                                            </div>
+                                            <div class="text-sm text-gray-600">
+                                                <span class="font-semibold text-gray-900">{{ product.nombre }}</span> está casi agotado.
+                                            </div>
+                                            <div class="mt-1">
+                                                <a href="/empleados/productos/?search={{product.nombre}}&category={{product.categoria_id}}&precio_min={{product.precio}}&precio_max={{product.precio}}" class="text-xs font-medium text-blue-600 hover:underline">Revisar inventario</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="px-4 py-6 text-sm font-normal text-center text-gray-500">
+                                    <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <p>No Hay Productos Son Bajo Stock En Este Momento</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <a href="{% url 'products' %}" class="block py-3 font-medium text-center text-gray-900 bg-gray-50 hover:bg-gray-100">
+                        <div class="inline-flex items-center">
+                            <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            Ver inventario
+                        </div>
+                    </a>
+                </div>
+                <button type="button" class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="dropdown">
+                    <span class="sr-only">Open user menu</span>
+                    <img class="w-8 h-8 rounded-full" src="../../media/{{ empleado.profile_image }}" alt="user photo">
+                </button>
+                <!-- Dropdown menu -->
+                <div class="z-50 hidden w-56 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow" id="dropdown">
+                    <div class="px-4 py-3">
+                        <span class="block text-sm font-semibold text-gray-900">{{empleado.username}}</span>
+                        <div class="relative">
+                            <span class="block text-sm text-gray-500 truncate cursor-pointer"
+                                data-tooltip-target="tooltip-animation">
+                                {{ empleado.email }}
+                            </span>
+                        
+                            <div id="tooltip-animation" role="tooltip"
+                                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-700 rounded-lg shadow-xs opacity-0 tooltip">
+                                {{ empleado.email }}
+                                <div class="tooltip-arrow" data-popper-arrow></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
+                        <li>
+                            <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-blue-800">Mi perfil</a>
+                        </li>
+                    </ul>   
+                    <ul class="py-1 text-gray-500" aria-labelledby="dropdown">
+                        <form id="logout-form-dropdown" action="{% url 'logout' %}" method="post" style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                        <li>
+                            <a href="#" onclick="document.getElementById('logout-form-dropdown').submit(); return false;" class="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-red-600 ">Cerrar sesion</a>
+                        </li>
+                    </ul>
+                    
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -192,8 +240,8 @@
 <div class="sm:ml-64">
 <main class="px-2 mt-20">
     <header class="mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <h1 class="sm:text-3xl md:text-2xl text-lg font-bold text-gray-800 truncate">Sistema de Punto de Venta</h1>
+        <div class="flex flex-col items-center justify-between md:flex-row">
+          <h1 class="text-lg font-bold text-gray-800 truncate sm:text-3xl md:text-2xl">Sistema de Punto de Venta</h1>
           <div class="text-sm text-gray-600">
             <p id="current-date-time"></p>
             <p>Empleado: {{ empleado.username }}</p>

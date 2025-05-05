@@ -12,7 +12,7 @@ function hideLoader() {
 window.addEventListener("load", function () {
     hideLoader();
 });
-
+22
 // Mostrar el loader al enviar formularios
 document.querySelectorAll('form').forEach(form => {
     form.addEventListener('submit', function () {

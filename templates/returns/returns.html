@@ -3,7 +3,7 @@
 {% block title %}Sistema de Devoluciones{% endblock %}
 {% block section1 %}
 <link rel="stylesheet" href="{% static 'css/login/login_alert.css' %}">
-<div class="fixed top-4 right-4 z-50 space-y-2">
+<div class="fixed z-50 space-y-2 top-4 right-4">
   {% for message in messages %}
   <div class="relative transition-transform duration-300 ease-in-out transform animate-slide-in alert-box">
       <div class="p-4 rounded-lg shadow-lg text-sm relative 
@@ -19,20 +19,20 @@
   </div>
   {% endfor %}
 </div>
-<div class="min-h-screen bg-gray-50 px-4 py-6 md:px-6">
+<div class="min-h-screen px-4 py-6 bg-gray-50 md:px-6">
   <!-- Header mejorado -->
-  <header class="mb-8 bg-white rounded-lg shadow-sm p-4 md:p-6 border-l-4 border-blue-700">
+  <header class="p-4 mb-8 bg-white border-l-4 border-blue-700 rounded-lg shadow-sm md:p-6">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Devoluciones de Productos</h1>
+        <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Devoluciones de Productos</h1>
         <p class="text-gray-600">Gestión de devoluciones y reembolsos</p>
       </div>
     </div>
   </header>
 
 <!-- Search Section mejorado -->
-<div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 border border-gray-100">
-  <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+<div class="p-4 mb-6 bg-white border border-gray-100 rounded-lg shadow-md md:p-6">
+  <h2 class="flex items-center mb-4 text-lg font-semibold text-gray-800 md:text-xl">
     <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
     </svg>
@@ -42,17 +42,17 @@
     {% csrf_token %}
     <div class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Número de Factura</label>
+        <label class="block mb-1 text-sm font-medium text-gray-700">Número de Factura</label>
         <div class="relative">
           <input 
             type="text" 
             placeholder="Ej: F-0012345" 
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-700 focus:border-blue-700" 
+            class="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-700 focus:border-blue-700" 
             name="numero_factura"
             id="search-input"
           >
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
             </svg>
           </div>
@@ -63,7 +63,7 @@
       <button 
         id="search-button"
         type="submit" 
-        class="bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-800 transition-colors flex items-center" 
+        class="flex items-center px-6 py-2 text-white transition-colors bg-blue-700 rounded-md hover:bg-blue-800" 
         disabled
       >
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -76,8 +76,8 @@
 </div>
 
   <!-- Información de Venta -->
-  <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 border border-gray-100">
-    <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+  <div class="p-4 mb-6 bg-white border border-gray-100 rounded-lg shadow-md md:p-6">
+    <h2 class="flex items-center mb-4 text-lg font-semibold text-gray-800 md:text-xl">
       <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
       </svg>
@@ -85,16 +85,16 @@
     </h2>
     {% if facturas %}
       {% for factura in facturas %}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-        <div class="bg-gray-50 p-3 rounded-lg">
+      <div class="grid grid-cols-1 gap-3 mb-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="p-3 rounded-lg bg-gray-50">
           <p class="text-sm text-gray-500">Factura</p>
           <p class="font-medium">{{ factura.numero_factura }}</p>
         </div>
-        <div class="bg-gray-50 p-3 rounded-lg">
+        <div class="p-3 rounded-lg bg-gray-50">
           <p class="text-sm text-gray-500">Fecha</p>
           <p class="font-medium">{{ factura.fecha_venta }}</p>
         </div>
-        <div class="bg-gray-50 p-3 rounded-lg">
+        <div class="p-3 rounded-lg bg-gray-50">
           <p class="text-sm text-gray-500">Vendedor</p>
           <p class="font-medium">{{ factura.vendedor }}</p>
         </div>
@@ -107,14 +107,14 @@
 
 <!-- Productos a Devolver -->
 {% for factura in facturas %}
-<div class="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6 border border-gray-100">
-  <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+<div class="p-4 mb-6 bg-white border border-gray-100 rounded-lg shadow-md md:p-6">
+  <h2 class="flex items-center mb-4 text-lg font-semibold text-gray-800 md:text-xl">
     <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
     </svg>
     Factura {{ factura.numero_factura }} - Productos a Devolver
   </h2>
-  <p class="text-gray-600 mb-4">Selecciona los productos que se devolverán y especifica el motivo</p>
+  <p class="mb-4 text-gray-600">Selecciona los productos que se devolverán y especifica el motivo</p>
   <form id="return-form" method="post">
     {% csrf_token %}
     <input type="hidden" name="factura_id" value="{{ factura.id }}">
@@ -122,32 +122,32 @@
       <table class="min-w-full divide-y divide-gray-200" data-factura-id="{{ factura.id }}">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <input type="checkbox" class="select-all h-4 w-4 text-blue-700 rounded bg-gray-200 border-gray-300 focus:ring-blue-700">
+            <th class="px-2 py-2 text-xs font-medium tracking-wider text-left text-gray-500 uppercase sm:px-4 sm:py-3">
+              <input type="checkbox" class="w-4 h-4 text-blue-700 bg-gray-200 border-gray-300 rounded select-all focus:ring-blue-700">
             </th>
-            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
-            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Precio</th>
-            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Descuento</th>
-            <th class="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Motivo</th>
+            <th class="px-2 py-2 text-xs font-medium tracking-wider text-left text-gray-500 uppercase sm:px-4 sm:py-3">Producto</th>
+            <th class="px-2 py-2 text-xs font-medium tracking-wider text-left text-gray-500 uppercase sm:px-4 sm:py-3">Cantidad</th>
+            <th class="hidden px-2 py-2 text-xs font-medium tracking-wider text-left text-gray-500 uppercase sm:px-4 sm:py-3 sm:table-cell">Precio</th>
+            <th class="hidden px-2 py-2 text-xs font-medium tracking-wider text-left text-gray-500 uppercase sm:px-4 sm:py-3 sm:table-cell">Descuento</th>
+            <th class="px-2 py-2 text-xs font-medium tracking-wider text-left text-gray-500 uppercase sm:px-4 sm:py-3">Motivo</th>
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           {% for producto in factura.productos %}
           <tr class="hover:bg-gray-50">
-            <td class="px-2 sm:px-4 py-2 sm:py-3">
-              <input type="checkbox" name="productos_devueltos" value="{{ producto.nombre }}" id="item-{{ producto.id }}" class="item-checkbox h-4 w-4 text-blue-700 rounded bg-gray-200 border-gray-300 focus:ring-blue-700">
+            <td class="px-2 py-2 sm:px-4 sm:py-3">
+              <input type="checkbox" name="productos_devueltos" value="{{ producto.nombre }}" id="item-{{ producto.id }}" class="w-4 h-4 text-blue-700 bg-gray-200 border-gray-300 rounded item-checkbox focus:ring-blue-700">
               <label for="item-{{ producto.id }}" class="sr-only">Seleccionar producto</label>
             </td>
-            <td class="px-2 sm:px-4 py-2 sm:py-3">
+            <td class="px-2 py-2 sm:px-4 sm:py-3">
               <div class="flex items-center">
-                <div class="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
-                  <img src="{{ producto.image }}" alt="{{ producto.nombre }}" class="h-8 w-8 sm:h-10 sm:w-10 object-cover rounded-md">
+                <div class="flex-shrink-0 w-8 h-8 sm:h-10 sm:w-10">
+                  <img src="{{ producto.image }}" alt="{{ producto.nombre }}" class="object-cover w-8 h-8 rounded-md sm:h-10 sm:w-10">
                 </div>
                 <div class="ml-2 sm:ml-3">
-                  <div class="text-xs sm:text-sm font-medium text-gray-900">{{ producto.nombre }}</div>
-                  <div class="text-xs sm:text-sm text-gray-500 sm:hidden">{{ producto.precio_unitario }}</div>
-                  <div class="text-xs sm:text-sm text-gray-500">Subtotal: {{ producto.subtotal }}</div>
+                  <div class="text-xs font-medium text-gray-900 sm:text-sm">{{ producto.nombre }}</div>
+                  <div class="text-xs text-gray-500 sm:text-sm sm:hidden">{{ producto.precio_unitario }}</div>
+                  <div class="text-xs text-gray-500 sm:text-sm">Subtotal: {{ producto.subtotal }}</div>
                   <div class="text-xs text-gray-500 sm:hidden">
                     {% if producto.descuento %}
                       Desc: {{ producto.cantidad_descuento }}%
@@ -158,20 +158,19 @@
                 </div>
               </div>
             </td>
-            <td class="px-2 sm:px-4 py-2 sm:py-3">
-              <input type="number" name="cantidad_{{ producto.nombre }}" value="{{ producto.cantidad }}" min="1" max="{{ producto.cantidad }}" class="cantidad-input w-12 sm:w-16 h-8 text-center text-xs sm:text-sm border border-gray-300 rounded-md" readonly>
+            <td class="px-2 py-2 sm:px-4 sm:py-3">
+              <input type="number" name="cantidad_{{ producto.nombre }}" value="{{ producto.cantidad }}" min="1" max="{{ producto.cantidad }}" class="w-12 h-8 text-xs text-center border border-gray-300 rounded-md cantidad-input sm:w-16 sm:text-sm" readonly>
             </td>
-            <td class="precio-unitario px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 hidden sm:table-cell">{{ producto.precio_unitario }}</td>
-            <td class="descuento-porcentaje px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-900 hidden sm:table-cell">
+            <td class="hidden px-2 py-2 text-xs text-gray-900 precio-unitario sm:px-4 sm:py-3 sm:text-sm sm:table-cell">{{ producto.precio_unitario }}</td>
+            <td class="hidden px-2 py-2 text-xs text-gray-900 descuento-porcentaje sm:px-4 sm:py-3 sm:text-sm sm:table-cell">
               {% if producto.descuento %}
                 {{ producto.cantidad_descuento }}%
               {% else %}
                 0%
               {% endif %}
             </td>
-            <td class="px-2 sm:px-4 py-2 sm:py-3">
-              <select name="motivo_{{ producto.nombre }}" class="w-full px-1 sm:px-2 py-1 text-xs sm:text-sm border border-gray-300 rounded-md focus:ring-blue-700 focus:border-blue-700">
-                <option value="">Seleccionar</option>
+            <td class="px-2 py-2 sm:px-4 sm:py-3">
+              <select name="motivo" class="w-full px-1 py-1 text-xs border border-gray-300 rounded-md sm:px-2 sm:text-sm focus:ring-blue-700 focus:border-blue-700">
                 <option value="defectuoso">Defectuoso</option>
                 <option value="danado">Dañado</option>
                 <option value="otro">Otro</option>
@@ -180,52 +179,51 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="6" class="px-2 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm text-gray-500">No hay productos asociados a esta factura.</td>
+            <td colspan="6" class="px-2 py-2 text-xs text-center text-gray-500 sm:px-4 sm:py-3 sm:text-sm">No hay productos asociados a esta factura.</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
     <div class="mt-6">
-      <h2 class="text-lg md:text-xl font-semibold mb-4 text-gray-800 flex items-center">
+      <h2 class="flex items-center mb-4 text-lg font-semibold text-gray-800 md:text-xl">
         <svg class="w-5 h-5 mr-2 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
         Detalles de la Devolución
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Método de Reembolso</label>
+            <label class="block mb-1 text-sm font-medium text-gray-700">Método de Reembolso</label>
             <select name="metodo_reembolso" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-700 focus:border-blue-700">
-              <option value="seleccionar">Seleccionar</option>
               <option value="transferencia">Transferencia bancaria</option>
               <option value="efectivo">Efectivo</option>
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Comentarios Adicionales</label>
+            <label class="block mb-1 text-sm font-medium text-gray-700">Comentarios Adicionales</label>
             <textarea name="comentarios" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-700 focus:border-blue-700" rows="4" placeholder="Detalles adicionales sobre la devolución..."></textarea>
           </div>
         </div>
         <div>
-          <div class="bg-gray-50 p-4 md:p-6 rounded-lg mb-4">
-            <h3 class="font-medium text-gray-900 mb-4">Resumen de la Devolución</h3>
+          <div class="p-4 mb-4 rounded-lg bg-gray-50 md:p-6">
+            <h3 class="mb-4 font-medium text-gray-900">Resumen de la Devolución</h3>
             <div class="space-y-3">
-              <div class="flex justify-between items-center text-sm">
+              <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600">Subtotal Productos:</span>
                 <span id="subtotal-products-{{ factura.id }}" class="font-medium">$0.00</span>
               </div>
-              <div class="flex justify-between items-center text-sm">
+              <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600">ITBIS (18%):</span>
                 <span id="itbis-{{ factura.id }}" class="font-medium">$0.00</span>
               </div>
-              <div class="flex justify-between items-center text-sm">
+              <div class="flex items-center justify-between text-sm">
                 <span class="text-gray-600">Descuentos Aplicados:</span>
                 <span id="discounts-{{ factura.id }}" class="font-medium text-red-600">$0.00</span>
               </div>
               <div class="pt-3 border-t border-gray-200">
-                <div class="flex justify-between items-center text-lg font-bold">
+                <div class="flex items-center justify-between text-lg font-bold">
                   <span>Total a Devolver:</span>
                   <span id="total-return-{{ factura.id }}" class="text-blue-700">$0.00</span>
                 </div>
@@ -233,7 +231,7 @@
             </div>
           </div>
           <div class="flex flex-col space-y-3">
-            <button type="submit" id="submit-return-btn" class="w-full bg-blue-700 text-white px-4 py-3 rounded-md hover:bg-blue-800 transition-colors font-medium flex items-center justify-center">
+            <button type="submit" id="submit-return-btn" class="flex items-center justify-center w-full px-4 py-3 font-medium text-white transition-colors bg-blue-700 rounded-md hover:bg-blue-800">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
               </svg>
@@ -254,8 +252,8 @@
 <!-- Eliminar el formulario de Detalles de la Devolución que estaba fuera del bucle -->
 
   <!-- Política de Devoluciones -->
-  <div class="bg-white rounded-lg shadow-md p-4 md:p-6 mt-6 border-t-4 border-blue-700">
-    <h2 class="text-lg font-semibold mb-2 text-gray-800">Política de Devoluciones</h2>
+  <div class="p-4 mt-6 bg-white border-t-4 border-blue-700 rounded-lg shadow-md md:p-6">
+    <h2 class="mb-2 text-lg font-semibold text-gray-800">Política de Devoluciones</h2>
     <div class="text-sm text-gray-600">
       <p class="mb-2">• Las devoluciones deben realizarse dentro de los <strong>30 días</strong> posteriores a la compra.</p>
       <p class="mb-2">• Los productos deben estar en su embalaje original y en buenas condiciones.</p>

@@ -1,18 +1,13 @@
 from django.db import IntegrityError
 from .email_validator import EmailValidator
 from .email_service import EmailService
-import uuid
 from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseForbidden, HttpResponse
+from django.http import HttpResponseForbidden
 from django.contrib import messages
-from django.utils.timezone import localtime, now
 from django.contrib.auth.hashers import make_password
 from django.views import View
-import os
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
@@ -23,23 +18,32 @@ from django.utils import timezone
 from .models import EmailVerificationToken
 from django.core.exceptions import ValidationError
 
-
-User = get_user_model()
-
 CustomUser = get_user_model()
+
 @csrf_protect
 def login_view(request):
     if request.user.is_authenticated:
+        # Check for unverified email verification token
+        verification_token = EmailVerificationToken.objects.filter(
+            user=request.user, 
+            is_verified=False
+        ).order_by('-created_at').first()  # Get the most recent token
+        if verification_token:
+            # Redirect to email verification with the token
+            return redirect('verify_email', token=verification_token.token)
+        # No pending email verification, proceed with normal redirection
         if request.user.is_superuser or request.user.groups.filter(name="Gerente").exists():
             return redirect("admin:index")
         if request.user.groups.filter(name="Vendedor").exists():
             return redirect("ventas")
         if request.user.groups.filter(name="Almacén").exists():
             return redirect("products")
+        # Log out the user before redirecting to technical_problem
+        logout(request)
         return redirect("technical_problem")
 
     if request.method == "POST":
-        login_input = request.POST.get("login_input")  # Renamed to be more generic
+        login_input = request.POST.get("login_input")
         password = request.POST.get("password")
 
         if not login_input:
@@ -56,11 +60,9 @@ def login_view(request):
         
         # Primero intenta buscar por email, luego por username
         try:
-            # Intenta buscar por email
             user = User.objects.get(email=login_input)
         except User.DoesNotExist:
             try:
-                # Si no encuentra por email, busca por username
                 user = User.objects.get(username=login_input)
             except User.DoesNotExist:
                 user = None
@@ -71,26 +73,33 @@ def login_view(request):
 
         # Intentar autenticar solo si el usuario existe
         if user:
-            # Usar el username del usuario encontrado para la autenticación
             user = authenticate(request, username=user.username, password=password)
 
         if user is not None:
+            # Log the user in
             login(request, user)
-
+            # Check for unverified email verification token
+            verification_token = EmailVerificationToken.objects.filter(
+                user=user, 
+                is_verified=False
+            ).order_by('-created_at').first()  # Get the most recent token
+            if verification_token:
+                # Redirect to email verification with the token
+                return redirect('verify_email', token=verification_token.token)
+            # No pending email verification, proceed with normal redirection
             if user.is_superuser or user.groups.filter(name="Gerente").exists():
                 return redirect("admin:index")
             if user.groups.filter(name="Vendedor").exists():
                 return redirect("ventas")
             if user.groups.filter(name="Almacén").exists():
                 return redirect("products")
-
+            messages.error(request, "No tienes permisos para acceder a este sistema.")
             return redirect("technical_problem")
 
         messages.error(request, "Nombre de usuario/email o contraseña incorrectos.")
         return redirect("login")
 
     return render(request, "registration/login.html")
-
 def disabled_user_view(request):
     return render(request, "registration/disable_user.html")
 
@@ -160,8 +169,14 @@ class CreateCredentialsView(View):
     
 def splash(request):
     return render(request, "splash.html")
-
-
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render
+from django.db import IntegrityError
+from django.utils import timezone
+from .models import EmailVerificationToken
+from .email_service import EmailService
+from .email_validator import EmailValidator  # Asegúrate de que esto esté importado
 
 @login_required
 def profile(request):
@@ -182,7 +197,6 @@ def profile(request):
         email = request.POST.get('email')
         original_email = empleado.email
         error = None
-        success = None
 
         try:
             # Verificar si el email cambió
@@ -199,7 +213,7 @@ def profile(request):
                     new_email=email
                 )
 
-                verification_url = f"http://{request.get_host()}/verify-email/{verification_token.token}"
+                verification_url = f"http://{request.get_host()}/verificar-email/{verification_token.token}"
                 
                 # Enviar email de verificación
                 email_service = EmailService(
@@ -209,48 +223,81 @@ def profile(request):
                 )
                 email_service.subject = "Verifica tu nuevo email"
                 email_service.html_content = email_service.generate_verification_html(verification_url)
-                email_service.send_email()
+                email_service.send_email(
+                    recipient_email=email,  # Enviar al nuevo email
+                    subject="Verifica tu nuevo email",
+                    html_content=email_service.html_content
+                )
 
-                success = "Se ha enviado un email de verificación a tu nueva dirección. Por favor, verifica tu email."
+                messages.success(request, "Se ha enviado un email de verificación a tu nueva dirección. Por favor, verifica tu email.")
+                # Update username even if email changed
+                empleado.username = username
+                empleado.save()
+                context = {
+                    "empleado": empleado,
+                    "fecha_mostrada": fecha_mostrada,
+                }
+                return render(request, 'empleados/edit_profile.html', context)
 
-            # Actualizar el username
-            empleado.username = username
-            empleado.save()
+            # If only username changed or no changes
+            if username != empleado.username:
+                empleado.username = username
+                empleado.save()
+                messages.success(request, "¡Tu nombre de usuario ha sido actualizado exitosamente!")
+            else:
+                messages.info(request, "No se realizaron cambios en el perfil.")
 
             context = {
                 "empleado": empleado,
                 "fecha_mostrada": fecha_mostrada,
-                "success": success
             }
-            return render(request, 'registration/confirm_email_change.html', context)
+            return render(request, 'empleados/edit_profile.html', context)
 
         except IntegrityError:
-            error = "Este email ya está en uso por otro usuario."
+            messages.error(request, "Este email ya está en uso por otro usuario.")
         except ValidationError as e:
-            error = str(e)
+            messages.error(request, str(e))
         except Exception as e:
-            error = f"Error al actualizar el perfil: {str(e)}"
+            messages.error(request, f"Error al actualizar el perfil: {str(e)}")
 
-        if error:
-            context = {
-                "empleado": empleado,
-                "fecha_mostrada": fecha_mostrada,
-                "error": error
-            }
-            return render(request, 'registration/confirm_email_change.html', context)
+        context = {
+            "empleado": empleado,
+            "fecha_mostrada": fecha_mostrada,
+        }
+        return render(request, 'empleados/edit_profile.html', context)
 
     context = {
         "empleado": empleado,
         "fecha_mostrada": fecha_mostrada,
     }
-    return render(request, 'registration/edit_profile.html', context)
+    return render(request, 'empleados/edit_profile.html', context)
+from django.contrib.auth.models import User
+from django.shortcuts import render
+from .models import EmailVerificationToken  # Ensure this is imported
+from django.contrib.auth import get_user_model
+from django.shortcuts import render
+from .models import EmailVerificationToken  # Asegúrate de que este modelo esté importado
 
-@login_required
+User = get_user_model()
+
 def verify_email(request, token):
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return render(request, 'registration/confirm_email_change.html', {
+            "empleado": None,
+            "fecha_mostrada": "Nunca",
+            "error": "Debes iniciar sesión para verificar tu correo."
+        })
+
     try:
-        verification_token = EmailVerificationToken.objects.get(token=token, user=request.user, is_verified=False)
+        # Query the token, ensuring it matches the logged-in user and is not verified
+        verification_token = EmailVerificationToken.objects.get(
+            token=token, 
+            user=request.user, 
+            is_verified=False
+        )
         
-        # Verificar si el email ya está en uso por otro usuario
+        # Check if the new email is already in use by another user
         if User.objects.exclude(pk=request.user.pk).filter(email=verification_token.new_email).exists():
             return render(request, 'registration/confirm_email_change.html', {
                 "empleado": request.user,
@@ -258,22 +305,26 @@ def verify_email(request, token):
                 "error": "Este correo ya está en uso por otro usuario."
             })
 
+        # Update the user's email and save
         request.user.email = verification_token.new_email
         request.user.save()
+
+        # Mark the token as verified
         verification_token.is_verified = True
         verification_token.save()
+
         return render(request, 'registration/confirm_email_change.html', {
             "empleado": request.user,
             "fecha_mostrada": "Nunca",
             "success": "Email verificado correctamente."
         })
+
     except EmailVerificationToken.DoesNotExist:
         return render(request, 'registration/confirm_email_change.html', {
             "empleado": request.user,
             "fecha_mostrada": "Nunca",
             "error": "Token de verificación inválido o ya utilizado."
         })
-
 @login_required
 @require_POST
 def update_profile_picture(request):

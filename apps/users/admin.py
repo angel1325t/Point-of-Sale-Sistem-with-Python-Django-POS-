@@ -1,9 +1,10 @@
+from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
+from django.contrib.auth.models import Group
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from .models import CustomUser
 from .forms import CustomUserForm
-from django.contrib.auth.models import Group
 
 
 class CustomUserAdmin(admin.ModelAdmin):
@@ -13,16 +14,15 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_per_page = 5
     search_fields = ('username', 'email', 'id')
     actions = ['disable_users', 'delete_selected', 'enable_users']
-    
+
     fieldsets = (
         (None, {
-            'fields': ['email']  # Manteniendo el formato con listas
+            'fields': ['email']
         }),
         ('Permisos', {
-            'fields': ['is_superuser', 'is_staff', 'is_active', 'groups'],  # Moviendo 'groups' aquí
+            'fields': ['is_superuser', 'is_staff', 'is_active', 'group_selection'],  # Cambiado 'groups' por 'group_selection'
         }),
     )
-
 
     def profile_image_display(self, obj):
         if obj.profile_image:
@@ -40,9 +40,10 @@ class CustomUserAdmin(admin.ModelAdmin):
     profile_image_display.short_description = "Profile Image"
 
     def groups_display(self, obj):
-        return ", ".join([group.name for group in obj.groups.all()])  # Mostrar nombres de los grupos
+        group = obj.groups.first()  # Obtenemos el primer (y único) grupo
+        return group.name if group else "-"  # Mostramos el nombre del grupo o "-" si no hay grupo
 
-    groups_display.short_description = "Groups"
+    groups_display.short_description = "Grupo"
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super().get_fieldsets(request, obj)
@@ -51,15 +52,22 @@ class CustomUserAdmin(admin.ModelAdmin):
                 fieldset[1]['fields'] = tuple(f for f in fieldset[1]['fields'] if f != 'username')
         return fieldsets
 
-    # Acción personalizada para deshabilitar usuarios
-    @admin.action(description=_("Disable selected users"))
+    @admin.action(description=_("Deshabilitar usuarios seleccionados"))
     def disable_users(self, request, queryset):
         queryset.update(is_active=False)
 
-    @admin.action(description=_("Enable selected users"))
+    @admin.action(description=_("Habilitar usuarios seleccionados"))
     def enable_users(self, request, queryset):
         queryset.update(is_active=True)
 
 
-# Registrar el modelo
+class CustomGroupAdmin(BaseGroupAdmin):
+    exclude = ['users']  # Excluye el campo 'users' para evitar asignaciones desde la admin de grupos
+
+
+# Desregistra la administración predeterminada de Group y registra la personalizada
+admin.site.unregister(Group)
+admin.site.register(Group, CustomGroupAdmin)
+
+# Registra CustomUser con CustomUserAdmin
 admin.site.register(CustomUser, CustomUserAdmin)

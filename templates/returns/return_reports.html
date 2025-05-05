@@ -1,0 +1,328 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Devoluciones</title>
+    <style>
+        @page {
+            size: letter portrait;
+            margin: 2cm;
+            @bottom-right {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 9pt;
+                color: #666;
+            }
+        }
+        
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.5;
+            margin: 0;
+            padding: 25px;
+            background-color: white;
+        }
+        
+        /* Colores corporativos - azul más suave basado en la imagen */
+        :root {
+            --primary-color: #3A51D6; /* Azul corporativo más suave */
+            --primary-light: #C0C9F6; /* Azul claro */
+            --primary-dark: #2234B9; /* Azul original del logo */
+            --accent-color: #F0F3FF; /* Azul muy claro */
+            --text-on-primary: #FFFFFF;
+            --light-gray: #F8FAFD;
+            --border-color: #E0E5F2;
+        }
+        
+        /* Encabezado */
+        .header {
+            background-color: white;
+            color: #333;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .header-content {
+            flex: 1;
+        }
+        
+        .logo-container {
+            text-align: right;
+            padding-left: 20px;
+        }
+        
+        .logo-container img {
+            max-height: 80px;
+        }
+        
+        h1 {
+            font-size: 26px;
+            margin: 0 0 10px 0;
+            color: black;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .report-info {
+            font-size: 14px;
+            margin: 5px 0;
+            color: #555;
+        }
+        
+        /* Introducción */
+        .introduction {
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .introduction h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: black;
+        }
+        
+        .introduction p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #444;
+        }
+        
+        /* Tablas */
+        .table-section {
+            padding: 0 0 25px 0;
+            margin-bottom: 30px;
+        }
+        
+        .table-section h2 {
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: black;
+            font-weight: 600;
+        }
+        
+        .table-container {
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: var(--primary-light); /* Azul más suave */
+            color: black; /* Texto azul oscuro para mejor contraste */
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--light-gray);
+        }
+        
+        /* Sección de resumen - MEJORADA */
+        .summary-section {
+            padding: 25px 0;
+            margin-bottom: 30px;
+            border-top: 1px solid var(--border-color);
+            background-color: white;
+        }
+        
+        .summary-section h2 {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: black;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 12px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 25px;
+        }
+        
+        .summary-item {
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .summary-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .summary-item h3 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: black;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .summary-item p {
+            margin: 12px 0;
+            font-size: 14px;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .summary-item .label {
+            font-weight: 500;
+        }
+        
+
+        .empty-message {
+            font-style: italic;
+            text-align: center;
+            color: #777;
+        }
+        
+        /* Pie de página */
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Todo el contenido va directamente en el body ya que es un PDF -->
+        <!-- Encabezado del reporte -->
+        <div class="header">
+            <div class="header-content">
+                <h1>Reporte de Devoluciones</h1>
+                <p class="report-info">Fecha de emisión: {% now "d/m/Y" %}</p>
+                <p class="report-info">PuntoXpress</p>
+            </div>
+            <div class="logo-container">
+                <img src="{% static 'img/logo.png' %}" alt="Logo PuntoXpress" style="max-width: 160px;">
+            </div>
+        </div>
+
+        <!-- Introducción -->
+        <div class="introduction">
+            <h2>Descripción del Reporte</h2>
+            <p>El presente informe proporciona un análisis detallado de las devoluciones de productos registradas en PuntoXpress durante el período seleccionado. Este documento está diseñado para facilitar la identificación de tendencias en las devoluciones, los productos más frecuentemente devueltos y los motivos principales que generan estas devoluciones. La información presentada en este reporte es fundamental para la toma de decisiones estratégicas orientadas a la mejora continua de nuestros productos y servicios, así como para optimizar la experiencia de compra de nuestros clientes.</p>
+        </div>
+
+        <!-- Tabla principal -->
+        <div class="table-section">
+            <h2>Registro de Devoluciones por Fecha</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th># Devoluciones</th>
+                            <th>Total Reembolsado</th>
+                            <th>Productos Devueltos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in resumen %}
+                        <tr>
+                            <td>{{ r.fecha_devolucion|date:"d/m/Y" }}</td>
+                            <td>{{ r.total_devoluciones }}</td>
+                            <td>${{ r.total_reembolsado|floatformat:2 }}</td>
+                            <td>{{ r.total_productos }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No hay devoluciones registradas en este período.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Secciones de resumen MEJORADA -->
+        <div class="summary-section">
+            <h2>Resumen de Indicadores Clave</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <h3>Producto Más Devuelto</h3>
+                    {% if producto_mas_devuelto %}
+                        <p>
+                            <span class="label">Producto:</span>
+                            <span class="value">{{ producto_mas_devuelto.producto__nombre }}</span>
+                        </p>
+                        <p>
+                            <span class="label">Cantidad:</span>
+                            <span class="value">{{ producto_mas_devuelto.total_cantidad }}</span>
+                        </p>
+                    {% else %}
+                        <p class="empty-message">No hay productos devueltos en este período.</p>
+                    {% endif %}
+                </div>
+
+                <div class="summary-item">
+                    <h3>Total de Dinero Reembolsado</h3>
+                    <p>
+                        <span class="label">Total:</span>
+                        <span class="value">${{ total_reembolsado|floatformat:2 }}</span>
+                    </p>
+                </div>
+
+                <div class="summary-item">
+                    <h3>Motivo Más Común de Devolución</h3>
+                    {% if motivo_mas_comun %}
+                        <p>
+                            <span class="label">Motivo:</span>
+                            <span class="value">{{ motivo_mas_comun.motivo }}</span>
+                        </p>
+                        <p>
+                            <span class="label">Devoluciones:</span>
+                            <span class="value">{{ motivo_mas_comun.total }}</span>
+                        </p>
+                    {% else %}
+                        <p class="empty-message">No hay devoluciones registradas en este período.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie de página -->
+        <div class="footer">
+            <p>© {% now "Y" %} PuntoXpress - Todos los derechos reservados</p>
+            <p>Este reporte fue generado automáticamente el {% now "d/m/Y" %} a las {% now "H:i" %}</p>
+            <p>Para cualquier consulta sobre este reporte, contacte al departamento de Atención al Cliente</p>
+        </div>
+</body>
+</html>

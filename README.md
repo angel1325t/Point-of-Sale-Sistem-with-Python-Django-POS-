@@ -120,7 +120,7 @@ Esta aplicación de punto de venta optimizará la gestión de ventas e inventari
 
 ## Instalación y Configuración
 
-1. Clonar el repositorio:
+1. Clonar el repositorio:		
 
    ```sh
    git clone https://github.com/tuusuario/tu-repositorio.git
@@ -132,7 +132,7 @@ Esta aplicación de punto de venta optimizará la gestión de ventas e inventari
    python -m venv venv
    source venv/bin/activate  # En Windows: venv\Scripts\activate
    ```
-3.     Instalar dependencias:
+3. Instalar dependencias:
 
    ```sh
    pip install -r requirements.txt

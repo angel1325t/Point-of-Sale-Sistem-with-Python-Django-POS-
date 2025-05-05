@@ -1,13 +1,7 @@
-
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from .models import Devolucion
 from weasyprint import HTML
 from django.template.loader import get_template
-from django.shortcuts import redirect
 from django.db import transaction
-from django.contrib import messages
 from .models import Devolucion, DetalleDevolucion
 from apps.ventas.models import Factura
 from apps.productos.models import Producto
@@ -17,6 +11,13 @@ from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count, Sum
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+from django.http import HttpResponse
+from django.template import loader
+from io import BytesIO
+
 
 
 def user_is_not_wareHouse(user):
@@ -92,6 +93,7 @@ def process_return_view(request):
             with transaction.atomic():
                 factura_id = request.POST.get('factura_id')
                 metodo_reembolso = request.POST.get('metodo_reembolso')
+                motivo_general = request.POST.get('motivo')
                 comentarios = request.POST.get('comentarios', '')
 
                 # Validar campos requeridos
@@ -124,7 +126,7 @@ def process_return_view(request):
                 # Crear devolución
                 devolucion = Devolucion.objects.create(
                     factura=factura,
-                    motivo_general='OTRO',
+                    motivo_general= motivo_general,
                     metodo_reembolso=metodo_reembolso.upper(),
                     subtotal=subtotal,
                     impuesto=impuesto,
@@ -249,3 +251,207 @@ def render_to_pdf(template_src, context_dict=None):
         # Log the error for debugging (optional)
         print(f"Error generando PDF: {e}")
         return None
+    
+
+def devoluciones_por_periodo(request):
+    # Obtener el filtro desde la solicitud, por defecto 'mensual'
+    filtro = request.GET.get('filtro', 'mensual')
+    print("Filtro recibido:", filtro)
+    
+    # Definir el rango de tiempo según el filtro
+    if filtro == 'diario':
+        delta = timedelta(days=1)  # Últimos 2 días
+    elif filtro == 'semanal':
+        delta = timedelta(days=6)  # Últimos 7 días
+    else:  # mensual
+        delta = timedelta(days=29)  # Últimos 30 días
+
+    # Calcular la fecha de inicio y fin
+    today = timezone.now().date()
+    fecha_inicio = today - delta
+    print("Fecha de inicio:", fecha_inicio, "Fecha de fin:", today)
+    
+    # Consultar las devoluciones, agrupadas por día
+    devoluciones = (Devolucion.objects
+                    .filter(fecha_devolucion__gte=fecha_inicio)
+                    .extra(select={'date': "DATE(fecha_devolucion)"})
+                    .values('date')
+                    .annotate(total=Count('id'))
+                    .order_by('date'))
+    
+    print("Devoluciones encontradas:", list(devoluciones))
+
+    # Crear un diccionario con las fechas y los totales
+    data_dict = {}
+    for d in devoluciones:
+        fecha = d['date']  # Ya es una fecha truncada
+        key = fecha.strftime('%Y-%m-%d')
+        data_dict[key] = data_dict.get(key, 0) + d['total']
+    print("Diccionario de datos:", data_dict)
+
+    # Generar todas las fechas desde fecha_inicio hasta hoy
+    labels = []
+    data = []
+    current_date = fecha_inicio
+    while current_date <= today:
+        key = current_date.strftime('%Y-%m-%d')
+        labels.append(key)
+        data.append(data_dict.get(key, 0))
+        print(f"Fecha: {key}, Total: {data_dict.get(key, 0)}")
+        current_date += timedelta(days=1)
+    
+    # Devolver los datos en formato JSON
+    response = {
+        'labels': labels,
+        'data': data,
+    }
+    print("Respuesta JSON:", response)
+    
+    return JsonResponse(response)
+
+
+
+def productos_mas_devueltos(request):
+    filtro = request.GET.get('filtro', 'mensual')
+    delta = {'diario': timedelta(days=1), 'semanal': timedelta(weeks=1), 'mensual': timedelta(days=30)}
+    fecha_inicio = datetime.now() - delta.get(filtro, timedelta(days=30))
+    
+    productos = (DetalleDevolucion.objects
+                 .filter(devolucion__fecha_devolucion__gte=fecha_inicio)
+                 .values('producto__nombre')
+                 .annotate(total=Sum('cantidad'))
+                 .order_by('-total')[:5])
+    
+    data = {
+        'labels': [p['producto__nombre'] for p in productos],
+        'data': [p['total'] for p in productos],
+    }
+    return JsonResponse(data)
+
+
+def motivos_devolucion_data(request):
+    filtro = request.GET.get('filtro', 'mensual')
+    print(f"Filtro recibido: {filtro}")
+
+    delta = {
+        'diario': timedelta(days=1),
+        'semanal': timedelta(weeks=1),
+        'mensual': timedelta(days=30)
+    }
+    fecha_inicio = datetime.now() - delta.get(filtro, timedelta(days=30))
+    print(f"Fecha de inicio calculada: {fecha_inicio}")
+
+    motivos = (Devolucion.objects
+               .filter(fecha_devolucion__gte=fecha_inicio)
+               .values('motivo_general')
+               .annotate(total=Count('id'))
+               .order_by('-total'))
+    
+    print(f"Motivos obtenidos: {list(motivos)}")
+
+    data = {
+        'labels': [m['motivo_general'] for m in motivos],
+        'data': [m['total'] for m in motivos],
+    }
+    print(f"Datos preparados para el JSON: {data}")
+
+    return JsonResponse(data)
+
+def return_pdf(request):
+    print("Iniciando generación de resumen de devoluciones...")
+
+    # Establecer fecha de inicio (primer día del mes actual) y fecha de fin (último día del mes actual)
+    today = timezone.now()
+    fecha_inicio = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    fecha_fin = (fecha_inicio + relativedelta(months=1)) - timedelta(seconds=1)
+
+    print(f"Fecha de inicio: {fecha_inicio}")
+    print(f"Fecha de fin: {fecha_fin}")
+
+    # Filtrar devoluciones desde el inicio hasta el fin del mes actual
+    resumen = (
+        Devolucion.objects
+        .filter(fecha_devolucion__isnull=False)
+        .filter(fecha_devolucion__gte=fecha_inicio)
+        .filter(fecha_devolucion__lte=fecha_fin)
+        .values('fecha_devolucion')
+        .annotate(
+            total_devoluciones=Count('id'),
+            total_reembolsado=Sum('total_devolver'),
+            total_productos=Sum('detalles__cantidad')
+        )
+        .order_by('fecha_devolucion')
+    )
+
+    print("Resumen generado:")
+    for r in resumen:
+        print(r)
+
+    # Calcular el producto más devuelto
+    producto_mas_devuelto = (
+        DetalleDevolucion.objects
+        .filter(devolucion__fecha_devolucion__gte=fecha_inicio)
+        .filter(devolucion__fecha_devolucion__lte=fecha_fin)
+        .values('producto__nombre')  # Asumiendo que el modelo Producto tiene un campo 'nombre'
+        .annotate(total_cantidad=Sum('cantidad'))
+        .order_by('-total_cantidad')
+        .first()
+    )
+
+    print("Producto más devuelto:")
+    print(producto_mas_devuelto)
+
+    # Calcular el total de dinero devuelto
+    total_reembolsado = (
+        Devolucion.objects
+        .filter(fecha_devolucion__gte=fecha_inicio)
+        .filter(fecha_devolucion__lte=fecha_fin)
+        .aggregate(total=Sum('total_devolver'))['total'] or 0
+    )
+
+    print(f"Total reembolsado: {total_reembolsado}")
+
+    # Calcular el motivo más común de devolución
+    motivo_mas_comun = (
+        DetalleDevolucion.objects
+        .filter(devolucion__fecha_devolucion__gte=fecha_inicio)
+        .filter(devolucion__fecha_devolucion__lte=fecha_fin)
+        .values('motivo')
+        .annotate(total=Count('id'))
+        .order_by('-total')
+        .first()
+    )
+
+    print("Motivo más común:")
+    print(motivo_mas_comun)
+
+    # Preparar el contexto
+    context = {
+        'resumen': resumen,
+        'producto_mas_devuelto': producto_mas_devuelto,
+        'total_reembolsado': total_reembolsado,
+        'motivo_mas_comun': motivo_mas_comun,
+    }
+
+    print("Contexto preparado:")
+    print(context)
+
+    # Cargar plantilla
+    template = loader.get_template('returns/return_reports.html')
+    html_string = template.render(context, request)
+
+    print("HTML renderizado (fragmento):")
+    print(html_string[:500])
+
+    # Generar PDF
+    pdf_file = BytesIO()
+    HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(pdf_file)
+    pdf_file.seek(0)
+
+    print("PDF generado exitosamente.")
+
+    # Enviar PDF como respuesta
+    response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reporte_devoluciones.pdf"'
+    print("PDF enviado como respuesta.")
+    return response

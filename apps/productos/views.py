@@ -7,14 +7,11 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
-from django.conf import settings
 from django.template.loader import render_to_string
 import qrcode
 from weasyprint import HTML
 import base64
 from io import BytesIO
-from .models import Producto 
 import json
 
 def user_is_not_seller(user):

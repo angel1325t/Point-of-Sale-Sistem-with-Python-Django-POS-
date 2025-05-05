@@ -28,8 +28,8 @@ class Suministradores(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Suministrador"
-        verbose_name_plural = "Suministradores"
+        verbose_name = "Proveedor"
+        verbose_name_plural = "Proveedores"
 
     def __str__(self):
         return self.nombre_proveedor

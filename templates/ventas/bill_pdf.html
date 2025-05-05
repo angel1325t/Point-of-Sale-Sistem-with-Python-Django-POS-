@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Factura {{ factura.numero_factura }}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            width: 80mm; /* Ancho para impresora térmica; cambiar a 210mm para A4 */
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+        }
+
+        /* Para A4, descomentar lo siguiente y comentar el width anterior */
+        /*
+        body {
+            font-family: sans-serif;
+            width: 210mm;
+            margin: 10mm;
+            padding: 0;
+            font-size: 12px;
+        }
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        */
+
+        h1 {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 14px;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+
+        p {
+            font-size: 12px;
+            margin: 0;
+            padding: 2px 0;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 2px 3px; /* Reducido para acomodar más columnas */
+            font-size: 11px; /* Ligeramente más pequeño para ajustar */
+        }
+
+        th {
+            border-bottom: 1px solid #000;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .total {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .subtotal {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .itbis {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .descuento {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .total-productos {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .footer small {
+            display: block;
+            margin-top: 5px;
+        }
+
+        .politica {
+            margin-top: 15px;
+            border-top: 1px dashed #000;
+            padding-top: 10px;
+            font-size: 10px;
+        }
+
+        .politica h4 {
+            font-size: 11px;
+            margin: 0 0 5px 0;
+            text-align: center;
+        }
+
+        .politica ul {
+            padding-left: 15px;
+            margin: 5px 0;
+        }
+
+        .encabezado {
+            text-align: center;
+            border-bottom: 1px dashed #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .direccion {
+            font-size: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="encabezado">
+        <div class="logo">EMPRESA S.A.</div>
+        <div class="direccion">
+            <p>Calle Principal #123</p>
+            <p>Tel: 123-456-7890</p>
+            <p>NIF/CIF: B12345678</p>
+            <p>RNC: 131999999</p>
+        </div>
+    </div>
+
+    <h1>Factura {{ factura.numero_factura }}</h1>
+
+    <p><strong>Fecha:</strong> {{ factura.fecha_emision|date:"d/m/Y" }}</p>
+    <p><strong>Hora:</strong> {{ factura.fecha_emision|time:"H:i" }}</p>
+    <p><strong>Empleado:</strong> {{ factura.venta.empleado.username|default:"N/A" }}</p>
+    <p><strong>Método de pago:</strong> {{ factura.venta.get_metodo_pago_display|default:"N/A" }}</p>
+    
+    {% if factura.venta.transferencia %}
+    <h3>Datos de Transferencia</h3>
+    <p><strong>Referencia:</strong> {{ factura.venta.transferencia.numero_referencia|default:"N/A" }}</p>
+    <p><strong>Banco:</strong> {{ factura.venta.transferencia.banco_emisor|default:"N/A" }}</p>
+    <p><strong>Tipo de cuenta:</strong> {{ factura.venta.transferencia.get_tipo_cuenta_display|default:"N/A" }}</p>
+    {% endif %}
+
+    <h3>Detalle de productos</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+                <th>ITBIS</th>
+                <th>Desc.</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for detalle in factura.venta.detalles.all %}
+            <tr>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td>{{ detalle.cantidad }}</td>
+                <td>{{ detalle.precio_unitario|floatformat:2 }}</td>
+                <td>{{ detalle.subtotal|floatformat:2 }}</td>
+                <td>{{ detalle.itbis|floatformat:2 }}</td>
+                <td>{{ detalle.cantidad_descuento|floatformat:2 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="subtotal"><strong>Subtotal:</strong> {{ total_subtotal|floatformat:2 }}</p>
+    <p class="itbis"><strong>ITBIS (18%):</strong> {{ total_itbis|floatformat:2 }}</p>
+    {% if total_descuento > 0 %}
+        <p class="descuento"><strong>Descuento:</strong> {{ total_descuento|floatformat:2 }}</p>
+    {% endif %}
+    <p class="total"><strong>Total:</strong> {{ factura.venta.total|floatformat:2 }}</p>
+
+    <div class="politica">
+        <h4>Política de Devoluciones</h4>
+        <ul>
+            <li>Las devoluciones deben realizarse dentro de los <strong>30 días</strong> posteriores a la compra.</li>
+            <li>Los productos deben estar en su embalaje original y en buenas condiciones.</li>
+            <li>Se requiere presentar el comprobante de compra original para todas las devoluciones.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>Gracias por su compra!</p>
+        <small>Visítenos nuevamente.</small>
+    </div>
+</body>
+</html>

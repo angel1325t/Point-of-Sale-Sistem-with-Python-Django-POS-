@@ -6,21 +6,21 @@
 {% endblock %}
 <div class="grid grid-cols-1 gap-6 sm:p-4">
   <!-- Panel de productos -->
-  <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-2 sm:p-4">
+  <div class="p-2 bg-white rounded-lg shadow-md lg:col-span-2 sm:p-4">
     <div
-      class="flex flex-col lg:flex-row justify-between items-center mb-4 sm:mb-6"
+      class="flex flex-col items-center justify-between mb-4 lg:flex-row sm:mb-6"
     >
-      <h2 class="text-lg sm:text-xl font-semibold text-gray-800">Ventas</h2>
+      <h2 class="text-lg font-semibold text-gray-800 sm:text-xl">Ventas</h2>
       <div
-        class="flex flex-col md:flex-row sm:space-x-2 w-full sm:w-auto mt-2 sm:mt-0"
+        class="flex flex-col w-full mt-2 md:flex-row sm:space-x-2 sm:w-auto sm:mt-0"
       >
         <button
           id="toggle-scanner"
-          class="btn btn-primary flex items-center justify-center w-full sm:w-auto"
+          class="flex items-center justify-center w-full btn btn-primary sm:w-auto"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 mr-1"
+            class="w-5 h-5 mr-1"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -34,7 +34,7 @@
           </svg>
           Escanear QR
         </button>
-        <div class="relative w-full sm:w-auto mt-2 sm:mt-0">
+        <div class="relative w-full mt-2 sm:w-auto sm:mt-0">
           <input
             type="text"
             id="search-product"
@@ -42,9 +42,9 @@
             class="w-full px-3 py-2 border rounded focus:ring-1 focus:ring-[#2234B9]"
             onkeyup="filterProducts()" autocomplete="off"
           />
-          <button class="clear-button absolute top-2 right-2 text-red-600 hover:text-red-800 text-xl" id="clear-button" style="display: none;">×</button>
+          <button class="absolute text-xl text-red-600 clear-button top-2 right-2 hover:text-red-800" id="clear-button" style="display: none;">×</button>
           <div
-            class="absolute w-full bg-white border mt-1 rounded shadow-md hidden custom-dropdown"
+            class="absolute hidden w-full mt-1 bg-white border rounded shadow-md custom-dropdown"
             id="product-list"
           >
           {% for producto in productos %}
@@ -63,11 +63,11 @@
 
           <div
             id="no-results-message"
-            class="hidden absolute top-full mt-2 right-0 bg-white w-64 p-4 shadow-lg text-center text-red-600 border border-red-500 rounded-lg z-50"
+            class="absolute right-0 z-50 hidden w-64 p-4 mt-2 text-center text-red-600 bg-white border border-red-500 rounded-lg shadow-lg top-full"
           >
           <button
           id="close-button"
-          class="absolute top-2 right-2 text-red-600 hover:text-red-800"
+          class="absolute text-red-600 top-2 right-2 hover:text-red-800"
         >
           ×
         </button>
@@ -79,7 +79,7 @@
 
     <div id="scanner-container" class="hidden max-w-2xl mx-auto">
       <div id="reader"></div>
-      <div class="mt-4 flex justify-end">
+      <div class="flex justify-end mt-4">
         <button id="close-scanner" class="btn btn-secondary">
           Cerrar Escáner
         </button>
@@ -90,13 +90,13 @@
       <div id="sale-items" class="mb-2 space-y-4">
         <!-- Producto individual -->
       </div>
-      <p id="empty-sale-message" class="text-gray-500 py-2 text-center">
+      <p id="empty-sale-message" class="py-2 text-center text-gray-500">
         No hay productos agregados
       </p>
     </div>
 
     <div id="cash-payment" class="mt-3">
-      <label class="block text-gray-600 mb-1">Monto recibido:</label>
+      <label class="block mb-1 text-gray-600">Monto recibido:</label>
       <div class="flex space-x-2">
         <input
           type="number"
@@ -108,7 +108,7 @@
     </div>
 
     <!-- Selector de método de pago -->
-    <div class="flex justify-between mb-4 mt-4">
+    <div class="flex justify-between mt-4 mb-4">
       <span class="text-gray-600">Método de pago:</span>
       <select
         id="payment-method"
@@ -122,14 +122,14 @@
 
     <!-- Formulario de pago con tarjeta (oculto por defecto) -->
 <div id="card-payment" class="flex items-center justify-center hidden">
-  <div class="rounded-xl shadow-2xl p-6 sm:p-8 w-full max-w-md md:max-w-lg bg-white">
-      <div class="flex flex-col sm:flex-row items-center justify-between mb-6">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-black mb-4 sm:mb-0 text-center sm:text-left w-full">
+  <div class="w-full max-w-md p-6 bg-white shadow-2xl rounded-xl sm:p-8 md:max-w-lg">
+      <div class="flex flex-col items-center justify-between mb-6 sm:flex-row">
+          <h2 class="w-full mb-4 text-2xl font-extrabold text-center text-black sm:text-3xl sm:mb-0 sm:text-left">
               Pagar con Tarjeta
           </h2>
-          <div class="flex space-x-2 justify-center sm:justify-end w-full">
-              <img src="{% static 'icons/mastercard.svg' %}" alt="MasterCard" class="h-8 sm:h-10 w-auto opacity-75 hover:opacity-100 transition-opacity"/>
-              <img src="{% static 'icons/visa.svg' %}" alt="Visa" class="h-8 sm:h-10 w-auto opacity-75 hover:opacity-100 transition-opacity"/>
+          <div class="flex justify-center w-full space-x-2 sm:justify-end">
+              <img src="{% static 'icons/mastercard.svg' %}" alt="MasterCard" class="w-auto h-8 transition-opacity opacity-75 sm:h-10 hover:opacity-100"/>
+              <img src="{% static 'icons/visa.svg' %}" alt="Visa" class="w-auto h-8 transition-opacity opacity-75 sm:h-10 hover:opacity-100"/>
           </div>
       </div>
 
@@ -137,9 +137,9 @@
           {% csrf_token %}
 
           <div class="space-y-4">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                      <label for="name" class="block text-sm font-medium text-black mb-1">Nombre</label>
+                      <label for="name" class="block mb-1 text-sm font-medium text-black">Nombre</label>
                       <input 
                           type="text" 
                           placeholder="Ingrese su nombre" 
@@ -150,7 +150,7 @@
                       />
                   </div>
                   <div>
-                      <label for="email" class="block text-sm font-medium text-black mb-1">Correo electrónico</label>
+                      <label for="email" class="block mb-1 text-sm font-medium text-black">Correo electrónico</label>
                       <input 
                           type="email" 
                           placeholder="Ingrese su correo" 
@@ -164,8 +164,8 @@
           </div>
 
           <div>
-              <div class="flex flex-col sm:flex-row justify-between mb-1">
-                  <label for="total" class="block text-sm font-medium text-black mb-2 sm:mb-0">Monto a pagar (USD)</label>
+              <div class="flex flex-col justify-between mb-1 sm:flex-row">
+                  <label for="total" class="block mb-2 text-sm font-medium text-black sm:mb-0">Monto a pagar (USD)</label>
                   <span class="text-sm text-[#23328C]/70 text-right" id="currency-indicator">USD $</span>
               </div>
               <div class="relative">
@@ -183,7 +183,7 @@
           </div>
 
           <div>
-              <label for="card-element" class="block text-sm font-medium text-black mb-1">Información de tarjeta</label>
+              <label for="card-element" class="block mb-1 text-sm font-medium text-black">Información de tarjeta</label>
               <div 
                   id="card-element" 
                   class="w-full px-3 py-2 border-2 border-[#23328C]/30 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#23328C]/50 focus:border-[#23328C] bg-white"
@@ -201,7 +201,7 @@
                   id="pay-button-card" 
                   class="w-full bg-[#23328C] text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-300 flex items-center justify-center text-sm sm:text-base"
               >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                   Pagar ahora
@@ -218,35 +218,35 @@
 
       <!-- Detalle de la venta para efectivo -->
       <div class="" id="contenedor_cash">
-        <div class="flex justify-between items-center border-b pb-3 border-gray-200">
-          <span class="text-gray-600 font-medium">Subtotal:</span>
+        <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+          <span class="font-medium text-gray-600">Subtotal:</span>
           <span id="subtotal" class="text-[#23328C] font-bold text-lg">$0.00</span>
         </div>
         
-        <div class="flex justify-between items-center border-b pb-3 border-gray-200">
-          <span class="text-gray-600 font-medium">Descuento:</span>
-          <span id="discount" class="text-red-600 font-semibold">$0.00</span>
+        <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+          <span class="font-medium text-gray-600">Descuento:</span>
+          <span id="discount" class="font-semibold text-red-600">$0.00</span>
         </div>
         
-        <div class="flex justify-between items-center border-b pb-3 border-gray-200">
-          <span class="text-gray-600 font-medium">ITBIS (18%):</span>
-          <span id="tax" class="text-green-600 font-semibold">$0.00</span>
+        <div class="flex items-center justify-between pb-3 border-b border-gray-200">
+          <span class="font-medium text-gray-600">ITBIS (18%):</span>
+          <span id="tax" class="font-semibold text-green-600">$0.00</span>
         </div>
         
-        <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+        <div class="flex items-center justify-between pb-4 border-b border-gray-200">
           <span class="text-xl font-bold text-gray-800">Total:</span>
           <span id="total" class="text-2xl font-bold text-[#23328C]">$0.00</span>
         </div>
         
-        <div class="flex justify-between items-center mb-6">
-          <span class="text-gray-600 font-medium">Monto a devolver:</span>
-          <span id="refund-amount" class="text-yellow-600 font-semibold">$0.00</span>
+        <div class="flex items-center justify-between mb-6">
+          <span class="font-medium text-gray-600">Monto a devolver:</span>
+          <span id="refund-amount" class="font-semibold text-yellow-600">$0.00</span>
         </div>
         
         <div class="grid grid-cols-2 gap-4">
           <button
             id="clear-sale"
-            class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform shadow-md hover:shadow-lg"
+            class="w-full px-4 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-red-600 rounded-lg shadow-md hover:bg-red-700 hover:shadow-lg"
           >
             Limpiar
           </button>
@@ -264,27 +264,27 @@
       <div class="flex items-center justify-around mb-6">
         <div class="text-center">
           <div
-            class="w-10 h-10 mx-auto rounded-full flex items-center justify-center step-indicator bg-blue-600 text-white font-bold"
+            class="flex items-center justify-center w-10 h-10 mx-auto font-bold text-white bg-blue-800 rounded-full step-indicator"
             data-step="1"
           >
             1
           </div>
           <div class="mt-2 text-sm font-semibold text-gray-700">Resumen</div>
         </div>
-        <div class="flex-1 mx-2 border-t-2 border-gray-300 mt-5"></div>
+        <div class="flex-1 mx-2 mt-5 border-t-2 border-gray-300"></div>
         <div class="text-center">
           <div
-            class="w-10 h-10 mx-auto rounded-full flex items-center justify-center step-indicator bg-gray-300 text-white font-bold"
+            class="flex items-center justify-center w-10 h-10 mx-auto font-bold text-white bg-gray-300 rounded-full step-indicator"
             data-step="2"
           >
             2
           </div>
           <div class="mt-2 text-sm font-semibold text-gray-700">Checkout</div>
         </div>
-        <div class="flex-1 mx-2 border-t-2 border-gray-300 mt-5"></div>
+        <div class="flex-1 mx-2 mt-5 border-t-2 border-gray-300"></div>
         <div class="text-center">
           <div
-            class="w-10 h-10 mx-auto rounded-full flex items-center justify-center step-indicator bg-gray-300 text-white font-bold"
+            class="flex items-center justify-center w-10 h-10 mx-auto font-bold text-white bg-gray-300 rounded-full step-indicator"
             data-step="3"
           >
             3
@@ -307,12 +307,12 @@
 
         <!-- PASO 2 -->
         <div class="step-content" data-step="2">
-          <h2 class="text-xl font-bold mb-4">Datos del Cliente</h2>
+          <h2 class="mb-4 text-xl font-bold">Datos del Cliente</h2>
           <input
             type="text"
             name="name"
             placeholder="Nombre completo"
-            class="w-full border px-3 py-2 mb-2"
+            class="w-full px-3 py-2 mb-2 border"
             required
             autocomplete="off"
           />
@@ -321,7 +321,7 @@
             name="phone"
             id="phone"
             placeholder="Teléfono"
-            class="w-full border px-3 py-2 mb-2"
+            class="w-full px-3 py-2 mb-2 border"
             required
             maxlength="15"
             autocomplete="off"
@@ -330,7 +330,7 @@
             type="email"
             name="email"
             placeholder="Correo Electrónico"
-            class="w-full border px-3 py-2 mb-2"
+            class="w-full px-3 py-2 mb-2 border"
             required
             autocomplete="off"
           />
@@ -338,12 +338,12 @@
 
         <!-- PASO 3 -->
         <div class="step-content" data-step="3">
-          <h2 class="text-xl font-bold mb-4">Datos de la Transferencia</h2>
+          <h2 class="mb-4 text-xl font-bold">Datos de la Transferencia</h2>
           <input
             type="text"
             name="reference"
             placeholder="Número de Referencia"
-            class="w-full border px-3 py-2 mb-2"
+            class="w-full px-3 py-2 mb-2 border"
             required
             autocomplete="off"
           />
@@ -351,13 +351,13 @@
             type="text"
             name="bank"
             placeholder="Banco Emisor"
-            class="w-full border px-3 py-2 mb-2"
+            class="w-full px-3 py-2 mb-2 border"
             required
             autocomplete="off"
           />
           <select
             name="tipo_cuenta"
-            class="w-full border px-3 py-2 mb-2"
+            class="w-full px-3 py-2 mb-2 border"
             required
           >
             <option value="">Seleccione el tipo de cuenta</option>
@@ -370,7 +370,7 @@
             id="monto"
             step="0.01"
             placeholder="Monto Transferido"
-            class="w-full border px-3 py-2 mb-2 bg-gray-100 cursor-not-allowed"
+            class="w-full px-3 py-2 mb-2 bg-gray-100 border cursor-not-allowed"
             readonly
             required
           />
@@ -380,19 +380,19 @@
         <input type="hidden" name="products" id="products-input" />
 
         <div class="flex justify-between mt-6">
-          <button type="button" class="prev-step bg-gray-300 px-4 py-2 rounded">
+          <button type="button" class="px-4 py-2 bg-gray-300 rounded prev-step">
             Anterior
           </button>
           <button
             type="button"
-            class="next-step bg-blue-600 text-white px-4 py-2 rounded"
+            class="px-4 py-2 text-white bg-blue-800 rounded next-step"
             id="siguiente"
           >
             Siguiente
           </button>
           <button
             type="submit"
-            class="pay-step bg-green-600 text-white px-4 py-2 rounded"
+            class="px-4 py-2 text-white bg-green-600 rounded pay-step"
           >
             Pagar
           </button>
@@ -402,19 +402,19 @@
     </div>
     
   </div>
-
+  
 {% endblock section1 %}
 {% block scripts %}
 <script src="https://js.stripe.com/v3/"></script>
 <script src="{% static 'js/sales/card/stripeConfig.js' %}"></script>
-<script src="{% static 'js/sales/transfer/multiStep.js' %}"></script>
+<script src="{% static 'js/sales/transfer/multiStep2.js' %}"></script>
 <script src="{% static 'js/sales/transfer/transferAlert2.js' %}"></script>
-<script src="{% static 'js/sales/card/cardAlert2.js' %}"></script>
+<script src="{% static 'js/sales/card/cardAlerts.js' %}"></script>
 <script src="{% static 'js/sales/card/cardSummary.js' %}"></script>
-<script src="{% static 'js/sales/transfer/transferSummary.js' %}"></script>
+<script src="{% static 'js/sales/transfer/transferSummary2.js' %}"></script>
 <script src="{% static 'js/sales/paymentMethodController.js' %}"></script>
 <script src="{% static 'js/sales/salesController.js' %}" type="module"></script>
-<script src="{% static 'js/sales/cash/process_cash2.js' %}"></script>
+<script src="{% static 'js/sales/cash/process_cashs.js' %}"></script>
 <script src="{% static 'js/products/search_product.js' %}"></script>
 <script src="https://unpkg.com/html5-qrcode" defer></script>
 {% endblock %}

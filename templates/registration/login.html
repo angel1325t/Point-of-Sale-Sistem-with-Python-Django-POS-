@@ -5,7 +5,7 @@
 {% block styles %}
 <link rel="stylesheet" href="{% static 'css/login/login_alert.css' %}">
 {% endblock %}
-<div class="fixed top-4 right-4 z-50 space-y-2">
+<div class="fixed z-50 space-y-2 top-4 right-4">
     {% for message in messages %}
     <div class="relative transition-transform duration-300 ease-in-out transform animate-slide-in alert-box">
         <div class="p-4 rounded-lg shadow-lg text-sm relative 
@@ -21,11 +21,11 @@
     </div>
     {% endfor %}
 </div>
-<div class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="container mx-auto px-4">
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="container px-4 mx-auto">
         <div class="flex flex-wrap items-center justify-center">
-            <div class="w-full 2xl:w-2/5 xl:w-1/2 md:w-2/3 flex flex-col justify-center items-center bg-white p-6 rounded-lg shadow-md">
-                <h2 class="text-2xl font-bold text-center mb-2">Iniciar sesión</h2>
+            <div class="flex flex-col items-center justify-center w-full p-6 bg-white rounded-lg shadow-md 2xl:w-2/5 xl:w-1/2 md:w-2/3">
+                <h2 class="mb-2 text-2xl font-bold text-center">Iniciar sesión</h2>
                 <div class="mb-3">
                     <img src="{% static 'img/logo.png' %}" class="w-36">
                 </div>
@@ -33,27 +33,27 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label class="block text-gray-700">Nombre de usuario o email</label>
-                        <div class="flex border rounded-lg overflow-hidden">
-                            <span class="bg-gray-200 p-2"><img src="{% static 'icons/user.svg' %}" alt=""></span>
+                        <div class="flex overflow-hidden border rounded-lg">
+                            <span class="p-2 bg-gray-200"><img src="{% static 'icons/user.svg' %}" alt=""></span>
                             <input type="text" class="w-full p-2 focus:outline-none" placeholder="Ingresa tu nombre de usuario o email" name="login_input">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="block text-gray-700">Contraseña</label>
-                        <div class="flex border rounded-lg overflow-hidden">
-                            <span class="bg-gray-200 p-2"><img src="{% static 'icons/psw.svg' %}" alt=""></span>
+                        <div class="flex overflow-hidden border rounded-lg">
+                            <span class="p-2 bg-gray-200"><img src="{% static 'icons/psw.svg' %}" alt=""></span>
                             <input type="password" id="password" class="w-full p-2 focus:outline-none" placeholder="Ingresa tu contraseña" name="password">
-                            <button type="button" id="togglePassword" class="bg-gray-200 p-2"><img src="{% static 'icons/eye.svg' %}" alt=""></button>
+                            <button type="button" id="togglePassword" class="p-2 bg-gray-200"><img src="{% static 'icons/eye.svg' %}" alt=""></button>
                         </div>
                     </div>
                     <!-- Enlace para recuperar contraseña -->
                     <div class="text-right">
-                        <a href="{% url 'password_reset' %}" class="text-sm font-medium text-blue-700 hover:text-blue-800 transition">
+                        <a href="{% url 'password_reset' %}" class="text-sm font-medium text-blue-700 transition hover:text-blue-800">
                           ¿Olvidaste tu contraseña?
                         </a>
                       </div>
                     
-                    <button type="submit" class="w-full bg-primary text-white p-2 rounded-lg mt-2">Iniciar Sesión</button>
+                    <button type="submit" class="w-full p-2 mt-2 text-white rounded-lg bg-primary">Iniciar Sesión</button>
                 </form>
 
                 <!-- Spinner de carga -->
