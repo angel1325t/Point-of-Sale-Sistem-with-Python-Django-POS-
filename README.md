@@ -2,170 +2,148 @@
 
 ## Introducción
 
-La aplicación web es un sistema de punto de venta (POS) diseñado para gestionar ventas, inventario y clientes de manera eficiente. Permite a los usuarios registrar productos, procesar transacciones y generar reportes en tiempo real.
+Esta aplicación web es un sistema de punto de venta (POS) diseñado para gestionar de manera eficiente las ventas, el inventario y los clientes. Permite registrar productos, procesar transacciones y generar reportes en tiempo real.
 
-Con una interfaz intuitiva y funciones clave como gestión de usuarios, historial de ventas y control de stock, esta aplicación facilitará la administración de un negocio y mejorará la toma de decisiones.
+Gracias a su interfaz intuitiva y funcionalidades clave como la gestión de usuarios, historial de ventas y control de stock, esta solución facilita la administración del negocio y mejora la toma de decisiones.
 
-Esta aplicación de punto de venta optimizará la gestión de ventas e inventario, permitiendo automatizar procesos, reducir errores manuales y mejorar la eficiencia operativa. Además, proporciona reportes en tiempo real para la toma de decisiones basada en datos precisos.
+Además, automatiza procesos, reduce errores manuales y mejora la eficiencia operativa mediante reportes actualizados en tiempo real.
 
-## Requerimientos Funcionales
+---
 
-### Front-end:
+## Características Principales
 
-- Panel para realizar ventas rápidas con escaneo de códigos de barras.
-- Gestión de productos, categorías y precios dinámicos.
-- Interfaz para aplicar descuentos y promociones.
-- Integración de métodos de pago (efectivo, tarjeta, transferencia).
+- Gestión de productos e inventario  
+- Registro de ventas y devoluciones  
+- Control de stock en tiempo real  
+- Gestión de usuarios con roles personalizados  
+- Generación de reportes y estadísticas de ventas  
+- Panel de administración integrado (Django Admin)  
 
-### Back-end:
+---
 
-- Base de datos para productos, transacciones y clientes.
-- Algoritmo para calcular descuentos automáticos y promociones.
-- API para gestionar reportes de ventas en tiempo real.
-- Análisis de ventas por hora, día y producto más vendido.
+## Tecnologías Utilizadas
 
-### Requerimientos Generales:
+### Front-end
 
-- Diseño Responsivo (adaptado a cada pantalla).
-- Login y Registro de usuarios.
-- Integración de inteligencia artificial.
-- Manual técnico y de usuario (PDF).
-- Documentación del progreso del desarrollo.
-- CRUD de todas las entidades de la aplicación (Productos, Usuarios, Empleados).
-- Permisos de usuario.
-- UI/UX optimizado.
-- Reportes e informes sobre ventas y desempeño.
+- **Lenguajes:**
+  - HTML  
+  - CSS  
+  - JavaScript  
 
-## Tecnologías Implementadas
+- **Frameworks y librerías:**
+  - Tailwind CSS  
+  - Flowbite  
+  - Google Fonts  
+  - Font Awesome  
+  - Heroicons  
+  - MerakiUI  
+  - WickedBlocks  
+  - Django Templates  
+  - UnDraw (ilustraciones)  
+  - Django-Jazmin (estilos personalizados para el admin)
 
-### Front-end:
+### Back-end
 
-- **Tecnologías base:**
-  - HTML
-  - CSS
-  - JavaScript
-- **Librerías y herramientas:**
-  - Tailwind CSS
-  - FlowBite
-  - Google Fonts
-  - Font Awesome
-  - Heroicons
-  - MerakiUI
-  - Wickedblocks
-  - DjangoTemplates
-  - UnDraw
-  - Django-Jazmín
+- **Lenguajes y frameworks:**
+  - Django (Python)  
+  - MySQL  
 
-### Back-end:
+- **Servicios y APIs:**
+  - Hunter.io (verificación de correos electrónicos)  
+  - Stripe (procesamiento de pagos)  
+  - Chart.js (gráficas dinámicas)  
+  - Gmail API (envío automático de correos)  
+  - HTML5-QRCode (escaneo de códigos QR en tiempo real)
 
-- **Tecnologías base:**
-  - Django (Python)
-  - MySQL
-- **Librerías y herramientas:**
-  - Hunter.io (API para verificación de correos electrónicos).
-  - Stripe (API para pagos con tarjeta).
-  - Chart.js (API para generación de gráficos).
-  - Gmail API (para envío de correos electrónicos).
-  - HTML5-QRCode (para escaneo de códigos QR).
+---
 
-## Documentación de APIs
+## Variables de Entorno
 
-### 1. **Hunter.io (Verificación de Correos Electrónicos)**
+Para el correcto funcionamiento del sistema, asegúrate de definir las siguientes variables de entorno:
 
-**Descripción:** API que permite verificar direcciones de correo electrónico.
+- `STRIPE_SECRET_KEY`: Clave privada de Stripe  
+- `HUNTER_API_KEY`: Clave para verificar correos con Hunter.io  
+- `GMAIL_CLIENT_ID`  
+- `GMAIL_CLIENT_SECRET`  
+- `GMAIL_REFRESH_TOKEN`  
 
-- **Propósito:** Validar direcciones de correo electrónico en registros.
-- **Uso:**
-  - Se envía la dirección a la API.
-  - Se analiza la respuesta y se determina la validez del correo.
-
-### 2. **Stripe (Pagos con Tarjeta)**
-
-**Descripción:** API para procesamiento de pagos con tarjeta.
-
-- **Propósito:** Gestionar pagos de forma segura.
-- **Uso:**
-  - Integración en modo sandbox para pruebas.
-  - Creación de sesiones de pago.
-  - Manejo de respuestas de éxito o fallo.
-
-### 3. **Chart.js (Generación de Gráficos)**
-
-**Descripción:** API para visualización de datos en gráficos interactivos.
-
-- **Propósito:** Representar datos clave en el dashboard.
-- **Uso:**
-  - Configuración de gráficos en el front-end.
-  - Uso de `canvas` en HTML5 para renderización.
-
-### 4. **Gmail API (Envío de Correos Electrónicos)**
-
-**Descripción:** API de Google para envío de correos.
-
-- **Propósito:** Automatizar el envío de notificaciones y confirmaciones.
-- **Uso:**
-  - Configuración de credenciales en Google Cloud.
-  - Autenticación y envío de correos programáticamente.
-
-### 5. **HTML5-QRCode (Escaneo de Códigos QR)**
-
-**Descripción:** Librería en JavaScript para escaneo de QR en tiempo real.
-
-- **Propósito:** Capturar códigos QR desde la cámara del dispositivo.
-- **Uso:**
-  - Integración de la librería en el proyecto.
-  - Configuración de escaneo en la interfaz de ventas.
+> Puedes almacenarlas en un archivo `.env` y cargarlas con `python-decouple` o `os.environ`.
 
 ---
 
 ## Instalación y Configuración
 
-1. Clonar el repositorio:		
+1. **Clonar el repositorio:**
 
-   ```sh
-   git clone https://github.com/tuusuario/tu-repositorio.git
-   cd tu-repositorio
-   ```
-2. Crear y activar entorno virtual:
+```bash
+git clone https://github.com/tuusuario/tu-repositorio.git
+cd tu-repositorio
+```
 
-   ```sh
-   python -m venv venv
-   source venv/bin/activate  # En Windows: venv\Scripts\activate
-   ```
-3. Instalar dependencias:
+2. **Crear y activar el entorno virtual:**
 
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. Configurar la base de datos en `settings.py` y migrar:
+```bash
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+```
 
-   ```sh
-   python manage.py migrate
-   ```
-5. Crear un superusuario para el panel de administración:
+3. **Instalar las dependencias:**
 
-   ```sh
-   python manage.py createsuperuser
-   ```
-6. Ejecutar el servidor:
+```bash
+pip install -r requirements.txt
+```
 
-   ```sh
-   python manage.py runserver
-   ```
-7. Acceder a la aplicación en `http://127.0.0.1:8000/`
+4. **Configurar la base de datos y aplicar migraciones:**
+
+Edita `settings.py` con tus datos de conexión y luego ejecuta:
+
+```bash
+python manage.py migrate
+```
+
+5. **Crear superusuario para el panel administrativo:**
+
+```bash
+python manage.py createsuperuser
+```
+
+6. **Ejecutar el servidor de desarrollo:**
+
+```bash
+python manage.py runserver
+```
+
+7. **Acceder a la aplicación:**
+
+Visita [http://127.0.0.1:8000/](http://127.0.0.1:8000/) en tu navegador.
 
 ---
 
-## Contribuciones
+## Documentación de APIs Integradas
 
-Si deseas contribuir al proyecto, ¡serás bienvenido! Por favor, sigue estos pasos:
+### Hunter.io (Verificación de Correos Electrónicos)
 
-1. Realiza un fork del repositorio.
-2. Crea una nueva rama (`git checkout -b feature-nueva-funcionalidad`).
-3. Realiza tus cambios y haz commit (`git commit -m 'Agrega nueva funcionalidad'`).
-4. Sube los cambios a tu fork (`git push origin feature-nueva-funcionalidad`).
-5. Abre un Pull Request en este repositorio.
+- **Propósito:** Validar correos electrónicos durante el registro.  
+- **Uso:** Se envía el correo a la API y se analiza la respuesta para determinar su validez.
 
-## Licencia
+### Stripe (Pagos con Tarjeta)
 
-Este proyecto está bajo la licencia MIT. Puedes ver más detalles en el archivo `LICENSE`.
+- **Propósito:** Procesamiento de pagos de forma segura.  
+- **Uso:** 
+  - Integración en modo sandbox para pruebas.  
+  - Creación de sesiones de pago y manejo de respuestas.
+
+### Chart.js (Gráficos)
+
+- **Propósito:** Visualizar estadísticas en el dashboard.  
+- **Uso:** Se renderizan gráficos en un elemento `<canvas>` mediante JavaScript.
+
+### Gmail API (Envío de Correos)
+
+- **Propósito:** Automatizar notificaciones por correo.  
+- **Uso:** Requiere credenciales OAuth 2.0 de Google Cloud y permite el envío programado de mensajes.
+
+### HTML5-QRCode (Escaneo de QR)
+
+- **Propósito:** Escaneo de códigos QR desde la cámara del dispositivo.  
+- **Uso:** Ideal para registrar productos rápidamente desde el punto de venta.
