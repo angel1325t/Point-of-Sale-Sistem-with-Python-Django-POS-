@@ -59,7 +59,7 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {
             "name": "Soporte",
-            "url": "https://github.com/farridav/django-jazzmin/issues",
+            "url": "https://wa.me/8492842781",
             "new_window": True,
         },
         {
@@ -83,6 +83,18 @@ JAZZMIN_SETTINGS = {
     "custom_css": "admin/css/custom.css",
     "changeform_format": "vertical",
     "hide_models": ["sites.Site"],
+    "usermenu_links": [
+        {
+            "name": "Soporte Técnico",
+            "url": "https://wa.me/8492842781",
+            "icon": "fas fa-headset"
+        },
+        {
+            "name": "Empleados",
+            "url": "/empleados/",
+            "icon": "fas fa-cogs",
+        },
+    ],
 }
 
 
@@ -204,12 +216,12 @@ LOGIN_URL = "/login"
 PASSWORD_RESET_TIMEOUT = 3600  # Opcional: Expira en 1 hora
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'angelalexanderperezmartinez47@gmail.com'
-EMAIL_HOST_PASSWORD = 'bzze hhcd qurk ihde'
-DEFAULT_FROM_EMAIL = 'angelalexanderperezmartinez47@gmail.com'
-HUNTER_API_KEY = "70180b1a15e6904ef2d1314ca055ce27a0e28718"
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+
 AUTH_USER_MODEL = "users.CustomUser"

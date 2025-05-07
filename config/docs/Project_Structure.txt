@@ -1,0 +1,59 @@
+
+apps/
+├── productos/
+│   ├── __pycache__/
+│   └── migrations/
+│       └── __pycache__/
+├── returns/
+│   ├── __pycache__/
+│   └── migrations/
+│       └── __pycache__/
+├── users/
+│   ├── __pycache__/
+│   └── migrations/
+│       └── __pycache__/
+└── ventas/
+    ├── __pycache__/
+    ├── migrations/
+    │   └── __pycache__/
+    └── utils/
+        └── __pycache__/
+config/
+├── __pycache__/
+└── manual/
+    └── __pycache__/
+media/
+├── productos_img/
+├── profile_pics/
+└── qrcodes/
+node_modules/
+static/
+├── admin/
+│   └── css/
+├── css/
+│   ├── admin/
+│   ├── login/
+│   └── products/
+├── icons/
+├── img/
+├── js/
+│   ├── admin/
+│   ├── login/
+│   ├── products/
+│   ├── returns/
+│   └── sales/
+│       ├── card/
+│       ├── cash/
+│       └── transfer/
+└── sounds/
+templates/
+├── admin/
+│   ├── returns/
+│   └── ventas/
+├── empleados/
+├── errors/
+├── products/
+├── registration/
+├── returns/
+├── test/
+└── ventas/

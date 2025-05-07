@@ -24,6 +24,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseForbidden
 from django.contrib.auth import views as auth_views
+from .manual.support_bot import chat
 
 
 urlpatterns = [
@@ -54,6 +55,7 @@ urlpatterns = [
     path('accounts/password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='registration/password_change_done.html'), name='password_change_done'),
     path("download-sale-report/", sale_pdf, name="sale_pdf"),
     path('download-return-report/', return_pdf, name='return_pdf'),
+    path('chat/', chat, name='chat'),
 ]
 
 

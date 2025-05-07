@@ -1,0 +1,42 @@
+.notyf__toast {
+  border-radius: 6px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  padding: 14px 18px;
+  max-width: 320px;
+}
+
+.notyf__ripple {
+  height: 100%;
+  width: 5px;
+  left: 0;
+  transform: none;
+  border-radius: 0;
+}
+
+.notyf__message {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  padding-left: 6px;
+}
+
+.notyf__icon {
+  width: 22px;
+  height: 22px;
+}
+
+.notyf__toast--success {
+  background-color: #18253a;
+}
+
+.notyf__toast--error {
+  background-color: #18253a;
+}
+
+.notyf__ripple--success {
+  background-color: #4caf50;
+}
+
+.notyf__ripple--error {
+  background-color: #f44336;
+}

@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+* {
+    font-family: "Inter", serif;
+}
+
+body{
+    background: #F3F4F6;
+}
+
+.bg-primary{
+    background-color: #2234B9;
+}
+
+.bg-primary:hover{
+    background-color: #23328C;
+    transition: all 0.4s;
+}
+
+.color-primary{
+    color: #2234B9;
+}
+/* Asegúrate de que los botones tengan el color correcto */
+.swal2-confirm {
+    background-color: #2234B9 !important;
+    color: white !important;
+}
+
+

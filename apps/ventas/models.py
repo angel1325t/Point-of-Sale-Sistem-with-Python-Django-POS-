@@ -14,7 +14,7 @@ class Venta(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='ventas',
-        limit_choices_to={'is_staff': True}  # Solo usuarios con is_staff=True
+        limit_choices_to={'is_staff': True} 
     )
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateTimeField(auto_now_add=True)
@@ -22,7 +22,6 @@ class Venta(models.Model):
 
     def __str__(self):
         return f"Venta #{self.id_venta} - {self.empleado.username} - {self.total}"
-    
 
 class Transferencia(models.Model):
     TIPO_CUENTA_CHOICES = [

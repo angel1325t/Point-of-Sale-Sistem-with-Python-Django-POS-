@@ -13,166 +13,253 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">  
     <link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-{% block styles %}{% endblock %}
+    {% block styles %}{% endblock %}
 </head>
-<body>
+<body class="bg-gray-50">
     <div class="backdrop" id="loading-spinner">
         <div class="loader"></div>
     </div>
     {% block content %}{% endblock %}
+
+    <!-- Chat Button -->
+    <button id="chatButton" class="fixed z-50 flex items-center justify-center w-12 h-12 text-white transition-all duration-300 bg-blue-800 rounded-full shadow-lg sm:w-14 sm:h-14 bottom-4 right-4 sm:bottom-6 sm:right-6 hover:bg-blue-700">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+        </svg>
+    </button>
+
+    <!-- Chat Container -->
+    <div id="chatContainer" class="fixed hidden border border-gray-200 rounded-lg shadow-xl transition-all duration-300 ease-in-out bottom-16 sm:bottom-24 right-2 sm:right-6 left-2 sm:left-auto w-auto sm:w-[28rem] md:w-[30rem] lg:w-[32rem] max-w-[calc(100vw-16px)] max-h-[70vh] sm:max-h-[80vh] flex flex-col bg-white z-40">
+        <!-- Chat Header -->
+        <div class="flex items-center justify-between p-2 bg-blue-800 border-b border-gray-200 rounded-t-lg sm:p-4">
+            <div class="flex items-center">
+                <span class="text-sm font-semibold text-white sm:text-lg">Atención al Cliente</span>
+            </div>
+            <div class="flex space-x-1 sm:space-x-2">
+                <button id="minimizeChat" class="p-1 text-white rounded-full hover:bg-blue-700">
+                    <svg id="minimizeIcon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <button id="closeChat" class="p-1 text-white rounded-full hover:bg-blue-700">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="flex-1 p-2 sm:p-4 overflow-y-auto bg-gray-50 min-h-[200px] sm:min-h-[300px] max-h-[50vh] sm:max-h-[55vh] transition-all duration-300"></div>
+        
+        <!-- Chat Input -->
+        <div class="p-2 bg-white border-t border-gray-200 rounded-b-lg sm:p-4">
+            <div class="flex items-center gap-2">
+                <input type="text" id="chatInput" class="flex-1 p-2 text-xs border border-gray-300 rounded-lg sm:p-3 sm:text-sm" placeholder="Escribe tu mensaje..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" class="flex items-center justify-center p-2 text-white transition-colors bg-blue-800 rounded-lg sm:p-3 hover:bg-blue-700">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatButton = document.getElementById('chatButton');
+            const chatContainer = document.getElementById('chatContainer');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const closeChat = document.getElementById('closeChat');
+            const minimizeChat = document.getElementById('minimizeChat');
+            const minimizeIcon = document.getElementById('minimizeIcon');
+            let isMinimized = false;
+
+            // Toggle chat open/close
+            chatButton.addEventListener('click', () => {
+                const isChatHidden = chatContainer.classList.contains('hidden');
+                
+                chatContainer.classList.toggle('hidden');
+                
+                if (isChatHidden) {
+                    // Resetear estado de minimizado al abrir
+                    if (isMinimized) {
+                        toggleMinimize(false);
+                    }
+                    
+                    // Enfocar campo de entrada al abrir
+                    setTimeout(() => {
+                        chatInput.focus();
+                    }, 100);
+                }
+            });
+
+            // Close chat
+            closeChat.addEventListener('click', () => {
+                chatContainer.classList.add('hidden');
+            });
+
+            // Function to toggle minimize state
+            function toggleMinimize(state = null) {
+                isMinimized = state !== null ? state : !isMinimized;
+                
+                if (isMinimized) {
+                    // Minimizar
+                    chatMessages.classList.add('hidden', 'h-0');
+                    chatMessages.classList.remove('flex-1', 'min-h-[200px]', 'sm:min-h-[300px]');
+                    
+                    // Cambiar ícono a expandir
+                    minimizeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>';
+                } else {
+                    // Maximizar
+                    chatMessages.classList.remove('hidden', 'h-0');
+                    chatMessages.classList.add('flex-1', 'min-h-[200px]', 'sm:min-h-[300px]');
+                    
+                    // Cambiar ícono a minimizar
+                    minimizeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>';
+                    
+                    // Scroll al final
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 100);
+                }
+            }
+
+            // Minimize chat
+            minimizeChat.addEventListener('click', () => {
+                toggleMinimize();
+            });
+
+            window.sendMessage = async () => {
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                // Si está minimizado, maximizar primero
+                if (isMinimized) {
+                    toggleMinimize(false);
+                }
+
+                // Add user message to chat
+                const userMessage = document.createElement('div');
+                userMessage.className = 'flex justify-end mb-2 sm:mb-3';
+                userMessage.innerHTML = `
+                    <div class="max-w-[75%] sm:max-w-[80%]">
+                        <p class="px-3 py-2 text-xs text-white break-words bg-blue-800 rounded-t-lg rounded-bl-lg sm:text-sm">${message}</p>
+                    </div>
+                `;
+                chatMessages.appendChild(userMessage);
+                chatInput.value = '';
+
+                // Show loading indicator
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'flex justify-start mb-2 sm:mb-3';
+                loadingMessage.id = 'loadingMessage';
+                loadingMessage.innerHTML = `
+                    <div class="max-w-[75%] sm:max-w-[80%]">
+                        <div class="flex items-center px-3 py-2 text-xs text-gray-700 bg-gray-200 rounded-t-lg rounded-br-lg sm:text-sm">
+                            <div class="flex space-x-1">
+                                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(loadingMessage);
+
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                try {
+                    const response = await fetch('/chat/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken'),
+                        },
+                        body: JSON.stringify({ message }),
+                    });
+
+                    const data = await response.json();
+                    
+                    // Remove loading indicator
+                    const loadingIndicator = document.getElementById('loadingMessage');
+                    if (loadingIndicator) {
+                        loadingIndicator.remove();
+                    }
+
+                    // Add AI response
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'flex justify-start mb-2 sm:mb-3';
+                    aiMessage.innerHTML = `
+                        <div class="max-w-[75%] sm:max-w-[80%]">
+                            <p class="px-3 py-2 text-xs text-gray-700 break-words bg-gray-200 rounded-t-lg rounded-br-lg sm:text-sm">${data.response}</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(aiMessage);
+
+                    // Scroll to bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                } catch (error) {
+                    console.error('Error:', error);
+                    
+                    // Remove loading indicator
+                    const loadingIndicator = document.getElementById('loadingMessage');
+                    if (loadingIndicator) {
+                        loadingIndicator.remove();
+                    }
+                    
+                    // Show error message
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'flex justify-start mb-2 sm:mb-3';
+                    errorMessage.innerHTML = `
+                        <div class="max-w-[75%] sm:max-w-[80%]">
+                            <p class="px-3 py-2 text-xs text-white break-words bg-red-500 rounded-t-lg rounded-br-lg sm:text-sm">Lo sentimos, hubo un error al procesar tu mensaje.</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(errorMessage);
+                }
+
+                // Focus on input
+                chatInput.focus();
+            };
+
+            // Get CSRF token
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            
+            // Handle document click to close chat when clicking outside
+            document.addEventListener('click', (event) => {
+                if (!chatContainer.classList.contains('hidden') && 
+                    !chatContainer.contains(event.target) && 
+                    event.target !== chatButton && 
+                    !chatButton.contains(event.target)) {
+                    chatContainer.classList.add('hidden');
+                }
+            });
+            
+            // Stop propagation for chat container clicks
+            chatContainer.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+        });
+    </script>
+
     <script src="{% static 'js/lazy.js' %}"></script>
     <script src="{% static 'js/global_loader.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet">
-{% comment %} 
-<style>
-  .notyf__toast {
-    border-radius: 6px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    padding: 14px 18px;
-    max-width: 320px;
-  }
-  
-  .notyf__ripple {
-    height: 100%;
-    width: 5px;
-    left: 0;
-    transform: none;
-    border-radius: 0;
-  }
-  
-  .notyf__message {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 15px;
-    line-height: 1.4;
-    padding-left: 6px;
-  }
-  
-  .notyf__icon {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .notyf__toast--success {
-    background-color: #18253a;
-  }
-  
-  .notyf__toast--error {
-    background-color: #18253a;
-  }
-  
-  .notyf__ripple--success {
-    background-color: #4CAF50;
-  }
-  
-  .notyf__ripple--error {
-    background-color: #F44336;
-  }
-</style>
-
-<script>
-    let socket;
-    let notificationQueue = [];
-    let isProcessingQueue = false;
-    
-    // Configure Notyf
-    const notyf = new Notyf({
-        duration: 3500,
-        position: {
-            x: 'right',
-            y: 'top'
-        },
-        types: [
-            {
-                type: 'success',
-                background: '#18253a',
-                icon: false
-            },
-            {
-                type: 'error',
-                background: '#18253a',
-                icon: false
-            }
-        ]
-    });
-    
-    // Process notifications one by one
-    function processNotificationQueue() {
-        if (notificationQueue.length === 0) {
-            isProcessingQueue = false;
-            return;
-        }
-        
-        isProcessingQueue = true;
-        const notification = notificationQueue.shift();
-        
-        if (notification.type === 'success') {
-            notyf.success(notification.message);
-        } else {
-            notyf.error(notification.message);
-        }
-        
-        // Wait for the current notification to finish before showing the next one
-        // Adding a small additional delay between notifications
-        setTimeout(() => {
-            processNotificationQueue();
-        }, 3800); // 3500ms (notyf duration) + 300ms extra gap
-    }
-    
-    // Add notification to queue and process if not already processing
-    function addToNotificationQueue(message, type = 'success') {
-        notificationQueue.push({
-            message: message,
-            type: type
-        });
-        
-        if (!isProcessingQueue) {
-            processNotificationQueue();
-        }
-    }
-
-    function connectWebSocket() {
-        socket = new WebSocket("ws://127.0.0.1:8000/ws/stock/");
-
-        socket.onopen = function(event) {
-            console.log("WebSocket conectado");
-        };
-
-        socket.onmessage = function(event) {
-            console.log("Datos recibidos:", event.data);
-            try {
-                const data = JSON.parse(event.data);
-                addToNotificationQueue(data.message, 'success');
-            } catch (error) {
-                console.error("Error al parsear mensaje:", error);
-                addToNotificationQueue("Error al procesar el mensaje", 'error');
-            }
-        };
-
-        socket.onerror = function(error) {
-            console.error("Error en WebSocket:", error);
-            addToNotificationQueue("Error de conexión", 'error');
-        };
-
-        socket.onclose = function(event) {
-            console.log("WebSocket cerrado:", event);
-            setTimeout(connectWebSocket, 3000);
-        };
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        connectWebSocket();
-        
-        // Test function to simulate multiple notifications (can be removed in production)
-        window.testNotifications = function(count) {
-            for (let i = 1; i <= count; i++) {
-                addToNotificationQueue(`Test notification ${i} of ${count}`);
-            }
-        };
-    });
-</script> {% endcomment %}
     {% block scripts %}{% endblock %}
 </body>
 </html>
-
-

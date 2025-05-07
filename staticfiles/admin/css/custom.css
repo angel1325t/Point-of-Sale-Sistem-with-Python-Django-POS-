@@ -1,0 +1,13 @@
+select[multiple], 
+.dual-listbox .box1, 
+.dual-listbox .box2 {
+    background-color: #343a40 !important;  /* Fondo oscuro */
+    color: white !important;               /* Texto blanco */
+    border: 1px solid #495057 !important;  /* Borde oscuro */
+}
+
+option {
+    background-color: #343a40 !important;  /* Fondo oscuro */
+    color: white !important;
+}
+
