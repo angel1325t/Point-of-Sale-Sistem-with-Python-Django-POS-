@@ -24,7 +24,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import HttpResponseForbidden
 from django.contrib.auth import views as auth_views
-from .manual.support_bot import chat
+from .docs.support_bot import chat
 
 
 urlpatterns = [

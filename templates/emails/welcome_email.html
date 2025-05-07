@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bienvenida</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    <table align="center" width="100%" style="max-width: 600px; background-color: white; padding: 20px; border-radius: 5px; 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+        <tr>
+            <td>
+                <h2 style="color: #2234B9; text-align: center;">Bienvenido, {{ username }}!</h2>
+                <p>Hola {{ username }},</p>
+                <p>Te hemos registrado en PuntoXpress. Para completar tu registro y asegurarte de que tu cuenta está segura, por favor establece una nueva contraseña.</p>
+                
+                <p style="text-align: center; margin-top: 20px;">
+                    <a href="http://127.0.0.1:8000/email/{{ id }}" style="background-color: #2234B9; color: white; padding: 12px 25px; text-decoration: none; 
+                    border-radius: 5px; display: inline-block; font-size: 16px; font-weight: bold;">Establecer Nuevas Credenciales</a>
+                </p>
+
+                <p style="margin-top: 20px; background-color: #FFDD57; padding: 10px; border-radius: 5px; color: #9A7D0A; 
+                font-weight: bold; text-align: center;">
+                    ¡Es necesario que cambies tus credenciales inmediatamente! No puedes acceder a tu cuenta hasta que lo hagas.
+                </p>
+                <p><strong>Usuario por defecto:</strong> {{ username }}</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

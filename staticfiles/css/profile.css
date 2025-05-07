@@ -1,0 +1,18 @@
+#edit-form {
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+#edit-form.max-h-0 {
+    margin-top: 0;
+}
+
+#edit-form.max-h-96 {
+    margin-top: 1rem;
+}
+
+.bg-wave {
+    background-color: #f3f4f6;
+    background-size: cover;
+    background-repeat: no-repeat;
+}

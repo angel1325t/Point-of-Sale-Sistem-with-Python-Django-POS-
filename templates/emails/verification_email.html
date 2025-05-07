@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verificación de Email</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    <table align="center" width="100%" style="max-width: 600px; background-color: white; padding: 20px; border-radius: 5px; 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+        <tr>
+            <td>
+                <h2 style="color: #2234B9; text-align: center;">Verifica tu nuevo email</h2>
+                <p>Hola {{ username }},</p>
+                <p>Has solicitado cambiar tu email en PuntoXpress. Por favor verifica tu nueva dirección de correo electrónico haciendo clic en el botón de abajo:</p>
+                
+                <p style="text-align: center; margin-top: 20px;">
+                    <a href="{{ verification_url }}" style="background-color: #2234B9; color: white; padding: 12px 25px; text-decoration: none; 
+                    border-radius: 5px; display: inline-block; font-size: 16px; font-weight: bold;">Verificar Email</a>
+                </p>
+
+                <p style="margin-top: 20px; color: #666;">
+                    Si no has solicitado este cambio, por favor ignora este mensaje.
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

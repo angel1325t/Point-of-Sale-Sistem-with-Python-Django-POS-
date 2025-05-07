@@ -1,6 +1,7 @@
 import logging
 from django.core.mail import send_mail
 from django.core.mail import BadHeaderError
+from django.template.loader import render_to_string
 from smtplib import SMTPException
 
 logger = logging.getLogger(__name__)
@@ -11,79 +12,28 @@ class EmailService:
         self.user = user
         self.password = password
         self.subject = "Tus credenciales de acceso"
-        self.html_content = self.generate_html_content()
 
     def generate_html_content(self):
-        """Genera el HTML para el email de bienvenida/registro"""
-        return f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Bienvenida</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-            <table align="center" width="100%" style="max-width: 600px; background-color: white; padding: 20px; border-radius: 5px; 
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
-                <tr>
-                    <td>
-                        <h2 style="color: #2234B9; text-align: center;">Bienvenido, {self.user.username}!</h2>
-                        <p>Hola {self.user.username},</p>
-                        <p>Te hemos registrado en PuntoXpress. Para completar tu registro y asegurarte de que tu cuenta está segura, por favor establece una nueva contraseña.</p>
-                        
-                        <p style="text-align: center; margin-top: 20px;">
-                            <a href="http://127.0.0.1:8000/email/{self.id}" style="background-color: #2234B9; color: white; padding: 12px 25px; text-decoration: none; 
-                            border-radius: 5px; display: inline-block; font-size: 16px; font-weight: bold;">Establecer Nuevas Credenciales</a>
-                        </p>
-
-                        <p style="margin-top: 20px; background-color: #FFDD57; padding: 10px; border-radius: 5px; color: #9A7D0A; 
-                        font-weight: bold; text-align: center;">
-                            ¡Es necesario que cambies tus credenciales inmediatamente! No puedes acceder a tu cuenta hasta que lo hagas.
-                        </p>
-                        <p><strong>Usuario por defecto:</strong> {self.user.username}</p>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-        """
+        """Genera el HTML para el email de bienvenida/registro usando un template"""
+        context = {
+            'username': self.user.username,
+            'id': self.id
+        }
+        return render_to_string('emails/welcome_email.html', context)
 
     def generate_verification_html(self, verification_url):
-        """Genera el HTML para el email de verificación"""
-        return f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Verificación de Email</title>
-        </head>
-        <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-            <table align="center" width="100%" style="max-width: 600px; background-color: white; padding: 20px; border-radius: 5px; 
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
-                <tr>
-                    <td>
-                        <h2 style="color: #2234B9; text-align: center;">Verifica tu nuevo email</h2>
-                        <p>Hola {self.user.username},</p>
-                        <p>Has solicitado cambiar tu email en PuntoXpress. Por favor verifica tu nueva dirección de correo electrónico haciendo clic en el botón de abajo:</p>
-                        
-                        <p style="text-align: center; margin-top: 20px;">
-                            <a href="{verification_url}" style="background-color: #2234B9; color: white; padding: 12px 25px; text-decoration: none; 
-                            border-radius: 5px; display: inline-block; font-size: 16px; font-weight: bold;">Verificar Email</a>
-                        </p>
-
-                        <p style="margin-top: 20px; color: #666;">
-                            Si no has solicitado este cambio, por favor ignora este mensaje.
-                        </p>
-                    </td>
-                </tr>
-            </table>
-        </body>
-        </html>
-        """
+        """Genera el HTML para el email de verificación usando un template"""
+        context = {
+            'username': self.user.username,
+            'verification_url': verification_url
+        }
+        return render_to_string('emails/verification_email.html', context)
 
     def send_email(self, recipient_email=None, subject=None, html_content=None):
         """Envía un correo electrónico, permitiendo personalizar el destinatario, asunto y contenido HTML"""
         recipient = recipient_email if recipient_email else self.user.email
         subject = subject if subject else self.subject
-        html_content = html_content if html_content else self.html_content
+        html_content = html_content if html_content else self.generate_html_content()
 
         try:
             send_mail(
