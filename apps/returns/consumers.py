@@ -19,7 +19,7 @@ class StockConsumer(AsyncWebsocketConsumer):
         )
 
         ahora = timezone.now()
-        intervalo = timedelta(hours=6) 
+        intervalo = timedelta(hours=1)
 
         for producto in productos_bajo_stock:
             # Verifica si ya se envió una alerta recientemente
