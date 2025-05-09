@@ -253,107 +253,181 @@ def render_to_pdf(template_src, context_dict=None):
         return None
     
 
-def devoluciones_por_periodo(request):
-    # Obtener el filtro desde la solicitud, por defecto 'mensual'
-    filtro = request.GET.get('filtro', 'mensual')
-    print("Filtro recibido:", filtro)
-    
-    # Definir el rango de tiempo según el filtro
-    if filtro == 'diario':
-        delta = timedelta(days=1)  # Últimos 2 días
-    elif filtro == 'semanal':
-        delta = timedelta(days=6)  # Últimos 7 días
+from django.http import JsonResponse
+from django.utils import timezone
+from datetime import datetime, timedelta
+from django.db.models import Sum
+from .models import Devolucion, DetalleDevolucion  # Ajusta según tus modelos
+
+def return_statistics(request):
+    filter_type = request.GET.get('filtro', 'mensual')
+    now = timezone.now()
+
+    if filter_type == 'diario':
+        start_date = datetime(now.year, now.month, now.day)
+        end_date = start_date + timedelta(days=1)
+    elif filter_type == 'semanal':
+        start_date = now - timedelta(days=now.weekday())
+        start_date = datetime(start_date.year, start_date.month, start_date.day)
+        end_date = start_date + timedelta(days=7)
     else:  # mensual
-        delta = timedelta(days=29)  # Últimos 30 días
+        start_date = datetime(now.year, now.month, 1)
+        if now.month == 12:
+            end_date = datetime(now.year + 1, 1, 1)
+        else:
+            end_date = datetime(now.year, now.month + 1, 1)
 
-    # Calcular la fecha de inicio y fin
-    today = timezone.now().date()
-    fecha_inicio = today - delta
-    print("Fecha de inicio:", fecha_inicio, "Fecha de fin:", today)
+    devoluciones = Devolucion.objects.filter(fecha_devolucion__gte=start_date, fecha_devolucion__lt=end_date)
+
+    total_devoluciones = devoluciones.count()
+    total_devuelto = sum(d.total_devolver for d in devoluciones)
+
+
+    detalle_devoluciones = DetalleDevolucion.objects.filter(devolucion__in=devoluciones)
+    top_product = detalle_devoluciones.values('producto__nombre').annotate(
+        total_devuelto=Sum('cantidad')
+    ).order_by('-total_devuelto').first()
+
+    return JsonResponse({
+        'total_devoluciones': total_devoluciones,
+        'total_devuelto': float(total_devuelto),
+        'producto_mas_devuelto': top_product['producto__nombre'] if top_product else '',
+    })
+
+
+def returns_by_period(request):
+    # Get the filter from the request, default to 'monthly'
+    period_filter = request.GET.get('filtro', 'mensual')
+    print("Received filter:", period_filter)
     
-    # Consultar las devoluciones, agrupadas por día
-    devoluciones = (Devolucion.objects
-                    .filter(fecha_devolucion__gte=fecha_inicio)
-                    .extra(select={'date': "DATE(fecha_devolucion)"})
-                    .values('date')
-                    .annotate(total=Count('id'))
-                    .order_by('date'))
+    now = timezone.now()
+
+    if period_filter == 'diario':
+        start_date = datetime(now.year, now.month, now.day, 0, 0, 0)
+        end_date = start_date + timedelta(days=1)
+
+    elif period_filter == 'semanal':
+        start_date = now - timedelta(days=now.weekday())  # Monday
+        start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+        end_date = start_date + timedelta(days=7)  # Next Monday
+
+    else:  # mensual
+        start_date = datetime(now.year, now.month, 1, 0, 0, 0)
+        if now.month == 12:
+            end_date = datetime(now.year + 1, 1, 1, 0, 0, 0)
+        else:
+            end_date = datetime(now.year, now.month + 1, 1, 0, 0, 0)
+
+    print("Start date:", start_date, "End date:", end_date)
+
+    # Query returns within the range
+    returns = (
+        Devolucion.objects
+        .filter(fecha_devolucion__gte=start_date, fecha_devolucion__lt=end_date)
+        .extra(select={'date': "DATE(fecha_devolucion)"})
+        .values('date')
+        .annotate(total=Count('id'))
+        .order_by('date')
+    )
     
-    print("Devoluciones encontradas:", list(devoluciones))
+    print("Returns found:", list(returns))
 
-    # Crear un diccionario con las fechas y los totales
-    data_dict = {}
-    for d in devoluciones:
-        fecha = d['date']  # Ya es una fecha truncada
-        key = fecha.strftime('%Y-%m-%d')
-        data_dict[key] = data_dict.get(key, 0) + d['total']
-    print("Diccionario de datos:", data_dict)
-
-    # Generar todas las fechas desde fecha_inicio hasta hoy
+    # Build the response only with dates that have returns
     labels = []
     data = []
-    current_date = fecha_inicio
-    while current_date <= today:
-        key = current_date.strftime('%Y-%m-%d')
-        labels.append(key)
-        data.append(data_dict.get(key, 0))
-        print(f"Fecha: {key}, Total: {data_dict.get(key, 0)}")
-        current_date += timedelta(days=1)
+    for r in returns:
+        date_str = r['date'].strftime('%Y-%m-%d')
+        labels.append(date_str)
+        data.append(r['total'])
+        print(f"Date: {date_str}, Total: {r['total']}")
     
-    # Devolver los datos en formato JSON
+    # Return data as JSON
     response = {
         'labels': labels,
         'data': data,
     }
-    print("Respuesta JSON:", response)
+    print("JSON Response:", response)
     
     return JsonResponse(response)
 
+def most_returned_products(request):
+    period_filter = request.GET.get('filtro', 'mensual')
+    now = timezone.now()
 
+    if period_filter == 'diario':
+        start_date = datetime(now.year, now.month, now.day, 0, 0, 0)
+        end_date = start_date + timedelta(days=1)
 
-def productos_mas_devueltos(request):
-    filtro = request.GET.get('filtro', 'mensual')
-    delta = {'diario': timedelta(days=1), 'semanal': timedelta(weeks=1), 'mensual': timedelta(days=30)}
-    fecha_inicio = datetime.now() - delta.get(filtro, timedelta(days=30))
-    
-    productos = (DetalleDevolucion.objects
-                 .filter(devolucion__fecha_devolucion__gte=fecha_inicio)
-                 .values('producto__nombre')
-                 .annotate(total=Sum('cantidad'))
-                 .order_by('-total')[:5])
-    
+    elif period_filter == 'semanal':
+        start_date = now - timedelta(days=now.weekday())  # Monday
+        start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+        end_date = start_date + timedelta(days=7)
+
+    else:  # mensual
+        start_date = datetime(now.year, now.month, 1, 0, 0, 0)
+        if now.month == 12:
+            end_date = datetime(now.year + 1, 1, 1, 0, 0, 0)
+        else:
+            end_date = datetime(now.year, now.month + 1, 1, 0, 0, 0)
+
+    print("Start date:", start_date, "End date:", end_date)
+
+    products = (
+        DetalleDevolucion.objects
+        .filter(devolucion__fecha_devolucion__gte=start_date,
+                devolucion__fecha_devolucion__lt=end_date)
+        .values('producto__nombre')
+        .annotate(total=Sum('cantidad'))
+        .order_by('-total')[:5]
+    )
+
     data = {
-        'labels': [p['producto__nombre'] for p in productos],
-        'data': [p['total'] for p in productos],
+        'labels': [p['producto__nombre'] for p in products],
+        'data': [p['total'] for p in products],
     }
+
     return JsonResponse(data)
 
+def return_reasons_data(request):
+    period_filter = request.GET.get('filtro', 'mensual')
+    print(f"Received filter: {period_filter}")
 
-def motivos_devolucion_data(request):
-    filtro = request.GET.get('filtro', 'mensual')
-    print(f"Filtro recibido: {filtro}")
+    now = timezone.now()
 
-    delta = {
-        'diario': timedelta(days=1),
-        'semanal': timedelta(weeks=1),
-        'mensual': timedelta(days=30)
-    }
-    fecha_inicio = datetime.now() - delta.get(filtro, timedelta(days=30))
-    print(f"Fecha de inicio calculada: {fecha_inicio}")
+    if period_filter == 'diario':
+        start_date = datetime(now.year, now.month, now.day, 0, 0, 0)
+        end_date = start_date + timedelta(days=1)
 
-    motivos = (Devolucion.objects
-               .filter(fecha_devolucion__gte=fecha_inicio)
-               .values('motivo_general')
-               .annotate(total=Count('id'))
-               .order_by('-total'))
+    elif period_filter == 'semanal':
+        start_date = now - timedelta(days=now.weekday())  # Monday
+        start_date = datetime(start_date.year, start_date.month, start_date.day, 0, 0, 0)
+        end_date = start_date + timedelta(days=7)
+
+    else:  # mensual
+        start_date = datetime(now.year, now.month, 1, 0, 0, 0)
+        if now.month == 12:
+            end_date = datetime(now.year + 1, 1, 1, 0, 0, 0)
+        else:
+            end_date = datetime(now.year, now.month + 1, 1, 0, 0, 0)
+
+    print(f"Calculated start date: {start_date}, end date: {end_date}")
+
+    reasons = (
+        Devolucion.objects
+        .filter(fecha_devolucion__gte=start_date, fecha_devolucion__lt=end_date)
+        .values('motivo_general')
+        .annotate(total=Count('id'))
+        .order_by('-total')
+    )
     
-    print(f"Motivos obtenidos: {list(motivos)}")
+    print(f"Reasons retrieved: {list(reasons)}")
 
     data = {
-        'labels': [m['motivo_general'] for m in motivos],
-        'data': [m['total'] for m in motivos],
+        'labels': [r['motivo_general'] for r in reasons],
+        'data': [r['total'] for r in reasons],
     }
-    print(f"Datos preparados para el JSON: {data}")
+    
+    print(f"Data prepared for JSON: {data}")
 
     return JsonResponse(data)
 

@@ -280,7 +280,7 @@
                 <h6 class="text-muted">
                     <i class="bx bx-money"></i> Total de Ganancias
                 </h6>
-                <h3 class="text-success">${{ total_ganancias|floatformat:2 }}</h3>
+                <h3 class="text-success" id="totalGanancias"></h3>
             </div>
         </div>
         <div class="mb-3 col-md-4 mb-md-0">
@@ -288,7 +288,7 @@
                 <h6 class="text-muted">
                     <i class="bx bx-cart"></i> Total de Ventas
                 </h6>
-                <h3 class="text-info">{{ total_ventas }}</h3>
+                <h3 class="text-info" id="totalVentas"></h3>
             </div>
         </div>
         <div class="mb-3 col-md-4 mb-md-0">
@@ -296,7 +296,7 @@
                 <h6 class="text-muted">
                     <i class="bx bx-star"></i> Producto Más Vendido
                 </h6>
-                <h4 class="text-warning">{{ producto_mas_vendido }}</h4>
+                <h4 class="text-warning" id="productoMasVendido"></h4>
             </div>
         </div>
     </div>
@@ -350,6 +350,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{% static 'js/admin/charts.js' %}"></script>
+
+<script src="{% static 'js/admin/sales_charts.js' %}"></script>
 {% endif %}
 {% endblock %}

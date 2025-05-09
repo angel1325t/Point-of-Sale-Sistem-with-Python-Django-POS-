@@ -273,31 +273,32 @@
 
     <!-- Estadísticas -->
     <div class="mb-4 row">
-        <div class="mb-3 col-md-4 mb-md-0">
-            <div class="stat-card success">
-                <h6 class="text-muted">
-                    <i class="bx bx-list-ul"></i> Total de Devoluciones
-                </h6>
-                <h3>{{ total_devoluciones }}</h3>
-            </div>
-        </div>
-        <div class="mb-3 col-md-4 mb-md-0">
-            <div class="stat-card success">
-                <h6 class="text-muted">
-                    <i class="bx bx-money"></i> Total Devuelto
-                </h6>
-                <h3>${{ total_devuelto|floatformat:2 }}</h3>
-            </div>
-        </div>
-        <div class="mb-3 col-md-4 mb-md-0">
-            <div class="stat-card success">
-                <h6 class="text-muted">
-                    <i class="bx bx-star"></i> Producto Más Devuelto
-                </h6>
-                <h3>{{ producto_mas_devuelto }}</h3>
-            </div>
-        </div>
-    </div>
+     <div class="mb-3 col-md-4 mb-md-0">
+         <div class="stat-card success">
+             <h6 class="text-muted">
+                 <i class="bx bx-list-ul"></i> Total de Devoluciones
+             </h6>
+             <h3 id="totalDevoluciones"></h3> <!-- Asegúrate de que el ID esté aquí -->
+         </div>
+     </div>
+     <div class="mb-3 col-md-4 mb-md-0">
+         <div class="stat-card success">
+             <h6 class="text-muted">
+                 <i class="bx bx-money"></i> Total Devuelto
+             </h6>
+             <h3 id="totalDevuelto"></h3> <!-- Asegúrate de que el ID esté aquí -->
+         </div>
+     </div>
+     <div class="mb-3 col-md-4 mb-md-0">
+         <div class="stat-card success">
+             <h6 class="text-muted">
+                 <i class="bx bx-star"></i> Producto Más Devuelto
+             </h6>
+             <h3 id="productoMasDevuelto"></h3> <!-- Asegúrate de que el ID esté aquí -->
+         </div>
+     </div>
+ </div>
+
 
     <!-- Filtros -->
     <div class="mb-4 row">
@@ -350,10 +351,25 @@
 
     document.getElementById('filtroFechas').addEventListener('change', function() {
         const filtro = this.value;
+        updateResumenEstadisticas(filtro);
         updateDevolucionesPeriodoChart(filtro);
         updateTopProductosDevueltosChart(filtro);
         updateMotivosDevolucionChart(filtro);
     });
+    function updateResumenEstadisticas(filtro) {
+    fetch(`/estadisticas-devoluciones/?filtro=${filtro}`)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('totalDevoluciones').textContent = data.total_devoluciones;
+            document.getElementById('totalDevuelto').textContent = `$${data.total_devuelto.toFixed(2)}`;
+            document.getElementById('productoMasDevuelto').textContent = data.producto_mas_devuelto || 'N/A';
+        })
+        .catch(error => console.error('Error al actualizar el resumen de estadísticas:', error));
+}
+
 
     function updateDevolucionesPeriodoChart(filtro) {
         fetch(`/devoluciones_por_periodo/?filtro=${filtro}`)
@@ -465,6 +481,7 @@
     updateDevolucionesPeriodoChart('mensual');
     updateTopProductosDevueltosChart('mensual');
     updateMotivosDevolucionChart('mensual');
+    updateResumenEstadisticas('mensual');
 </script>
 {% endif %}
 {% endblock %}

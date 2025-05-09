@@ -1,26 +1,40 @@
 // Variable global para cada gráfico
-let ingresosEgresosChart;
-let topProductosChart;
-let ventasCategoriaChart;
-let ventasPeriodoChart;
+let incomeExpenseChart;
+let topProductsChart;
+let salesByCategoryChart;
+let salesOverTimeChart;
 
 // Escuchar cambios en el filtro de fechas
 document.getElementById('filtroFechas').addEventListener('change', function() {
-    const filtroSeleccionado = this.value;  // Obtener el valor seleccionado
-    updateIngresosEgresosChart(filtroSeleccionado);  // Actualizar Ingresos vs Egresos
-    updateTopProductosChart(filtroSeleccionado);     // Actualizar Top Productos
-    updateVentasCategoriaChart(filtroSeleccionado);  // Actualizar Ventas por Categoría
-    updateVentasPeriodoChart(filtroSeleccionado, 'line');  // Actualizar Ventas por Período
+    const selectedFilter = this.value;  // Obtener el valor seleccionado
+    updateIncomeExpenseChart(selectedFilter);         // Actualizar Ingresos vs Egresos
+    updateTopProductsChart(selectedFilter);           // Actualizar Top Productos
+    updateSalesByCategoryChart(selectedFilter);       // Actualizar Ventas por Categoría
+    updateSalesOverTimeChart(selectedFilter, 'line'); // Actualizar Ventas por Período
+    loadGeneralStatistics(selectedFilter);            // Cargar estadísticas generales
 });
 
-// Función para actualizar Ingresos vs Egresos
-function updateIngresosEgresosChart(filtro) {
-    fetch(`/ingresos_egresos_data/?filtro=${filtro}`)
+// Función para cargar estadísticas generales
+function loadGeneralStatistics(filter) {
+    fetch(`/ventas_estadisticas/?filtro=${filter}`)
         .then(response => response.json())
         .then(data => {
-            if (ingresosEgresosChart) ingresosEgresosChart.destroy();  // Destruir gráfico anterior
+            document.getElementById('totalVentas').textContent = data.total_ventas;
+            document.getElementById('totalGanancias').textContent = `$${data.total_ganancias.toFixed(2)}`;
+            document.getElementById('productoMasVendido').textContent = data.producto_mas_vendido || 'N/A';
+            document.getElementById('cantidadVendida').textContent = data.cantidad_vendida || 0;
+        })
+        .catch(error => console.error('Error al obtener estadísticas:', error));
+}
+
+// Función para actualizar Ingresos vs Egresos
+function updateIncomeExpenseChart(filter) {
+    fetch(`/ingresos_egresos_data/?filtro=${filter}`)
+        .then(response => response.json())
+        .then(data => {
+            if (incomeExpenseChart) incomeExpenseChart.destroy();  // Destruir gráfico anterior
             const ctx = document.getElementById('ingresosEgresosChart').getContext('2d');
-            ingresosEgresosChart = new Chart(ctx, {
+            incomeExpenseChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: data.labels,
@@ -52,13 +66,13 @@ function updateIngresosEgresosChart(filtro) {
 }
 
 // Función para actualizar Top 5 Productos Más Vendidos
-function updateTopProductosChart(filtro) {
-    fetch(`/top_productos_data/?filtro=${filtro}`)
+function updateTopProductsChart(filter) {
+    fetch(`/top_productos_data/?filtro=${filter}`)
         .then(response => response.json())
         .then(data => {
-            if (topProductosChart) topProductosChart.destroy();  // Destruir gráfico anterior
+            if (topProductsChart) topProductsChart.destroy();  // Destruir gráfico anterior
             const ctx = document.getElementById('topProductosChart').getContext('2d');
-            topProductosChart = new Chart(ctx, {
+            topProductsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: data.labels,
@@ -82,13 +96,13 @@ function updateTopProductosChart(filtro) {
 }
 
 // Función para actualizar Ventas por Categoría
-function updateVentasCategoriaChart(filtro) {
-    fetch(`/ventas_por_categoria_data/?filtro=${filtro}`)
+function updateSalesByCategoryChart(filter) {
+    fetch(`/ventas_por_categoria_data/?filtro=${filter}`)
         .then(response => response.json())
         .then(data => {
-            if (ventasCategoriaChart) ventasCategoriaChart.destroy();  // Destruir gráfico anterior
+            if (salesByCategoryChart) salesByCategoryChart.destroy();  // Destruir gráfico anterior
             const ctx = document.getElementById('ventasCategoriaChart').getContext('2d');
-            ventasCategoriaChart = new Chart(ctx, {
+            salesByCategoryChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: data.labels,
@@ -116,7 +130,23 @@ function updateVentasCategoriaChart(filtro) {
                     indexAxis: 'y', // Barras horizontales
                     responsive: true,
                     scales: {
-                        x: { beginAtZero: true }
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.x.toFixed(2) + '%';
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -124,21 +154,21 @@ function updateVentasCategoriaChart(filtro) {
         .catch(error => console.error('Error al obtener los datos:', error));
 }
 
-// Función para actualizar Ventas por Período (ya existente, renombrada para consistencia)
-function updateVentasPeriodoChart(filtro, tipo) {
-    fetch(`/api/chartdata/?filtro=${filtro}`)
+// Función para actualizar Ventas por Período
+function updateSalesOverTimeChart(filter, type) {
+    fetch(`/api/chartdata/?filtro=${filter}`)
         .then(response => response.json())
         .then(data => {
-            if (ventasPeriodoChart) ventasPeriodoChart.destroy();
+            if (salesOverTimeChart) salesOverTimeChart.destroy(); // Destruir gráfico anterior
 
             const ctx = document.getElementById('ventasPeriodoChart').getContext('2d');
 
             // Gradiente azul desde arriba hacia abajo
             const gradient = ctx.createLinearGradient(0, 0, 0, 400);
             gradient.addColorStop(0, 'rgba(231, 76, 60, 0.4)');  // más oscuro arriba
-            gradient.addColorStop(1, 'rgba(231, 76, 60, 1)');  // más claro abajo
+            gradient.addColorStop(1, 'rgba(231, 76, 60, 1)');    // más claro abajo
 
-            ventasPeriodoChart = new Chart(ctx, {
+            salesOverTimeChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: data.labels,
@@ -172,10 +202,9 @@ function updateVentasPeriodoChart(filtro, tipo) {
         .catch(error => console.error('Error al obtener los datos:', error));
 }
 
-
-
 // Inicializar todos los gráficos con un filtro por defecto (mensual)
-updateIngresosEgresosChart('mensual');
-updateTopProductosChart('mensual');
-updateVentasCategoriaChart('mensual');
-updateVentasPeriodoChart('mensual', 'line');
+loadGeneralStatistics('mensual');
+updateIncomeExpenseChart('mensual');
+updateTopProductsChart('mensual');
+updateSalesByCategoryChart('mensual');
+updateSalesOverTimeChart('mensual', 'line');

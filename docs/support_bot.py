@@ -28,7 +28,7 @@ def extract_text_from_pdf(pdf_path):
         return None
 
 # Load PDF text once at startup
-PDF_PATH = 'config/docs/Manual de uso.pdf'
+PDF_PATH = 'docs/Manual de uso.pdf'
 PDF_TEXT = extract_text_from_pdf(PDF_PATH)
 
 PROMPT = """
