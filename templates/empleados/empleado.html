@@ -251,6 +251,49 @@
       
       
     {% block section1 %}{% endblock %}
+        <!-- Chat Button -->
+    <button id="chatButton" class="fixed z-50 flex items-center justify-center w-12 h-12 text-white transition-all duration-300 bg-blue-800 rounded-full shadow-lg sm:w-14 sm:h-14 bottom-4 right-4 sm:bottom-6 sm:right-6 hover:bg-blue-700">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+        </svg>
+    </button>
+
+    <!-- Chat Container -->
+    <div id="chatContainer" class="fixed hidden border border-gray-200 rounded-lg shadow-xl transition-all duration-300 ease-in-out bottom-16 sm:bottom-24 right-2 sm:right-6 left-2 sm:left-auto w-auto sm:w-[28rem] md:w-[30rem] lg:w-[32rem] max-w-[calc(100vw-16px)] max-h-[70vh] sm:max-h-[80vh] flex flex-col bg-white z-40">
+        <!-- Chat Header -->
+        <div class="flex items-center justify-between p-2 bg-blue-800 border-b border-gray-200 rounded-t-lg sm:p-4">
+            <div class="flex items-center">
+                <span class="text-sm font-semibold text-white sm:text-lg">Atención al Cliente</span>
+            </div>
+            <div class="flex space-x-1 sm:space-x-2">
+                <button id="minimizeChat" class="p-1 text-white rounded-full hover:bg-blue-700">
+                    <svg id="minimizeIcon" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <button id="closeChat" class="p-1 text-white rounded-full hover:bg-blue-700">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div id="chatMessages" class="flex-1 p-2 sm:p-4 overflow-y-auto bg-gray-50 min-h-[200px] sm:min-h-[300px] max-h-[50vh] sm:max-h-[55vh] transition-all duration-300"></div>
+        
+        <!-- Chat Input -->
+        <div class="p-2 bg-white border-t border-gray-200 rounded-b-lg sm:p-4">
+            <div class="flex items-center gap-2">
+                <input type="text" id="chatInput" class="flex-1 p-2 text-xs border border-gray-300 rounded-lg sm:p-3 sm:text-sm" placeholder="Escribe tu mensaje..." onkeypress="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()" class="flex items-center justify-center p-2 text-white transition-colors bg-blue-800 rounded-lg sm:p-3 hover:bg-blue-700">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
 </main>
 </div>
 

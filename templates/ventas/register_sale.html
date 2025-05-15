@@ -112,21 +112,23 @@
           placeholder="0.00"
         />
       </div>
+      </div>
   
-       <div class="flex justify-between mt-4 mb-4">
-  <span class="text-gray-600">Método de pago:</span>
-  <div class="flex space-x-4">
-    <button id="cash-tab" class="pb-2 text-gray-600 border-b-2 tab-button focus:outline-none hover:text-blue-800">
+<div class="flex flex-col justify-between w-full p-2 mt-4 mb-4 border-t-[2.2px] border-gray-200 sm:flex-row">
+  <span class="mb-2 text-gray-600 sm:mb-0">Método de pago:</span>
+  <div class="flex flex-wrap justify-center gap-2 sm:gap-4 sm:justify-end">
+    <button id="cash-tab" class="px-2 pb-1 text-gray-600 border-b-2 border-transparent tab-button focus:outline-none hover:text-blue-800 hover:border-blue-800 active:border-blue-800 active:text-blue-800">
       Efectivo
     </button>
-    <button id="card-tab" class="pb-2 text-gray-600 border-b-2 tab-button focus:outline-none hover:text-blue-800">
+    <button id="card-tab" class="px-2 pb-1 text-gray-600 border-b-2 border-transparent tab-button focus:outline-none hover:text-blue-800 hover:border-blue-800 active:border-blue-800 active:text-blue-800">
       Tarjeta
     </button>
-    <button id="transfer-tab" class="pb-2 text-gray-600 border-b-2 tab-button focus:outline-none hover:text-blue-800 ">
+    <button id="transfer-tab" class="px-2 pb-1 text-gray-600 border-b-2 border-transparent tab-button focus:outline-none hover:text-blue-800 hover:border-blue-800 active:border-blue-800 active:text-blue-800">
       Transferencia
     </button>
   </div>
 </div>
+
       <!-- Formulario de pago con tarjeta (oculto por defecto) -->
 <div id="card-payment" class="flex items-center justify-center hidden">
    <div class="w-full max-w-md p-6 bg-white shadow-2xl rounded-xl sm:p-8 md:max-w-lg">
@@ -221,7 +223,7 @@
       </form>
   </div>
 </div>
-</div>
+
     
 
 

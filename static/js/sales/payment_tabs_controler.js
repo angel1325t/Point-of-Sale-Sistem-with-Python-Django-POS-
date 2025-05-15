@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const cashContent = document.getElementById('contenedor_cash');
   const cardContent = document.getElementById('card-payment');
   const transferContent = document.getElementById('multistep-form');
+  const cashPayment = document.getElementById('cash-payment');
 
   // Verificar que los elementos existen
   if (!cashTab || !cardTab || !transferTab) {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cashContent?.classList.add('hidden');
     cardContent?.classList.add('hidden');
     transferContent?.classList.add('hidden');
+    cashPayment?.classList.add('hidden'); // Ocultar por defecto
 
     // Quitar clase 'active' de todos los tabs
     cashTab.classList.remove('active');
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (tab === 'cash') {
       cashContent?.classList.remove('hidden');
       cashTab.classList.add('active');
+      cashPayment?.classList.remove('hidden'); // Mostrar solo en efectivo
     } else if (tab === 'card') {
       cardContent?.classList.remove('hidden');
       cardTab.classList.add('active');
