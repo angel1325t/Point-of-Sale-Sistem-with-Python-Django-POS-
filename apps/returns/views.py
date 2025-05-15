@@ -253,11 +253,6 @@ def render_to_pdf(template_src, context_dict=None):
         return None
     
 
-from django.http import JsonResponse
-from django.utils import timezone
-from datetime import datetime, timedelta
-from django.db.models import Sum
-from .models import Devolucion, DetalleDevolucion  # Ajusta según tus modelos
 
 def return_statistics(request):
     filter_type = request.GET.get('filtro', 'mensual')
