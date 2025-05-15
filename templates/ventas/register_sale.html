@@ -2,6 +2,13 @@
 {% block styles %}
 
 <link rel="stylesheet" href="{% static 'css/products/search_product.css' %}" />
+<style>
+  .tab-button.active {
+  color: #2234B9;
+  border-color: #2234B9;
+}
+
+</style>
 <link href="https://cdn.jsdelivr.net/npm/notyf@3.7.0/notyf.min.css" rel="stylesheet"/>
 {% endblock %}
 <div class="grid grid-cols-1 gap-6 sm:p-4">
@@ -105,24 +112,24 @@
           placeholder="0.00"
         />
       </div>
-    </div>
-
-    <!-- Selector de método de pago -->
-    <div class="flex justify-between mt-4 mb-4">
-      <span class="text-gray-600">Método de pago:</span>
-      <select
-        id="payment-method"
-        class="border border-gray-300 rounded px-2 pr-6 py-1 focus:ring-1 focus:ring-[#2234B9]"
-      >
-        <option value="cash">Efectivo</option>
-        <option value="card">Tarjeta</option>
-        <option value="transfer">Transferencia</option>
-      </select>
-    </div>
-
-    <!-- Formulario de pago con tarjeta (oculto por defecto) -->
+  
+       <div class="flex justify-between mt-4 mb-4">
+  <span class="text-gray-600">Método de pago:</span>
+  <div class="flex space-x-4">
+    <button id="cash-tab" class="pb-2 text-gray-600 border-b-2 tab-button focus:outline-none hover:text-blue-800">
+      Efectivo
+    </button>
+    <button id="card-tab" class="pb-2 text-gray-600 border-b-2 tab-button focus:outline-none hover:text-blue-800">
+      Tarjeta
+    </button>
+    <button id="transfer-tab" class="pb-2 text-gray-600 border-b-2 tab-button focus:outline-none hover:text-blue-800 ">
+      Transferencia
+    </button>
+  </div>
+</div>
+      <!-- Formulario de pago con tarjeta (oculto por defecto) -->
 <div id="card-payment" class="flex items-center justify-center hidden">
-  <div class="w-full max-w-md p-6 bg-white shadow-2xl rounded-xl sm:p-8 md:max-w-lg">
+   <div class="w-full max-w-md p-6 bg-white shadow-2xl rounded-xl sm:p-8 md:max-w-lg">
       <div class="flex flex-col items-center justify-between mb-6 sm:flex-row">
           <h2 class="w-full mb-4 text-2xl font-extrabold text-center text-black sm:text-3xl sm:mb-0 sm:text-left">
               Pagar con Tarjeta
@@ -214,10 +221,18 @@
       </form>
   </div>
 </div>
+</div>
     
 
+
+      <!-- Formulario multistep (visible solo para Transferencia) -->
+    
+
+
+<!-- Detalle de la venta para efectivo -->
+<div id="contenedor_cash" class="hidden tab-content">
+  
       <!-- Detalle de la venta para efectivo -->
-      <div class="" id="contenedor_cash">
         <div class="flex items-center justify-between pb-3 border-b border-gray-200">
           <span class="font-medium text-gray-600">Subtotal:</span>
           <span id="subtotal" class="text-[#23328C] font-bold text-lg">$0.00</span>
@@ -258,9 +273,9 @@
           </button>
         </div>
       </div>
-
       <!-- Formulario multistep (visible solo para Transferencia) -->
-    <div id="multistep-form" class="hidden">
+<div id="multistep-form" class="hidden tab-content">
+  <!-- Formulario de transferencia aquí -->
       <div class="flex items-center justify-around mb-6">
         <div class="text-center">
           <div
@@ -399,10 +414,14 @@
         </div>
       </form>
     </div>
+</div>
+
+
+
+
+   
+
     </div>
-    
-  </div>
-  
 {% endblock section1 %}
 {% block scripts %}
 <script src="https://js.stripe.com/v3/"></script>
@@ -410,9 +429,9 @@
 <script src="{% static 'js/sales/transfer/multiStep2.js' %}"></script>
 <script src="{% static 'js/sales/transfer/transferAlert2.js' %}"></script>
 <script src="{% static 'js/sales/card/cardAlerts.js' %}"></script>
-<script src="{% static 'js/sales/card/cardSummary.js' %}"></script>
-<script src="{% static 'js/sales/transfer/transferSummary2.js' %}"></script>
-<script src="{% static 'js/sales/paymentMethodController.js' %}"></script>
+<script src="{% static 'js/sales/card/cardSummary_observer.js' %}"></script>
+<script src="{% static 'js/sales/transfer/transferSummary_observer.js' %}"></script>
+<script src="{% static 'js/sales/payment_tabs_controler.js' %}"></script>
 <script src="{% static 'js/sales/salesController.js' %}" type="module"></script>
 <script src="{% static 'js/sales/cash/process_cashs.js' %}"></script>
 <script src="{% static 'js/products/search_product.js' %}"></script>

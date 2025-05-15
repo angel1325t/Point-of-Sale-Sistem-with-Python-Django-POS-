@@ -2,8 +2,8 @@ from django.utils.html import format_html
 from django.contrib import admin
 from django import forms
 from django.shortcuts import render, redirect
-from .models import Producto, Categoria, Suministradores
-from .forms import AddProductForm, CategoriaForm, SuministradoresForm  # Importa los formularios
+from .models import Producto, Categoria, Suministradores,MovimientoProducto
+from .forms import AddProductForm, CategoriaForm, SuministradoresForm
 
 # Formulario para aplicar descuentos
 class DiscountForm(forms.Form):
@@ -19,6 +19,16 @@ class CategoriaAdmin(admin.ModelAdmin):
     list_filter = ('nombre_categoria',)
     ordering = ('nombre_categoria',)
     list_per_page = 5
+
+
+
+@admin.register(MovimientoProducto)
+class MovimientoProductoAdmin(admin.ModelAdmin):
+    list_display = ('producto', 'tipo_movimiento', 'cantidad', 'stock_antes', 'stock_despues', 'fecha')
+    list_filter = ('tipo_movimiento', 'fecha')
+    search_fields = ('producto__nombre', 'descripcion')
+    ordering = ('-fecha',)
+
 
 # Registro de Producto en el admin
 class ProductAdmin(admin.ModelAdmin):
@@ -95,3 +105,4 @@ class SuministradoresAdmin(admin.ModelAdmin):
     list_filter = ('created_at', 'updated_at')
     ordering = ('-created_at',)
     list_per_page = 10
+    

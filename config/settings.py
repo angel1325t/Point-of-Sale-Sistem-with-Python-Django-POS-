@@ -33,6 +33,7 @@ stripe.api_key = STRIPE_SECRET_KEY  # Configura la clave secreta
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'channels',
     "jazzmin",
     "django.contrib.admin",
@@ -77,6 +78,7 @@ JAZZMIN_SETTINGS = {
         "productos.categoria": "fas fa-boxes-stacked",
         "productos.producto": "fas fa-tag",
         "productos.suministradores": "fas fa-user-tag",
+        "productos.movimientoproducto": "fas fa-user-tag",
         "returns.devolucion": "fa-solid fa-arrow-rotate-left",
         "auth.group": "fas fa-gears",
     },
@@ -109,6 +111,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",  # Middleware para la localización
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -116,6 +119,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.users.middlewares.ErrorLoggingMiddleware",
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 ROOT_URLCONF = "config.urls"
@@ -141,9 +145,13 @@ ASGI_APPLICATION = "config.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

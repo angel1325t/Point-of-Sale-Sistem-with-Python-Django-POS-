@@ -96,13 +96,12 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
-
 class MovimientoProducto(models.Model):
     TIPO_MOVIMIENTO = [
         ('ENTRADA', 'Entrada'),
         ('SALIDA', 'Salida'),
         ('ACTUALIZACION', 'Actualización'),
-        ('CREACION', 'Creación'),  # ← agregado aquí
+        ('CREACION', 'Creación'),
     ]
 
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='movimientos')
@@ -113,6 +112,10 @@ class MovimientoProducto(models.Model):
     descripcion = models.TextField(null=True, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name = 'Movimiento'
+        verbose_name_plural = 'Movimientos'
+        ordering = ['-fecha']
+
     def __str__(self):
         return f'{self.tipo_movimiento} - {self.producto.nombre} ({self.cantidad})'
-

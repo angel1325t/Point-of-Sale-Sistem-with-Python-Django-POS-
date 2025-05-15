@@ -5,6 +5,12 @@ from datetime import timedelta
 from django.utils import timezone
 
 class StockConsumer(AsyncWebsocketConsumer):
+    async def stock_notification(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps({
+            'message': message
+        }))
+
     async def connect(self):
         print("WebSocket conectado con éxito")
         await self.channel_layer.group_add("stock_group", self.channel_name)
@@ -19,7 +25,7 @@ class StockConsumer(AsyncWebsocketConsumer):
         )
 
         ahora = timezone.now()
-        intervalo = timedelta(hours=1)
+        intervalo = timedelta(minutes=1)
 
         for producto in productos_bajo_stock:
             # Verifica si ya se envió una alerta recientemente

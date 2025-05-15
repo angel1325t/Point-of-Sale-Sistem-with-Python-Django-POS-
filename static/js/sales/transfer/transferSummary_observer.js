@@ -35,20 +35,16 @@ function updateTransferSummary() {
       const cantidad = cantidadElement ? parseInt(cantidadElement.value) || 1 : 1;
       const precioText = precioElement ? precioElement.textContent : 'Precio: $0.00';
       const descuentoText = descuentoElement ? descuentoElement.textContent.trim() : '0%';
-      
-      // Nueva regex corregida
+
       const priceRegex = /\$([\d,.]+)/;
-      const discountRegex = /([\d.]+)%/;  // Corregida para capturar solo números antes del %
-      
+      const discountRegex = /([\d.]+)%/;
+
       let priceMatch = precioText.match(priceRegex);
       let discountMatch = descuentoText.match(discountRegex);
-      
-      
 
       let unitPrice = priceMatch ? parseFloat(priceMatch[1].replace(',', '')) : 0;
       let discount = discountMatch ? parseFloat(discountMatch[1]) : 0;
 
-      // Aplicar descuento si existe
       let finalUnitPrice = unitPrice * (1 - discount / 100);
       let totalPrice = finalUnitPrice;
 
@@ -58,39 +54,40 @@ function updateTransferSummary() {
         id: productId,
         quantity: cantidad,
         price: totalPrice,
-        discount: discount // Guardamos el descuento aplicado
+        discount: discount
       });
 
       summaryHTML += `
         <div class="rounded-lg overflow-hidden bg-gray-50 p-4 mb-4">
-            <div class="space-y-3 text-gray-700">
-              <div class="flex justify-between items-center border-b pb-2">
-                <span class="font-semibold text-gray-600">Producto:</span>
-                <span class="font-medium">${nombre}</span>
-              </div>
-              <div class="flex justify-between items-center border-b pb-2">
-                <span class="font-semibold text-gray-600">Cantidad:</span>
-                <span class="font-medium">${cantidad}</span>
-              </div>
-              <div class="flex justify-between items-center border-b pb-2">
-                <span class="font-semibold text-gray-600">Precio Unitario:</span>
-                <span class="font-medium">$${unitPrice.toFixed(2)}</span>
-              </div>
-              <div class="flex justify-between items-center border-b pb-2">
-                <span class="font-semibold text-green-700">Descuento:</span>
-                <span class="text-green-700">${discount}%</span>
-              </div>
-              <div class="flex justify-between items-center pt-2">
-                <span class="text-lg font-bold text-gray-800">Valor Total:</span>
-                <span class="text-green-600 text-lg font-bold">$${totalPrice.toFixed(2)}</span>
-              </div>
+          <div class="space-y-3 text-gray-700">
+            <div class="flex justify-between items-center border-b pb-2">
+              <span class="font-semibold text-gray-600">Producto:</span>
+              <span class="font-medium">${nombre}</span>
             </div>
+            <div class="flex justify-between items-center border-b pb-2">
+              <span class="font-semibold text-gray-600">Cantidad:</span>
+              <span class="font-medium">${cantidad}</span>
+            </div>
+            <div class="flex justify-between items-center border-b pb-2">
+              <span class="font-semibold text-gray-600">Precio Unitario:</span>
+              <span class="font-medium">$${unitPrice.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between items-center border-b pb-2">
+              <span class="font-semibold text-green-700">Descuento:</span>
+              <span class="text-green-700">${discount}%</span>
+            </div>
+            <div class="flex justify-between items-center pt-2">
+              <span class="text-lg font-bold text-gray-800">Valor Total:</span>
+              <span class="text-green-600 text-lg font-bold">$${totalPrice.toFixed(2)}</span>
+            </div>
+          </div>
         </div>`;
     });
 
     // Calcular ITBIS (18%)
     let taxAmount = grandTotal * 0.18;
     let totalWithTax2 = grandTotal + taxAmount;
+
     // Calcular el total de descuento en dólares
     let totalDiscountAmount = productsList.reduce((acc, product) => {
       return acc + (product.price * (product.discount / 100));
@@ -118,7 +115,6 @@ function updateTransferSummary() {
       </div>
     </div>`;
 
-
     montoInput.value = totalWithTax2.toFixed(2);
     productsInput.value = JSON.stringify(productsList);
   }
@@ -130,8 +126,11 @@ function updateTransferSummary() {
 const saleItemsContainer = document.getElementById('sale-items');
 const observer = new MutationObserver(() => {
   updateTransferSummary();
-});  
+});
 observer.observe(saleItemsContainer, {
   childList: true,
   subtree: true,
-}); 
+});
+
+// ⚠️ Llamada inicial para actualizar el resumen si #sale-items ya está vacío al cargar
+updateTransferSummary();
